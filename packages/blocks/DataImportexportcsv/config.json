@@ -1,0 +1,65 @@
+{
+  "id": "DataImportexportcsv",
+  "version": "0.0.1",
+  "status": "preAlpha",
+  "path": "./packages/blocks/DataImportexportcsv",
+  "assembler-adapters": [],
+  "mobile": {
+    "merge-engine-navigation": {},
+    "assembler-exports": [
+      "DataImportexportcsv"
+    ],
+    "assembler-dependencies": [],
+    "catalog-dependencies": [
+      "core"
+    ],
+    "assembler-devDependencies": [],
+    "merge-engine-screens": {
+      "DataImportexportcsv": {
+        "file": "DataImportexportcsv.tsx",
+        "extends": "DataImportexportcsvController",
+        "configURL": "",
+        "validationRulesURL": "",
+        "imports": [
+          {
+            "value": "DataImportexportcsvController",
+            "path": "./DataImportexportcsvController"
+          },
+          {
+            "value": "{Props}",
+            "path": "./DataImportexportcsvController"
+          }
+        ]
+      }
+    }
+  },
+  "web": {
+    "merge-engine-navigation": {},
+    "assembler-exports": [
+      "DataImportexportcsv"
+    ],
+    "assembler-dependencies": [],
+    "catalog-dependencies": [
+      "core"
+    ],
+    "assembler-devDependencies": [],
+    "merge-engine-screens": {
+      "DataImportexportcsv": {
+        "file": "DataImportexportcsv.web.tsx",
+        "extends": "DataImportexportcsvController",
+        "configURL": "",
+        "validationRulesURL": "",
+        "imports": [
+          {
+            "value": "DataImportexportcsvController",
+            "path": "./DataImportexportcsvController"
+          },
+          {
+            "value": "{Props}",
+            "path": "./DataImportexportcsvController"
+          }
+        ]
+      }
+    }
+  }
+}

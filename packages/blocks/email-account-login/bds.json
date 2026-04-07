@@ -1,0 +1,56 @@
+{
+  "bds": {
+    "name": "Email Account Log In",
+    "id": "email-account-login",
+    "platform": [
+      "desktop",
+      "mobile"
+    ],
+    "author": "CMT",
+    "summary": null,
+    "license": "BSD",
+    "version": "1.0.0",
+    "pages": [
+      {
+        "email-account-login": {
+          "hotspots": [
+            {
+              "type": "input",
+              "id": "txtInputEmail",
+              "options": [
+                "mandatory",
+                "enabled"
+              ]
+            },
+            {
+              "type": "input",
+              "id": "btnRememberMe",
+              "options": [
+                "mandatory",
+                "enabled"
+              ]
+            },
+            {
+              "type": "input",
+              "id": "txtInputPassword",
+              "options": [
+                "mandatory",
+                "enabled"
+              ]
+            },
+            {
+              "type": "navigation",
+              "id": "btnEmailLogIn",
+              "options": [
+                "target",
+                "navigationTransition",
+                "navigationType",
+                "enabled"
+              ]
+            }
+          ]
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,805 @@
+// Customizable Area Start
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import moment from "moment";
+import { Alert, Linking, Platform } from "react-native";
+import  {
+  ProductPurchase,
+  flushFailedPurchasesCachedAsPendingAndroid,
+  getAvailablePurchases, initConnection,
+  purchaseUpdatedListener, requestSubscription
+} from 'react-native-iap';
+import { BlockComponent } from "../../../framework/src/BlockComponent";
+import { IBlock } from "../../../framework/src/IBlock";
+import { Message } from "../../../framework/src/Message";
+import MessageEnum, {
+  getName
+} from "../../../framework/src/Messages/MessageEnum";
+import { runEngine } from "../../../framework/src/RunEngine";
+// import AsyncStorage from "@react-native-async-storage/async-storage";
+import { AsynchStoragekey } from "../../../mobile/src/utils";
+
+import * as RNIap from 'react-native-iap';
+// Customizable Area End
+
+// export const configJSON = require("./config");
+
+export interface Props {
+  navigation: any;
+  id: string;
+  subscriptionState:any;
+  addSubscription:(val:any)=>void;
+  cancelSubscription:()=>void;
+  // Customizable Area Start
+
+  // Customizable Area End
+}
+
+interface S {
+  txtInputValue: string;
+  txtSavedValue: string;
+  enableField: boolean;
+  modalVisible: boolean;
+  activeBt: any;
+  highlightedcardindex: string;
+  paymentError: boolean;
+  cancelSubscriptionError: boolean;
+  isLoading: boolean;
+  isCancelbuttonLoading: boolean;
+  priceingListapi_price: string;
+  pricingListapi_expiryDate: string;
+  courseDurationMonth: string;
+  courseExpiryMonthAndate: string;
+  isSubscriptionScreenLoading: boolean;
+  userToken: any;
+  isloading: boolean;
+  subscribed: boolean;
+  subscribedDate: any;
+  productList: undefined;
+  isVisible: boolean;
+  subscription_id: string;
+  subscriptionInfo: undefined;
+  subscription: any;
+  checkForSubscription:boolean;
+  // Customizable Area Start
+  // Customizable Area End
+}
+
+interface SS {
+  id: any;
+  // Customizable Area Start
+  // Customizable Area End
+}
+//Item Subscription on the basis of platforms
+// // Test Subscriptions
+// const itemSubs: any = Platform.select({
+//   android: ['test_month'],
+//   ios: ["test_month"]
+// })
+
+// // Prod Subscriptions
+const itemSubs: any = Platform.select({
+  android:['etoh_prod'],
+  ios:['etoh_prod']
+})
+
+export const configJSON = require("./config.js");
+
+export default class SubcriptionController extends BlockComponent<
+  Props,
+  S,
+  SS
+> {
+  // Customizable Area Start
+  // Customizable Area End
+  focusListener: any;
+  subscriptionSuccessID: string = "";
+  apiStripeTokensendId: string = "";
+  cancelSubscriptionApiId: string = "";
+  makePaymentApiId: string = "";
+  pricingListApiId: string = "";
+
+
+
+  Customer_creditcard_id: any;
+  constructor(props: Props) {
+    super(props);
+
+    this.subScribedMessages = [
+      getName(MessageEnum.RestAPIResponceMessage),
+      getName(MessageEnum.RestAPIResponceErrorMessage),
+      getName(MessageEnum.RestAPIResponceSuccessMessage),
+    ];
+
+    this.receive = this.receive.bind(this);
+
+    // Customizable Area Start
+
+    this.state = {
+      txtInputValue: "",
+      txtSavedValue: "A",
+      enableField: false,
+      modalVisible: false,
+      activeBt: "",
+      highlightedcardindex: "0",
+      paymentError: false,
+      cancelSubscriptionError: false,
+      isLoading: false,
+      isCancelbuttonLoading: false,
+      courseDurationMonth: '',
+      courseExpiryMonthAndate: '',
+      priceingListapi_price: '0',
+      pricingListapi_expiryDate: '',
+      isSubscriptionScreenLoading: true,
+      userToken: "",
+      isloading: false,
+      subscribed: false,
+      subscribedDate: undefined,
+      productList: undefined,
+      subscription_id: '',
+      isVisible: false,
+      subscriptionInfo: undefined,
+      subscription: undefined,
+      checkForSubscription:false
+      // Customizable Area Start
+      // Customizable Area End
+    };
+    runEngine.attachBuildingBlock(this as IBlock, this.subScribedMessages);
+
+    // Customizable Area Start
+    // Customizable Area End
+  }
+
+  // async componentWillMount() {
+  //   this.justmountedFunction()
+  // }
+
+  async justmountedFunction() {
+    // this.Customer_creditcard_id = await AsyncStorage.getItem(
+    //   AsynchStoragekey.AsynchStoragekey.USER_CREDITCARDID
+    // );
+
+    this.setState({
+      userToken: await AsyncStorage.getItem(
+        AsynchStoragekey.AsynchStoragekey.LOGIN_TOKEN
+      ),
+      isloading:true
+    })
+    // const subsStatus = await AsyncStorage.getItem(
+    //   AsynchStoragekey.AsynchStoragekey.USER_SUBSCRIPTION
+    // );
+    const subsStatus = this.props.subscriptionState?.subscriptionInfo?.userSubscription;
+    this.setState({
+      subscribed:subsStatus=='subscribed'?true:false,
+      subscription:subsStatus
+    })
+    // const subscription_id = await AsyncStorage.getItem(AsynchStoragekey.AsynchStoragekey.SUBSCRIPTION_TRANSACTION_RECEIPT);
+    const subscription_id = this.props.subscriptionState?.subscriptionInfo?.subscriptionId;
+    
+    console.log('subbbb',subscription_id,subsStatus)
+    if(subsStatus =="subscribed" && (subscription_id!=='null'||subscription_id!==null)){
+      // console.log('check for subscription')
+      // const expiry_date = await AsyncStorage.getItem(AsynchStoragekey.AsynchStoragekey.SUBSCRIPTION_EXPIRY_DATE);
+      const expiry_date = this.props.subscriptionState?.subscriptionInfo?.expiryDate;
+
+      // const subscription_id = await AsyncStorage.getItem(AsynchStoragekey.AsynchStoragekey.SUBSCRIPTION_TRANSACTION_RECEIPT);
+      // console.log('subscription Info',expiry_date,subscription_id)
+      this.checkAvailableSubscription(subscription_id);
+    }else{
+      console.log('new connection')
+      this.iapConnection(true);
+    }
+
+    // console.log(await AsyncStorage.getItem(
+    //   AsynchStoragekey.AsynchStoragekey.USER_CREDITCARDID
+    // ), typeof (await AsyncStorage.getItem(
+    //   AsynchStoragekey.AsynchStoragekey.USER_CREDITCARDID
+    // )), "____________________________________kkk")
+
+  }
+  async getPricingDetails() {
+    console.log("PRICING LIST API IS RUNNING")
+    const header = {
+      "Content-Type": "application/json",
+      token: await AsyncStorage.getItem(
+        AsynchStoragekey.AsynchStoragekey.LOGIN_TOKEN)
+      ,
+    };
+    const requestMessage = new Message(
+      getName(MessageEnum.RestAPIRequestMessage)
+    );
+
+    this.pricingListApiId = requestMessage.messageId;
+    requestMessage.addData(
+      getName(MessageEnum.RestAPIResponceEndPointMessage),
+      configJSON.pricingListUrl
+    );
+
+    requestMessage.addData(
+      getName(MessageEnum.RestAPIRequestHeaderMessage),
+      JSON.stringify(header)
+    );
+
+    requestMessage.addData(
+      getName(MessageEnum.RestAPIRequestMethodMessage),
+      configJSON.pricingListApiMethodType
+    );
+
+    console.log("SENT DATA FOR PRICING LIST", requestMessage)
+
+
+    runEngine.sendMessage(requestMessage.id, requestMessage);
+    // Customizable Area End
+    return true;
+  }
+
+  async componentDidMount() {
+    // await RNIap.clearTransactionIOS();
+    // this.justmountedFunction();
+    // this.cancelSubscription();
+    // await this.iapConnection(true);
+    // this.getPricingDetails();
+    
+    this.focusListener = this.props.navigation.addListener("didFocus", () => {
+
+      this.justmountedFunction();
+      // this.iapConnection(true);
+      // this.updatePurchase();
+    })
+    // await this.iappurcase();
+  }
+  async componentWillUnmount(): Promise<void> {
+
+    this.props.navigation.setParams({ itisfromloginOrSignUp: null, isItfromlessonOrtheme: null });
+
+  }
+
+  async receive(from: string, message: Message) {
+    runEngine.debugLog("Message Recived", message);
+
+    if (getName(MessageEnum.RestAPIResponceMessage) === message.id) {
+      const apiRequestCallId = message.getData(
+        getName(MessageEnum.RestAPIResponceDataMessage)
+      );
+
+      var responseJson = message.getData(
+        getName(MessageEnum.RestAPIResponceSuccessMessage)
+      );
+
+      var errorReponse = message.getData(
+        getName(MessageEnum.RestAPIResponceErrorMessage)
+      );
+      var successResponse = message.getData(
+        getName(MessageEnum.RestAPIResponceSuccessMessage)
+      );
+
+      
+
+      if (apiRequestCallId === this.cancelSubscriptionApiId) {
+        console.log('subscription cancellation response', successResponse)
+        if (!successResponse) {
+          console.log('error response', errorReponse)
+        } else {
+          var dataSet = successResponse?.data?.attributes;
+          // await AsyncStorage.setItem(
+          //   AsynchStoragekey.AsynchStoragekey.SUBSCRIPTION_TRANSACTION_RECEIPT,
+          //   ""
+          // );
+          // await AsyncStorage.setItem(
+          //   AsynchStoragekey.AsynchStoragekey.SUBSCRIPTION_TRANSACTION_DATE,
+          //   ""
+          // );
+          // await AsyncStorage.setItem(
+          //   AsynchStoragekey.AsynchStoragekey.SUBSCRIPTION_EXPIRY_DATE,
+          //   ""
+          // );
+          // await AsyncStorage.setItem(
+          //   AsynchStoragekey.AsynchStoragekey.SUBSCRIPTION_STATUS,
+          //   JSON.stringify(false)
+          // );
+          console.log('set locale to unsubscribed')
+          this.props.cancelSubscription();
+          // await AsyncStorage.setItem(
+          //   AsynchStoragekey.AsynchStoragekey.USER_SUBSCRIPTION,
+          //   "unsubscribed"
+          // );
+        }
+      }
+      // Customizable Area Start
+      // Customizable Area End
+      if (apiRequestCallId === this.pricingListApiId) {
+        this.setState({ isloading: false })
+        if (!successResponse) {
+
+
+        } else {
+          let myData = successResponse?.data[0]?.attributes
+          console.log("mydata of price list", myData)
+          if (!myData.subscribed) {
+            this.props.navigation.navigate("SubCriptionScreen")
+          }
+
+          let courseDurationMonth = new Date(myData.valid_up_to).getMonth() - new Date().getMonth()
+
+          const month_names = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+          let courseExpiryMonth = month_names[new Date(myData.valid_up_to).getMonth()]
+          let courseExpiryDate = new Date(myData.valid_up_to).getDate()
+
+          this.setState({
+            ...this.state,
+            priceingListapi_price: myData.price,
+            pricingListapi_expiryDate: myData.valid_up_to,
+            courseDurationMonth: String(courseDurationMonth),
+            courseExpiryMonthAndate: courseExpiryMonth + " " + courseExpiryDate,
+            isSubscriptionScreenLoading: false
+          })
+          await AsyncStorage.setItem(
+            AsynchStoragekey.AsynchStoragekey.SUBSCRIPTION_RENEWAL_DATE,
+            courseExpiryMonth + " " + courseExpiryDate
+          );
+        }
+      }
+      if (apiRequestCallId == this.subscriptionSuccessID) {
+        if (!successResponse) {
+          console.log('error response', errorReponse)
+          // _____________
+
+        
+          // ____________
+          this.setState({isloading:false})
+        } else {
+          var dataSet = successResponse?.data?.attributes;
+          console.log('subscription success data', dataSet,)
+          // await AsyncStorage.setItem(
+          //   AsynchStoragekey.AsynchStoragekey.SUBSCRIPTION_TRANSACTION_RECEIPT,
+          //   dataSet?.subscription_id??''
+          // );
+          // await AsyncStorage.setItem(
+          //   AsynchStoragekey.AsynchStoragekey.SUBSCRIPTION_TRANSACTION_DATE,
+          //   JSON.stringify(dataSet?.subscription_date)
+          // );
+          // await AsyncStorage.setItem(
+          //   AsynchStoragekey.AsynchStoragekey.SUBSCRIPTION_STATUS,
+          //   JSON.stringify(true)
+          // );
+          // await AsyncStorage.setItem(
+          //   AsynchStoragekey.AsynchStoragekey.SUBSCRIPTION_EXPIRY_DATE,
+          //   dataSet?.expired_at
+          // );
+          
+          this.props.addSubscription({
+            subscriptionId: dataSet?.subscription_id,
+            transactionDate: dataSet?.subscription_date,
+            status: true,
+            expiryDate: dataSet?.expired_at,
+            userSubscription: 'subscribed',
+          })
+          // await AsyncStorage.setItem(
+          //   AsynchStoragekey.AsynchStoragekey.USER_SUBSCRIPTION,
+          //   "subscribed"
+          // );
+          this.setState({isloading:false})
+        }
+      }
+    }
+  }
+
+  async getToken() {
+    const msg: Message = new Message(
+      getName(MessageEnum.SessionRequestMessage)
+    );
+    let token: any = await AsyncStorage.getItem("LOGIN_TOKEN");
+    // this.setState({token:token},()=>this.getDashboardData())
+    // console.log('values ',token)
+    // this.send(msg);
+  }
+  setCancelModal() {
+    this.setState({ isVisible: !this.state.isVisible })
+  }
+
+
+  async sendSubscriptionSuccess(subscriptionInfo: any) {
+    const header = {
+      "Content-Type": configJSON.subscriptionContentType,
+      token: await AsyncStorage.getItem(
+        AsynchStoragekey.AsynchStoragekey.LOGIN_TOKEN
+      ),
+    };
+    console.log('subscription object', subscriptionInfo)
+
+    configJSON.subscriptionApiData.subscription_id = subscriptionInfo?.orderId ?? subscriptionInfo?.transactionId;
+    configJSON.subscriptionApiData.subscription_date = moment(subscriptionInfo?.transactionDate).format('YYYY-MM-DDTHH:mm:ss');
+    configJSON.subscriptionApiData.duration = "1.month";
+
+
+    const requestMessage = new Message(
+      getName(MessageEnum.RestAPIRequestMessage)
+    );
+    console.log('subscription success body', configJSON.subscriptionApiData, configJSON.subscriptionUrl, configJSON.subscriptionApiMethodType, requestMessage)
+
+    this.subscriptionSuccessID = requestMessage.messageId;
+    requestMessage.addData(
+      getName(MessageEnum.RestAPIResponceEndPointMessage),
+      configJSON.subscriptionUrl
+    );
+
+    requestMessage.addData(
+      getName(MessageEnum.RestAPIRequestHeaderMessage),
+      JSON.stringify(header)
+    );
+
+    requestMessage.addData(
+      getName(MessageEnum.RestAPIRequestBodyMessage),
+      JSON.stringify(configJSON.subscriptionApiData)
+    );
+
+    requestMessage.addData(
+      getName(MessageEnum.RestAPIRequestMethodMessage),
+      configJSON.subscriptionApiMethodType
+    );
+
+
+
+    runEngine.sendMessage(requestMessage.id, requestMessage);
+    // Customizable Area End
+    return true;
+  }
+  cancelSubscription = async () => {
+    const header = {
+      "Content-Type": configJSON.subscriptionContentType,
+      token: await AsyncStorage.getItem(
+        AsynchStoragekey.AsynchStoragekey.LOGIN_TOKEN
+      ),
+    };
+    const requestMessage = new Message(
+      getName(MessageEnum.RestAPIRequestMessage)
+    );
+    console.log('subscription cancel body at subscription controller', configJSON.subscriptionApiData, configJSON.subscriptionUrl, configJSON.subscriptionApiMethodType, requestMessage)
+
+    this.cancelSubscriptionApiId = requestMessage.messageId;
+    requestMessage.addData(
+      getName(MessageEnum.RestAPIResponceEndPointMessage),
+      configJSON.subscriptionCancelUrl
+    );
+
+    requestMessage.addData(
+      getName(MessageEnum.RestAPIRequestHeaderMessage),
+      JSON.stringify(header)
+    );
+
+    requestMessage.addData(
+      getName(MessageEnum.RestAPIRequestBodyMessage),
+      null
+    );
+
+    requestMessage.addData(
+      getName(MessageEnum.RestAPIRequestMethodMessage),
+      configJSON.subscriptionCancelApiMethodType
+    );
+
+
+
+    runEngine.sendMessage(requestMessage.id, requestMessage);
+    // Customizable Area End
+    return true;
+  }
+
+
+
+  txtInputWebProps = {
+    onChangeText: (text: string) => {
+      this.setState({ txtInputValue: text });
+    },
+    secureTextEntry: false,
+  };
+
+  txtInputMobileProps = {
+    ...this.txtInputWebProps,
+    autoCompleteType: "email",
+    keyboardType: "email-address",
+  };
+
+  txtInputProps = this.isPlatformWeb()
+    ? this.txtInputWebProps
+    : this.txtInputMobileProps;
+
+
+  btnExampleProps = {
+    onPress: () => this.doButtonPressed(),
+  };
+
+  doButtonPressed() {
+    let msg = new Message(getName(MessageEnum.AccoutLoginSuccess));
+    msg.addData(
+      getName(MessageEnum.AuthTokenDataMessage),
+      this.state.txtInputValue
+    );
+    this.send(msg);
+  }
+
+  // web events
+  setInputValue = (text: string) => {
+    this.setState({ txtInputValue: text });
+  };
+
+  setEnableField = () => {
+    this.setState({ enableField: !this.state.enableField });
+  };
+
+  // Customizable Area Start
+  // Customizable Area End
+
+  //Create IAP Connection, Get available subscription, Update if already have any
+  iapConnection = async (load:boolean) => {
+    this.setState({ isloading: true })
+    initConnection().catch((err) => {
+      this.setState({ isloading: false })
+    }).then(async (res) => {
+      // if (Platform.OS === 'ios') {
+      //   console.log('[Subscription]','Will clear transaction ios');
+      //   await RNIap.clearTransactionIOS();
+      //   console.log('[Subscription]','Did clear transaction ios');
+      // }
+      console.log('iap rconnection response', JSON.stringify(res))
+      console.log('iap rconnection product',RNIap.getSubscriptions)
+
+      const products = await RNIap.getSubscriptions({skus:itemSubs})
+
+      console.log('subscription products',products)
+      this.setState({ subscription: products[0], subscription_id: products[0]?.productId,  },()=>{
+        console.log("iap rconnection response state",this.state)
+      });
+      if(load){
+        this.setState({isloading: false})
+      }
+      if (Platform.OS == 'android') {
+        console.log("here in the android")
+        await flushFailedPurchasesCachedAsPendingAndroid();
+    } else {
+        // await clearTransactionIOS();
+    }
+    })
+  }
+
+  //Get Available subscription from respective stores
+  getAvailableSubsFromStore = async () => {
+    const products = await RNIap.getSubscriptions(itemSubs);
+    console.log("getting_products>>>", products)
+    this.setState({subscription_id: products[0]?.productId });
+  }
+
+
+  //Subscribe to a new subscription
+
+  consumeAllSkus = async()=>{
+    const availablePurchases = await RNIap.getAvailablePurchases();
+    availablePurchases.forEach((purchase) => {
+        RNIap.finishTransaction(purchase, true).then((res)=>{
+          // console.log('consumption finished',res)
+        }).catch((err)=>{
+          console.log('err @ transaction consume',err)
+        });
+      });
+     
+  }
+
+  subscribe = async () => {
+    try {
+      await this.iapConnection(false);
+      this.setState({isloading:true})
+      // await this.consumeAllSkus();
+      // console.log('subscription loading------',this.state?.subscription?.subscriptionOfferDetails[0].offerToken)
+    
+    let subscriptionOffers:any=[]
+
+if(Platform.OS=='ios')
+{
+  console.log("00checking thisssi---",this.state)
+   subscriptionOffers = {sku:this.state.subscription_id}
+
+}
+else{
+  console.log("00checking thisssi---",this.state)
+  subscriptionOffers = {subscriptionOffers:[{sku:this.state.subscription_id,offerToken:this.state?.subscription?.subscriptionOfferDetails[0].offerToken ?? ""}]}
+}
+console.log("subscriptionOffers checking")
+      await requestSubscription(subscriptionOffers).then(async(purchase:any)=>{
+      //  console.log('subscription purchased',this.state?.subscription?.subscriptionOfferDetails[0])
+        await this.updateSubscription(purchase)
+      
+      }).catch((err)=>{
+        this.setState({isloading:false})
+        Alert.alert('Subscription could not be purchased')
+        console.log('error on subscription purchase',err,this.state)
+      })
+
+     
+    } catch (err) {
+      this.setState({isloading:false})
+      console.warn("subscription request error gggg----", err, this.state);
+      // this.iapConnection();
+    }
+  };
+  updateSubscription = async (subDetail: any) => {
+console.log('updating purchase',subDetail)
+    await this.updatePurchase();
+if(Platform.OS=='android')
+{
+  let changeddetails=JSON.parse (subDetail[0]?.transactionReceipt)
+  console.log(changeddetails,"changeddetails")
+  this.sendSubscriptionSuccess(changeddetails);
+  
+  this.setState({ subscribed: true, subscribedDate: changeddetails?.transactionDate,isloading:false })
+}
+else{
+  this.sendSubscriptionSuccess(subDetail);
+    this.setState({ subscribed: true, subscribedDate: subDetail?.transactionDate,isloading:false })
+
+}
+
+  }
+
+
+  
+  //Check for available purchased subscription
+  checkAvailableSubscription = async (subscriptionId:any) => {
+    await this.iapConnection(true);
+    await getAvailablePurchases().then(async (res) => {
+      if(Platform.OS=='ios'){
+        await RNIap.clearTransactionIOS();
+      }
+      // console.log('purchased subs length',res.length)
+      if (res.length > 0 && subscriptionId!==undefined) {
+        // console.log('subscription infor r',res[0])
+        let subDetail = await res.find((x)=>{
+          // console.log('subscription info',x.transactionId,x.originalTransactionIdentifierIOS,subscriptionId,x.productId)
+          if(x.productId==itemSubs[0] && (String(x.transactionId) === subscriptionId||String(x?.originalTransactionIdentifierIOS) == subscriptionId)){
+            // console.log('found subscription info',x.transactionId,x.originalTransactionIdentifierIOS,subscriptionId,x)
+            return x;
+          }
+        });
+        // console.log('subss Detail',JSON.stringify(subDetail),subscriptionId);
+        if(subDetail!==undefined){
+        await this.updatePurchase();
+        this.setState({
+          subscriptionInfo: subDetail,
+          isloading:false,
+        })
+        this.setState({ subscribed: true, subscribedDate: subDetail?.transactionDate })
+      }else{
+        await this.cancelSubscription();
+        this.setState({
+          subscribed:false,subscriptionInfo:undefined,isloading:false
+        })
+      }
+      } else {
+        this.cancelSubscription();
+        // await AsyncStorage.setItem(
+        //   AsynchStoragekey.AsynchStoragekey.SUBSCRIPTION_TRANSACTION_RECEIPT,
+        //   ""
+        // );
+        // await AsyncStorage.setItem(
+        //   AsynchStoragekey.AsynchStoragekey.SUBSCRIPTION_TRANSACTION_DATE,
+        //   ""
+        // );
+        // await AsyncStorage.setItem(
+        //   AsynchStoragekey.AsynchStoragekey.SUBSCRIPTION_STATUS,
+        //   JSON.stringify(false)
+        // );
+        // await AsyncStorage.setItem(
+        //   AsynchStoragekey.AsynchStoragekey.USER_SUBSCRIPTION,
+        //   "unsubscribed"
+        // );
+        this.props.cancelSubscription();
+        this.setState({
+          subscribed: false,
+          isloading:false,
+          subscribedDate: undefined
+        })
+      }
+    }).catch((err) => {
+      console.log('purchased error', err)
+    })
+  }
+
+  //Updating purchase of subscription
+  updatePurchase =  () => {
+    console.log('update purchzase function')
+    {
+      if(Platform.OS=='android'){
+    flushFailedPurchasesCachedAsPendingAndroid().then((res)=>{console.log('flushed transaction',res)}).catch((err)=>{console.log('flushed transaction',err)})
+  }
+    else{
+      RNIap.clearTransactionIOS();
+    }
+
+  }
+     purchaseUpdatedListener(
+      async (purchase: ProductPurchase) => {
+        // console.log('purchaseUpdatedListener', purchase);
+        const receipt = purchase.transactionReceipt;
+        if (receipt) {
+          try {
+            if (Platform.OS == 'ios') {
+
+              await RNIap.finishTransaction(purchase,false).then((res) => {
+                console.log('transaction finish', purchase,res)
+              });
+            }
+            if (Platform.OS == 'android') {
+              // RNIap.acknowledgePurchaseAndroid(purchase?.purchaseToken).then((res) => {
+              //   console.log('acknowledged subscription',res)
+                await RNIap.finishTransaction(purchase,true).catch((err) => {
+                  console.log(err.code, err.message)
+                }).then((res)=>{
+                  console.log('transaction finish android',res)
+                });
+              // })
+            }
+            
+          } catch (ackErr) {
+            this.setState({isloading:false})
+            console.warn('ackErr', ackErr);
+          }
+          console.log('Purchase subscription transaction finished')
+        } else {
+          console.log('no reciept for transaction', receipt)
+          this.setState({isloading:false})
+          // Retry / conclude the purchase is fraudulent, etc...
+        }
+        this.setState({isloading:false})
+      },
+    );
+  }
+
+  // Restoring Subscription
+  restoreSubscription = async () => {
+    this.setState({isloading:true})
+    try {
+      // const activeSubscription = await AsyncStorage.getItem(AsynchStoragekey.AsynchStoragekey.USER_SUBSCRIPTION);
+      const activeSubscription = this.props.subscriptionState?.subscriptionInfo?.userSubscription;
+      const purchases = await RNIap.getAvailablePurchases();
+      const newState = { premium: false, ads: true }
+      let restoredTitles: list = [];
+      // console.log('purchases', purchases)
+      if(purchases.length>0 && activeSubscription =='subscribed'){
+      purchases.forEach(async (purchase) => {
+        this.setState({
+          subscriptionInfo: purchase
+        })
+      
+        // this.sendSubscriptionSuccess(purchase)
+        // console.log('purchase detail', purchase)
+        switch (purchase.productId) {
+          case itemSubs.toString()
+            :
+            newState.premium = true
+            restoredTitles.push('Premium Version');
+            break
+
+        }
+      })
+      this.setState({isloading:false})
+      Alert.alert('Restore Successful', 'You successfully restored the EtOH Coach Subscription');
+    }else{
+      this.setState({isloading:false})
+      Alert.alert('', "You don't have any active subscription currently");
+    }
+    } catch (err) {
+      this.setState({isloading:false})
+      console.warn(err); // standardized err.code and err.message available
+      Alert.alert('', "You don't have any active subscription currently");
+    }
+  }
+
+  //Cancel Subscription Linking
+  cancelSubs = () => {
+    if (Platform.OS == 'ios') {
+      Linking.openURL('https://apps.apple.com/account/subscriptions');
+      // Linking.openURL('https://buy.itunes.apple.com/WebObjects/MZFinance.woa/wa/manageSubscriptions')
+    } else {
+      Linking.openURL(`https://play.google.com/store/account/subscriptions?package=com.EtOHFinal&sku=${itemSubs[0]}`)
+    }
+    this.setCancelModal();
+  }
+  // Customizable Area End
+}

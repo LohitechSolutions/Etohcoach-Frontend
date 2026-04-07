@@ -1,0 +1,101 @@
+{
+  "id": "email-account-login",
+  "verion": "0.0.1",
+  "status": "preAlpha",
+  "path": "./packages/blocks/email-account-login",
+  "assembler-adapters": ["EmailAccountLogInAdapter"],
+  "mobile": {
+    "merge-engine-navigation": {},
+    "assembler-exports": [
+      "EmailAccountLoginBlock"
+    ],
+    "assembler-messages": {
+      "output": {
+        "accountLogInButton": [
+          "LoginMobileSuccessMessage"
+        ]
+      },
+      "input": {
+        "navigation": [
+          "NavigationEmailLogInMessage"
+        ]
+      }
+    },
+    "assembler-dependencies": [],
+    "catalog-dependencies": [
+      "core",
+      "email-account-registration",
+      "forgot-password"
+    ],
+    "assembler-devDependencies": [],
+    "merge-engine-screens": {
+      "EmailAccountLoginBlock": {
+        "file": "EmailAccountLoginBlock.tsx",
+        "extends": "EmailAccountLoginController",
+        "configURL": "/login/login",
+        "validationRulesURL": "/profile/validations",
+        "imports": [
+          {
+            "value": "CustomCheckBox",
+            "path": "../../../../components/src/CustomCheckBox"
+          },
+          {
+            "value": "EmailAccountLoginController",
+            "path": "./EmailAccountLoginController"
+          },
+          {
+            "value": "{Props}",
+            "path": "./EmailAccountLoginController"
+          }
+        ]
+      }
+    }
+  },
+  "web": {
+    "merge-engine-navigation": {},
+    "assembler-exports": [
+      "EmailAccountLoginBlock"
+    ],
+    "assembler-messages": {
+      "output": {
+        "accountLogInButton": [
+          "LoginWebSuccessMessage"
+        ]
+      },
+      "input": {
+        "navigation": [
+          "NavigationEmailLogInMessage"
+        ]
+      }
+    },
+    "assembler-dependencies": [],
+    "catalog-dependencies": [
+      "core",
+      "email-account-registration",
+      "forgot-password"
+    ],
+    "assembler-devDependencies": [],
+    "merge-engine-screens": {
+      "EmailAccountLoginBlock": {
+        "file": "EmailAccountLoginBlock.tsx",
+        "extends": "EmailAccountLoginController",
+        "configURL": "/login/login",
+        "validationRulesURL": "/profile/validations",
+        "imports": [
+          {
+            "value": "CustomCheckBox",
+            "path": "../../../../components/src/CustomCheckBox"
+          },
+          {
+            "value": "EmailAccountLoginController",
+            "path": "./EmailAccountLoginController"
+          },
+          {
+            "value": "{Props}",
+            "path": "./EmailAccountLoginController"
+          }
+        ]
+      }
+    }
+  }
+}

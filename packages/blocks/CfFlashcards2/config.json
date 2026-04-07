@@ -1,0 +1,65 @@
+{
+  "id": "CfFlashcards2",
+  "version": "0.0.1",
+  "status": "preAlpha",
+  "path": "./packages/blocks/CfFlashcards2",
+  "assembler-adapters": [],
+  "mobile": {
+    "merge-engine-navigation": {},
+    "assembler-exports": [
+      "CfFlashcards2"
+    ],
+    "assembler-dependencies": [],
+    "catalog-dependencies": [
+      "core"
+    ],
+    "assembler-devDependencies": [],
+    "merge-engine-screens": {
+      "CfFlashcards2": {
+        "file": "CfFlashcards2.tsx",
+        "extends": "CfFlashcards2Controller",
+        "configURL": "",
+        "validationRulesURL": "",
+        "imports": [
+          {
+            "value": "CfFlashcards2Controller",
+            "path": "./CfFlashcards2Controller"
+          },
+          {
+            "value": "{Props}",
+            "path": "./CfFlashcards2Controller"
+          }
+        ]
+      }
+    }
+  },
+  "web": {
+    "merge-engine-navigation": {},
+    "assembler-exports": [
+      "CfFlashcards2"
+    ],
+    "assembler-dependencies": [],
+    "catalog-dependencies": [
+      "core"
+    ],
+    "assembler-devDependencies": [],
+    "merge-engine-screens": {
+      "CfFlashcards2": {
+        "file": "CfFlashcards2.web.tsx",
+        "extends": "CfFlashcards2Controller",
+        "configURL": "",
+        "validationRulesURL": "",
+        "imports": [
+          {
+            "value": "CfFlashcards2Controller",
+            "path": "./CfFlashcards2Controller"
+          },
+          {
+            "value": "{Props}",
+            "path": "./CfFlashcards2Controller"
+          }
+        ]
+      }
+    }
+  }
+}

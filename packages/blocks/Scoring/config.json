@@ -1,0 +1,65 @@
+{
+  "id": "Scoring",
+  "version": "0.0.1",
+  "status": "preAlpha",
+  "path": "./packages/blocks/Scoring",
+  "assembler-adapters": [],
+  "mobile": {
+    "merge-engine-navigation": {},
+    "assembler-exports": [
+      "Scoring"
+    ],
+    "assembler-dependencies": [],
+    "catalog-dependencies": [
+      "core"
+    ],
+    "assembler-devDependencies": [],
+    "merge-engine-screens": {
+      "Scoring": {
+        "file": "Scoring.tsx",
+        "extends": "ScoringController",
+        "configURL": "",
+        "validationRulesURL": "",
+        "imports": [
+          {
+            "value": "ScoringController",
+            "path": "./ScoringController"
+          },
+          {
+            "value": "{Props}",
+            "path": "./ScoringController"
+          }
+        ]
+      }
+    }
+  },
+  "web": {
+    "merge-engine-navigation": {},
+    "assembler-exports": [
+      "Scoring"
+    ],
+    "assembler-dependencies": [],
+    "catalog-dependencies": [
+      "core"
+    ],
+    "assembler-devDependencies": [],
+    "merge-engine-screens": {
+      "Scoring": {
+        "file": "Scoring.web.tsx",
+        "extends": "ScoringController",
+        "configURL": "",
+        "validationRulesURL": "",
+        "imports": [
+          {
+            "value": "ScoringController",
+            "path": "./ScoringController"
+          },
+          {
+            "value": "{Props}",
+            "path": "./ScoringController"
+          }
+        ]
+      }
+    }
+  }
+}

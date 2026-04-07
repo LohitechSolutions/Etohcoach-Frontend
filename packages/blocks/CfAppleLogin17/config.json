@@ -1,0 +1,65 @@
+{
+  "id": "CfAppleLogin17",
+  "version": "0.0.1",
+  "status": "preAlpha",
+  "path": "./packages/blocks/CfAppleLogin17",
+  "assembler-adapters": [],
+  "mobile": {
+    "merge-engine-navigation": {},
+    "assembler-exports": [
+      "CfAppleLogin17"
+    ],
+    "assembler-dependencies": [],
+    "catalog-dependencies": [
+      "core"
+    ],
+    "assembler-devDependencies": [],
+    "merge-engine-screens": {
+      "CfAppleLogin17": {
+        "file": "CfAppleLogin17.tsx",
+        "extends": "CfAppleLogin17Controller",
+        "configURL": "",
+        "validationRulesURL": "",
+        "imports": [
+          {
+            "value": "CfAppleLogin17Controller",
+            "path": "./CfAppleLogin17Controller"
+          },
+          {
+            "value": "{Props}",
+            "path": "./CfAppleLogin17Controller"
+          }
+        ]
+      }
+    }
+  },
+  "web": {
+    "merge-engine-navigation": {},
+    "assembler-exports": [
+      "CfAppleLogin17"
+    ],
+    "assembler-dependencies": [],
+    "catalog-dependencies": [
+      "core"
+    ],
+    "assembler-devDependencies": [],
+    "merge-engine-screens": {
+      "CfAppleLogin17": {
+        "file": "CfAppleLogin17.web.tsx",
+        "extends": "CfAppleLogin17Controller",
+        "configURL": "",
+        "validationRulesURL": "",
+        "imports": [
+          {
+            "value": "CfAppleLogin17Controller",
+            "path": "./CfAppleLogin17Controller"
+          },
+          {
+            "value": "{Props}",
+            "path": "./CfAppleLogin17Controller"
+          }
+        ]
+      }
+    }
+  }
+}

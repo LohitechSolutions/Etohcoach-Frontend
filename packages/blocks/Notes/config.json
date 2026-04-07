@@ -1,0 +1,65 @@
+{
+  "id": "Notes",
+  "version": "0.0.1",
+  "status": "preAlpha",
+  "path": "./packages/blocks/Notes",
+  "assembler-adapters": [],
+  "mobile": {
+    "merge-engine-navigation": {},
+    "assembler-exports": [
+      "Notes"
+    ],
+    "assembler-dependencies": [],
+    "catalog-dependencies": [
+      "core"
+    ],
+    "assembler-devDependencies": [],
+    "merge-engine-screens": {
+      "Notes": {
+        "file": "Notes.tsx",
+        "extends": "NotesController",
+        "configURL": "",
+        "validationRulesURL": "",
+        "imports": [
+          {
+            "value": "NotesController",
+            "path": "./NotesController"
+          },
+          {
+            "value": "{Props}",
+            "path": "./NotesController"
+          }
+        ]
+      }
+    }
+  },
+  "web": {
+    "merge-engine-navigation": {},
+    "assembler-exports": [
+      "Notes"
+    ],
+    "assembler-dependencies": [],
+    "catalog-dependencies": [
+      "core"
+    ],
+    "assembler-devDependencies": [],
+    "merge-engine-screens": {
+      "Notes": {
+        "file": "Notes.web.tsx",
+        "extends": "NotesController",
+        "configURL": "",
+        "validationRulesURL": "",
+        "imports": [
+          {
+            "value": "NotesController",
+            "path": "./NotesController"
+          },
+          {
+            "value": "{Props}",
+            "path": "./NotesController"
+          }
+        ]
+      }
+    }
+  }
+}

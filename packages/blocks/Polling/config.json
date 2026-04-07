@@ -1,0 +1,65 @@
+{
+  "id": "Polling",
+  "version": "0.0.1",
+  "status": "preAlpha",
+  "path": "./packages/blocks/Polling",
+  "assembler-adapters": [],
+  "mobile": {
+    "merge-engine-navigation": {},
+    "assembler-exports": [
+      "Polling"
+    ],
+    "assembler-dependencies": [],
+    "catalog-dependencies": [
+      "core"
+    ],
+    "assembler-devDependencies": [],
+    "merge-engine-screens": {
+      "Polling": {
+        "file": "Polling.tsx",
+        "extends": "PollingController",
+        "configURL": "",
+        "validationRulesURL": "",
+        "imports": [
+          {
+            "value": "PollingController",
+            "path": "./PollingController"
+          },
+          {
+            "value": "{Props}",
+            "path": "./PollingController"
+          }
+        ]
+      }
+    }
+  },
+  "web": {
+    "merge-engine-navigation": {},
+    "assembler-exports": [
+      "Polling"
+    ],
+    "assembler-dependencies": [],
+    "catalog-dependencies": [
+      "core"
+    ],
+    "assembler-devDependencies": [],
+    "merge-engine-screens": {
+      "Polling": {
+        "file": "Polling.web.tsx",
+        "extends": "PollingController",
+        "configURL": "",
+        "validationRulesURL": "",
+        "imports": [
+          {
+            "value": "PollingController",
+            "path": "./PollingController"
+          },
+          {
+            "value": "{Props}",
+            "path": "./PollingController"
+          }
+        ]
+      }
+    }
+  }
+}

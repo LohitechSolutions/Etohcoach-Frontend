@@ -1,0 +1,65 @@
+{
+  "id": "Annotations",
+  "version": "0.0.1",
+  "status": "preAlpha",
+  "path": "./packages/blocks/Annotations",
+  "assembler-adapters": [],
+  "mobile": {
+    "merge-engine-navigation": {},
+    "assembler-exports": [
+      "Annotations"
+    ],
+    "assembler-dependencies": [],
+    "catalog-dependencies": [
+      "core"
+    ],
+    "assembler-devDependencies": [],
+    "merge-engine-screens": {
+      "Annotations": {
+        "file": "Annotations.tsx",
+        "extends": "AnnotationsController",
+        "configURL": "",
+        "validationRulesURL": "",
+        "imports": [
+          {
+            "value": "AnnotationsController",
+            "path": "./AnnotationsController"
+          },
+          {
+            "value": "{Props}",
+            "path": "./AnnotationsController"
+          }
+        ]
+      }
+    }
+  },
+  "web": {
+    "merge-engine-navigation": {},
+    "assembler-exports": [
+      "Annotations"
+    ],
+    "assembler-dependencies": [],
+    "catalog-dependencies": [
+      "core"
+    ],
+    "assembler-devDependencies": [],
+    "merge-engine-screens": {
+      "Annotations": {
+        "file": "Annotations.web.tsx",
+        "extends": "AnnotationsController",
+        "configURL": "",
+        "validationRulesURL": "",
+        "imports": [
+          {
+            "value": "AnnotationsController",
+            "path": "./AnnotationsController"
+          },
+          {
+            "value": "{Props}",
+            "path": "./AnnotationsController"
+          }
+        ]
+      }
+    }
+  }
+}

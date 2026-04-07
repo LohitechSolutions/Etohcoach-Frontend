@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>aps-environment</key>
+	<string>development</string>
+	<key>com.apple.developer.applesignin</key>
+	<array>
+		<string>Default</string>
+	</array>
+	<key>com.apple.developer.associated-domains</key>
+	<array>
+		<string>applinks:etohcoachfinal-159129-ruby.b159129.prod.northeurope.az.svc.builder.ai</string>
+		<string>applinks:etohcoachfinal-159129-ruby.b159129.dev.eastus.az.svc.builder.cafe</string>
+	     <string>applinks:etohcoachfinal-159129-ruby.b159129.uat.uksouth.az.svc.builder.ai</string>
+		 <string>applinks:etohcoachfinal-159129-ruby.b159129.stage.eastus.az.svc.builder.ai</string>
+	</array>
+</dict>
+</plist>

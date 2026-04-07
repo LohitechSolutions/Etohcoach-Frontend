@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>EtOH Coach.ipa</key>
+	<array>
+		<dict>
+			<key>architectures</key>
+			<array>
+				<string>arm64</string>
+			</array>
+			<key>buildNumber</key>
+			<string>15</string>
+			<key>certificate</key>
+			<dict>
+				<key>SHA1</key>
+				<string>331A3B9219AA04F7F22EB02AF752E801F623327F</string>
+				<key>dateExpires</key>
+				<string>29/09/23</string>
+				<key>type</key>
+				<string>Apple Development</string>
+			</dict>
+			<key>entitlements</key>
+			<dict>
+				<key>application-identifier</key>
+				<string>5XC34F2YHC.com.EtOHCoachFinal</string>
+				<key>aps-environment</key>
+				<string>development</string>
+				<key>com.apple.developer.applesignin</key>
+				<array>
+					<string>Default</string>
+				</array>
+				<key>com.apple.developer.associated-domains</key>
+				<array>
+				<string>applinks:etohcoachfinal-159129-ruby.b159129.prod.northeurope.az.svc.builder.ai</string>
+		<string>applinks:etohcoachfinal-159129-ruby.b159129.dev.eastus.az.svc.builder.cafe</string>
+	     <string>applinks:etohcoachfinal-159129-ruby.b159129.uat.uksouth.az.svc.builder.ai</string>
+		 <string>applinks:etohcoachfinal-159129-ruby.b159129.stage.eastus.az.svc.builder.ai</string>
+				</array>
+				<key>com.apple.developer.team-identifier</key>
+				<string>5XC34F2YHC</string>
+				<key>get-task-allow</key>
+				<true/>
+			</dict>
+			<key>name</key>
+			<string>EtOH Coach.app</string>
+			<key>profile</key>
+			<dict>
+				<key>UUID</key>
+				<string>695e783b-173f-43c6-857f-136f2f37c430</string>
+				<key>dateExpires</key>
+				<string>31/10/23</string>
+				<key>name</key>
+				<string>EtOHCoachFinal_dev</string>
+			</dict>
+			<key>team</key>
+			<dict>
+				<key>id</key>
+				<string>5XC34F2YHC</string>
+				<key>name</key>
+				<string>EtOH</string>
+			</dict>
+			<key>versionNumber</key>
+			<string>1.0.0</string>
+		</dict>
+	</array>
+</dict>
+</plist>

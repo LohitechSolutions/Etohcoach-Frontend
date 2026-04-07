@@ -1,0 +1,9 @@
+export const imgPasswordVisible = require("../assets/ic_password_visible.png");
+export const imgPasswordInVisible = require("../assets/ic_password_invisible.png");
+export const BackArrow = require("../assets/BackArrow.png");
+export const LanguageIcon = require("../assets/language.png");
+export const RadioBtn_off = require("../assets/redioBtn.png");
+export const RadioBtn_on = require("../assets/redioBtnOn.png");
+export const uk_flag = require('../assets/uk_Flag.jpeg');
+export const Save = require('../assets/save.png');
+export const Rectangle = require("../assets/Rectangle.png");

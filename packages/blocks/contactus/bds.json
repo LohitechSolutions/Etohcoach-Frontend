@@ -1,0 +1,32 @@
+{
+  "bds": {
+    "name": "contactus",
+    "id": "contactus",
+    "platform": [
+      "desktop",
+      "mobile"
+    ],
+    "author": "CMT",
+    "summary": null,
+    "license": "BSD",
+    "version": "1.0.0",
+    "pages": [
+      {
+        "contactus": {
+          "hotspots": [
+            {
+              "type": "navigation",
+              "id": "btnAddComment",
+              "options": [
+                "target",
+                "navigationTransition",
+                "navigationType",
+                "enabled"
+              ]
+            }
+          ]
+        }
+      }
+    ]
+  }
+}

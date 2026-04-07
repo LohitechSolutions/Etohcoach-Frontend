@@ -1,0 +1,65 @@
+{
+  "id": "Gamification",
+  "version": "0.0.1",
+  "status": "preAlpha",
+  "path": "./packages/blocks/Gamification",
+  "assembler-adapters": [],
+  "mobile": {
+    "merge-engine-navigation": {},
+    "assembler-exports": [
+      "Gamification"
+    ],
+    "assembler-dependencies": [],
+    "catalog-dependencies": [
+      "core"
+    ],
+    "assembler-devDependencies": [],
+    "merge-engine-screens": {
+      "Gamification": {
+        "file": "Gamification.tsx",
+        "extends": "GamificationController",
+        "configURL": "",
+        "validationRulesURL": "",
+        "imports": [
+          {
+            "value": "GamificationController",
+            "path": "./GamificationController"
+          },
+          {
+            "value": "{Props}",
+            "path": "./GamificationController"
+          }
+        ]
+      }
+    }
+  },
+  "web": {
+    "merge-engine-navigation": {},
+    "assembler-exports": [
+      "Gamification"
+    ],
+    "assembler-dependencies": [],
+    "catalog-dependencies": [
+      "core"
+    ],
+    "assembler-devDependencies": [],
+    "merge-engine-screens": {
+      "Gamification": {
+        "file": "Gamification.web.tsx",
+        "extends": "GamificationController",
+        "configURL": "",
+        "validationRulesURL": "",
+        "imports": [
+          {
+            "value": "GamificationController",
+            "path": "./GamificationController"
+          },
+          {
+            "value": "{Props}",
+            "path": "./GamificationController"
+          }
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,65 @@
+{
+  "id": "Leaderboard",
+  "version": "0.0.1",
+  "status": "preAlpha",
+  "path": "./packages/blocks/Leaderboard",
+  "assembler-adapters": [],
+  "mobile": {
+    "merge-engine-navigation": {},
+    "assembler-exports": [
+      "Leaderboard"
+    ],
+    "assembler-dependencies": [],
+    "catalog-dependencies": [
+      "core"
+    ],
+    "assembler-devDependencies": [],
+    "merge-engine-screens": {
+      "Leaderboard": {
+        "file": "Leaderboard.tsx",
+        "extends": "LeaderboardController",
+        "configURL": "",
+        "validationRulesURL": "",
+        "imports": [
+          {
+            "value": "LeaderboardController",
+            "path": "./LeaderboardController"
+          },
+          {
+            "value": "{Props}",
+            "path": "./LeaderboardController"
+          }
+        ]
+      }
+    }
+  },
+  "web": {
+    "merge-engine-navigation": {},
+    "assembler-exports": [
+      "Leaderboard"
+    ],
+    "assembler-dependencies": [],
+    "catalog-dependencies": [
+      "core"
+    ],
+    "assembler-devDependencies": [],
+    "merge-engine-screens": {
+      "Leaderboard": {
+        "file": "Leaderboard.web.tsx",
+        "extends": "LeaderboardController",
+        "configURL": "",
+        "validationRulesURL": "",
+        "imports": [
+          {
+            "value": "LeaderboardController",
+            "path": "./LeaderboardController"
+          },
+          {
+            "value": "{Props}",
+            "path": "./LeaderboardController"
+          }
+        ]
+      }
+    }
+  }
+}

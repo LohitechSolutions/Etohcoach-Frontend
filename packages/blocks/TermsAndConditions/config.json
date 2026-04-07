@@ -1,0 +1,65 @@
+{
+  "id": "TermsAndConditions",
+  "version": "0.0.1",
+  "status": "preAlpha",
+  "path": "./packages/blocks/TermsAndConditions",
+  "assembler-adapters": [],
+  "mobile": {
+    "merge-engine-navigation": {},
+    "assembler-exports": [
+      "TermsAndConditions"
+    ],
+    "assembler-dependencies": [],
+    "catalog-dependencies": [
+      "core"
+    ],
+    "assembler-devDependencies": [],
+    "merge-engine-screens": {
+      "TermsAndConditions": {
+        "file": "TermsAndConditions.tsx",
+        "extends": "TermsAndConditionsController",
+        "configURL": "",
+        "validationRulesURL": "",
+        "imports": [
+          {
+            "value": "TermsAndConditionsController",
+            "path": "./TermsAndConditionsController"
+          },
+          {
+            "value": "{Props}",
+            "path": "./TermsAndConditionsController"
+          }
+        ]
+      }
+    }
+  },
+  "web": {
+    "merge-engine-navigation": {},
+    "assembler-exports": [
+      "TermsAndConditions"
+    ],
+    "assembler-dependencies": [],
+    "catalog-dependencies": [
+      "core"
+    ],
+    "assembler-devDependencies": [],
+    "merge-engine-screens": {
+      "TermsAndConditions": {
+        "file": "TermsAndConditions.web.tsx",
+        "extends": "TermsAndConditionsController",
+        "configURL": "",
+        "validationRulesURL": "",
+        "imports": [
+          {
+            "value": "TermsAndConditionsController",
+            "path": "./TermsAndConditionsController"
+          },
+          {
+            "value": "{Props}",
+            "path": "./TermsAndConditionsController"
+          }
+        ]
+      }
+    }
+  }
+}

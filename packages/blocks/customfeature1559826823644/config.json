@@ -1,0 +1,65 @@
+{
+  "id": "customfeature1559826823644",
+  "version": "0.0.2",
+  "status": "preAlpha",
+  "path": "./packages/blocks/customfeature1559826823644",
+  "assembler-adapters": [],
+  "mobile": {
+    "merge-engine-navigation": {},
+    "assembler-exports": [
+      "Customfeature1559826823644"
+    ],
+    "assembler-dependencies": [],
+    "catalog-dependencies": [
+      "core",
+      "utilities"
+    ],
+    "assembler-devDependencies": [],
+    "merge-engine-screens": {
+      "Customfeature1559826823644": {
+        "file": "Customfeature1559826823644.tsx",
+        "extends": "Customfeature1559826823644Controller",
+        "ui-elements": [],
+        "imports": [
+          {
+            "value": "Customfeature1559826823644Controller",
+            "path": "./Customfeature1559826823644Controller"
+          },
+          {
+            "value": "{Props}",
+            "path": "./Customfeature1559826823644Controller"
+          }
+        ]
+      }
+    }
+  },
+  "web": {
+    "merge-engine-navigation": {},
+    "assembler-exports": [
+      "Customfeature1559826823644"
+    ],
+    "assembler-dependencies": [],
+    "catalog-dependencies": [
+      "core",
+      "utilities"
+    ],
+    "assembler-devDependencies": [],
+    "merge-engine-screens": {
+      "Customfeature1559826823644": {
+        "file": "Customfeature1559826823644.web.tsx",
+        "extends": "Customfeature1559826823644Controller",
+        "ui-elements": [],
+        "imports": [
+          {
+            "value": "Customfeature1559826823644Controller",
+            "path": "./Customfeature1559826823644Controller"
+          },
+          {
+            "value": "{Props}",
+            "path": "./Customfeature1559826823644Controller"
+          }
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,65 @@
+{
+  "id": "SubscriptionBilling",
+  "version": "0.0.1",
+  "status": "preAlpha",
+  "path": "./packages/blocks/SubscriptionBilling",
+  "assembler-adapters": [],
+  "mobile": {
+    "merge-engine-navigation": {},
+    "assembler-exports": [
+      "SubscriptionBilling"
+    ],
+    "assembler-dependencies": [],
+    "catalog-dependencies": [
+      "core"
+    ],
+    "assembler-devDependencies": [],
+    "merge-engine-screens": {
+      "SubscriptionBilling": {
+        "file": "SubscriptionBilling.tsx",
+        "extends": "SubscriptionBillingController",
+        "configURL": "",
+        "validationRulesURL": "",
+        "imports": [
+          {
+            "value": "SubscriptionBillingController",
+            "path": "./SubscriptionBillingController"
+          },
+          {
+            "value": "{Props}",
+            "path": "./SubscriptionBillingController"
+          }
+        ]
+      }
+    }
+  },
+  "web": {
+    "merge-engine-navigation": {},
+    "assembler-exports": [
+      "SubscriptionBilling"
+    ],
+    "assembler-dependencies": [],
+    "catalog-dependencies": [
+      "core"
+    ],
+    "assembler-devDependencies": [],
+    "merge-engine-screens": {
+      "SubscriptionBilling": {
+        "file": "SubscriptionBilling.web.tsx",
+        "extends": "SubscriptionBillingController",
+        "configURL": "",
+        "validationRulesURL": "",
+        "imports": [
+          {
+            "value": "SubscriptionBillingController",
+            "path": "./SubscriptionBillingController"
+          },
+          {
+            "value": "{Props}",
+            "path": "./SubscriptionBillingController"
+          }
+        ]
+      }
+    }
+  }
+}

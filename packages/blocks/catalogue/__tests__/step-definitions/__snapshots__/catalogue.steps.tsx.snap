@@ -1,0 +1,623 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`catalogue User navigates to catalogue 1`] = `
+<SafeAreaView
+  style={
+    Object {
+      "backgroundColor": "#C7263E",
+      "flex": 1,
+    }
+  }
+>
+  <Loader
+    loading={true}
+  />
+  <View
+    style={
+      Object {
+        "justifyContent": "center",
+      }
+    }
+  >
+    <HeaderComponent
+      onPress={[Function]}
+    />
+  </View>
+  <View
+    style={
+      Object {
+        "backgroundColor": "white",
+        "flex": 1,
+      }
+    }
+  >
+    <View
+      style={
+        Object {
+          "marginHorizontal": 30,
+        }
+      }
+    >
+      <View
+        style={
+          Object {
+            "alignItems": "center",
+            "backgroundColor": "#f0eff5",
+            "borderRadius": 13.5,
+            "flexDirection": "row",
+            "height": 82.5,
+            "marginTop": 26.5,
+            "width": "100%",
+          }
+        }
+      >
+        <Image
+          source={
+            Object {
+              "testUri": "../../../packages/blocks/catalogue/assets/imageSearch.png",
+            }
+          }
+          style={
+            Object {
+              "height": 27.17391304347826,
+              "marginLeft": 18.115942028985508,
+              "width": 27.17391304347826,
+            }
+          }
+        />
+        <TextInput
+          allowFontScaling={true}
+          onChangeText={[Function]}
+          onSubmitEditing={[Function]}
+          placeholder="Search for course"
+          placeholderTextColor="grey"
+          rejectResponderTermination={true}
+          style={
+            Object {
+              "fontSize": 28,
+              "padding": 13.5,
+              "width": "85%",
+            }
+          }
+          underlineColorAndroid="transparent"
+          value=""
+        />
+      </View>
+      <View
+        style={
+          Object {
+            "flexDirection": "row",
+            "marginTop": 30.5,
+          }
+        }
+      >
+        <View>
+          <TouchableOpacity
+            activeOpacity={0.2}
+            key="0"
+            onPress={[Function]}
+            style={
+              Object {
+                "marginLeft": 30,
+              }
+            }
+            testID="0myicons"
+          >
+            <Image
+              source={
+                Object {
+                  "testUri": "../../../packages/blocks/catalogue/assets/filters.png",
+                }
+              }
+            />
+          </TouchableOpacity>
+          <Text
+            style={
+              Object {
+                "fontFamily": "Roboto-Regular",
+                "fontSize": 20,
+                "marginLeft": 30,
+                "marginTop": 6.5,
+                "textAlign": "center",
+              }
+            }
+          >
+            Filters
+          </Text>
+        </View>
+        <View>
+          <TouchableOpacity
+            activeOpacity={0.2}
+            key="1"
+            onPress={[Function]}
+            style={
+              Object {
+                "marginLeft": 30,
+              }
+            }
+            testID="1myicons"
+          >
+            <Image
+              source={
+                Object {
+                  "testUri": "../../../packages/blocks/catalogue/assets/wineicon.png",
+                }
+              }
+            />
+          </TouchableOpacity>
+          <Text
+            style={
+              Object {
+                "fontFamily": "Roboto-Regular",
+                "fontSize": 20,
+                "marginLeft": 30,
+                "marginTop": 6.5,
+                "textAlign": "center",
+              }
+            }
+          >
+            Wine
+          </Text>
+        </View>
+        <View>
+          <TouchableOpacity
+            activeOpacity={0.2}
+            key="2"
+            onPress={[Function]}
+            style={
+              Object {
+                "marginLeft": 30,
+              }
+            }
+            testID="2myicons"
+          >
+            <Image
+              source={
+                Object {
+                  "testUri": "../../../packages/blocks/catalogue/assets/spiritsicon.png",
+                }
+              }
+            />
+          </TouchableOpacity>
+          <Text
+            style={
+              Object {
+                "fontFamily": "Roboto-Regular",
+                "fontSize": 20,
+                "marginLeft": 30,
+                "marginTop": 6.5,
+                "textAlign": "center",
+              }
+            }
+          >
+            Spiritis
+          </Text>
+        </View>
+        <View>
+          <TouchableOpacity
+            activeOpacity={0.2}
+            key="3"
+            onPress={[Function]}
+            style={
+              Object {
+                "marginLeft": 30,
+              }
+            }
+            testID="3myicons"
+          >
+            <Image
+              source={
+                Object {
+                  "testUri": "../../../packages/blocks/catalogue/assets/bear.png",
+                }
+              }
+            />
+          </TouchableOpacity>
+          <Text
+            style={
+              Object {
+                "fontFamily": "Roboto-Regular",
+                "fontSize": 20,
+                "marginLeft": 30,
+                "marginTop": 6.5,
+                "textAlign": "center",
+              }
+            }
+          >
+            Beer
+          </Text>
+        </View>
+      </View>
+      <FilterModal
+        AddremoveFilteronPress={[Function]}
+        GetFilterList={[Function]}
+        closeAnywhere={[Function]}
+        closeModal={[Function]}
+        state={
+          Object {
+            "catlogue_data": Array [],
+            "certificate": Array [
+              "",
+            ],
+            "completion": Array [
+              "",
+            ],
+            "courseVisible": false,
+            "course_Details": Array [],
+            "difficulty": Array [
+              "",
+            ],
+            "drinks_types": Array [
+              "",
+            ],
+            "filter_key": "",
+            "isLoading": true,
+            "isVisible": false,
+            "notificationBt": false,
+            "search_key": "",
+            "totalReward": "",
+          }
+        }
+        visible={false}
+      />
+      <FlatList
+        contentContainerStyle={
+          Object {
+            "paddingBottom": 133.5,
+          }
+        }
+        data={Array []}
+        disableVirtualization={false}
+        horizontal={false}
+        initialNumToRender={10}
+        key="function key(item) {
+          cov_1ln2lhsx0c().f[10]++;
+          cov_1ln2lhsx0c().s[13]++;
+          return item.data;
+        }"
+        keyExtractor={[Function]}
+        maxToRenderPerBatch={10}
+        numColumns={1}
+        onEndReachedThreshold={2}
+        removeClippedSubviews={false}
+        renderItem={[Function]}
+        scrollEventThrottle={50}
+        showsHorizontalScrollIndicator={false}
+        showsVerticalScrollIndicator={false}
+        style={
+          Object {
+            "marginBottom": 181.15942028985506,
+          }
+        }
+        updateCellsBatchingPeriod={50}
+        windowSize={21}
+      />
+      <Text
+        style={
+          Object {
+            "textAlign": "center",
+          }
+        }
+      >
+        Record not found
+      </Text>
+      <NotificationModal
+        BackBtnCloseModal={[Function]}
+        CloseModal={[Function]}
+        notificationBtn={false}
+      />
+    </View>
+  </View>
+</SafeAreaView>
+`;
+
+exports[`catalogue User navigates to catalogue 2`] = `
+<SafeAreaView
+  style={
+    Object {
+      "backgroundColor": "#C7263E",
+      "flex": 1,
+    }
+  }
+>
+  <Loader
+    loading={true}
+  />
+  <View
+    style={
+      Object {
+        "justifyContent": "center",
+      }
+    }
+  >
+    <HeaderComponent
+      onPress={[Function]}
+    />
+  </View>
+  <View
+    style={
+      Object {
+        "backgroundColor": "white",
+        "flex": 1,
+      }
+    }
+  >
+    <View
+      style={
+        Object {
+          "marginHorizontal": 30,
+        }
+      }
+    >
+      <View
+        style={
+          Object {
+            "alignItems": "center",
+            "backgroundColor": "#f0eff5",
+            "borderRadius": 13.5,
+            "flexDirection": "row",
+            "height": 82.5,
+            "marginTop": 26.5,
+            "width": "100%",
+          }
+        }
+      >
+        <Image
+          source={
+            Object {
+              "testUri": "../../../packages/blocks/catalogue/assets/imageSearch.png",
+            }
+          }
+          style={
+            Object {
+              "height": 27.17391304347826,
+              "marginLeft": 18.115942028985508,
+              "width": 27.17391304347826,
+            }
+          }
+        />
+        <TextInput
+          allowFontScaling={true}
+          onChangeText={[Function]}
+          onSubmitEditing={[Function]}
+          placeholder="Search for course"
+          placeholderTextColor="grey"
+          rejectResponderTermination={true}
+          style={
+            Object {
+              "fontSize": 28,
+              "padding": 13.5,
+              "width": "85%",
+            }
+          }
+          underlineColorAndroid="transparent"
+          value=""
+        />
+      </View>
+      <View
+        style={
+          Object {
+            "flexDirection": "row",
+            "marginTop": 30.5,
+          }
+        }
+      >
+        <View>
+          <TouchableOpacity
+            activeOpacity={0.2}
+            key="0"
+            onPress={[Function]}
+            style={
+              Object {
+                "marginLeft": 30,
+              }
+            }
+            testID="0myicons"
+          >
+            <Image
+              source={
+                Object {
+                  "testUri": "../../../packages/blocks/catalogue/assets/filters.png",
+                }
+              }
+            />
+          </TouchableOpacity>
+          <Text
+            style={
+              Object {
+                "fontFamily": "Roboto-Regular",
+                "fontSize": 20,
+                "marginLeft": 30,
+                "marginTop": 6.5,
+                "textAlign": "center",
+              }
+            }
+          >
+            Filters
+          </Text>
+        </View>
+        <View>
+          <TouchableOpacity
+            activeOpacity={0.2}
+            key="1"
+            onPress={[Function]}
+            style={
+              Object {
+                "marginLeft": 30,
+              }
+            }
+            testID="1myicons"
+          >
+            <Image
+              source={
+                Object {
+                  "testUri": "../../../packages/blocks/catalogue/assets/wineicon.png",
+                }
+              }
+            />
+          </TouchableOpacity>
+          <Text
+            style={
+              Object {
+                "fontFamily": "Roboto-Regular",
+                "fontSize": 20,
+                "marginLeft": 30,
+                "marginTop": 6.5,
+                "textAlign": "center",
+              }
+            }
+          >
+            Wine
+          </Text>
+        </View>
+        <View>
+          <TouchableOpacity
+            activeOpacity={0.2}
+            key="2"
+            onPress={[Function]}
+            style={
+              Object {
+                "marginLeft": 30,
+              }
+            }
+            testID="2myicons"
+          >
+            <Image
+              source={
+                Object {
+                  "testUri": "../../../packages/blocks/catalogue/assets/spiritsicon.png",
+                }
+              }
+            />
+          </TouchableOpacity>
+          <Text
+            style={
+              Object {
+                "fontFamily": "Roboto-Regular",
+                "fontSize": 20,
+                "marginLeft": 30,
+                "marginTop": 6.5,
+                "textAlign": "center",
+              }
+            }
+          >
+            Spiritis
+          </Text>
+        </View>
+        <View>
+          <TouchableOpacity
+            activeOpacity={0.2}
+            key="3"
+            onPress={[Function]}
+            style={
+              Object {
+                "marginLeft": 30,
+              }
+            }
+            testID="3myicons"
+          >
+            <Image
+              source={
+                Object {
+                  "testUri": "../../../packages/blocks/catalogue/assets/bear.png",
+                }
+              }
+            />
+          </TouchableOpacity>
+          <Text
+            style={
+              Object {
+                "fontFamily": "Roboto-Regular",
+                "fontSize": 20,
+                "marginLeft": 30,
+                "marginTop": 6.5,
+                "textAlign": "center",
+              }
+            }
+          >
+            Beer
+          </Text>
+        </View>
+      </View>
+      <FilterModal
+        AddremoveFilteronPress={[Function]}
+        GetFilterList={[Function]}
+        closeAnywhere={[Function]}
+        closeModal={[Function]}
+        state={
+          Object {
+            "catlogue_data": Array [],
+            "certificate": Array [
+              "",
+            ],
+            "completion": Array [
+              "",
+            ],
+            "courseVisible": false,
+            "course_Details": Array [],
+            "difficulty": Array [
+              "",
+            ],
+            "drinks_types": Array [
+              "",
+            ],
+            "filter_key": "",
+            "isLoading": true,
+            "isVisible": false,
+            "notificationBt": false,
+            "search_key": "",
+            "totalReward": "",
+          }
+        }
+        visible={false}
+      />
+      <FlatList
+        contentContainerStyle={
+          Object {
+            "paddingBottom": 133.5,
+          }
+        }
+        data={Array []}
+        disableVirtualization={false}
+        horizontal={false}
+        initialNumToRender={10}
+        key="function key(item) {
+          cov_1ln2lhsx0c().f[10]++;
+          cov_1ln2lhsx0c().s[13]++;
+          return item.data;
+        }"
+        keyExtractor={[Function]}
+        maxToRenderPerBatch={10}
+        numColumns={1}
+        onEndReachedThreshold={2}
+        removeClippedSubviews={false}
+        renderItem={[Function]}
+        scrollEventThrottle={50}
+        showsHorizontalScrollIndicator={false}
+        showsVerticalScrollIndicator={false}
+        style={
+          Object {
+            "marginBottom": 181.15942028985506,
+          }
+        }
+        updateCellsBatchingPeriod={50}
+        windowSize={21}
+      />
+      <Text
+        style={
+          Object {
+            "textAlign": "center",
+          }
+        }
+      >
+        Record not found
+      </Text>
+      <NotificationModal
+        BackBtnCloseModal={[Function]}
+        CloseModal={[Function]}
+        notificationBtn={false}
+      />
+    </View>
+  </View>
+</SafeAreaView>
+`;

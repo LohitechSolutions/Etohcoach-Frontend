@@ -1,0 +1,65 @@
+{
+  "id": "Library2",
+  "version": "0.0.1",
+  "status": "preAlpha",
+  "path": "./packages/blocks/Library2",
+  "assembler-adapters": [],
+  "mobile": {
+    "merge-engine-navigation": {},
+    "assembler-exports": [
+      "Library2"
+    ],
+    "assembler-dependencies": [],
+    "catalog-dependencies": [
+      "core"
+    ],
+    "assembler-devDependencies": [],
+    "merge-engine-screens": {
+      "Library2": {
+        "file": "Library2.tsx",
+        "extends": "Library2Controller",
+        "configURL": "",
+        "validationRulesURL": "",
+        "imports": [
+          {
+            "value": "Library2Controller",
+            "path": "./Library2Controller"
+          },
+          {
+            "value": "{Props}",
+            "path": "./Library2Controller"
+          }
+        ]
+      }
+    }
+  },
+  "web": {
+    "merge-engine-navigation": {},
+    "assembler-exports": [
+      "Library2"
+    ],
+    "assembler-dependencies": [],
+    "catalog-dependencies": [
+      "core"
+    ],
+    "assembler-devDependencies": [],
+    "merge-engine-screens": {
+      "Library2": {
+        "file": "Library2.web.tsx",
+        "extends": "Library2Controller",
+        "configURL": "",
+        "validationRulesURL": "",
+        "imports": [
+          {
+            "value": "Library2Controller",
+            "path": "./Library2Controller"
+          },
+          {
+            "value": "{Props}",
+            "path": "./Library2Controller"
+          }
+        ]
+      }
+    }
+  }
+}
