@@ -9,9 +9,10 @@
   },
   "scripts": {
     "preinstall": "yarn --cwd ./packages/blocks/core",
-    "android": "yarn workspace mobile android",
+    "android": "export PATH=\"/Users/koushikmondal/.nvm/versions/node/v16.20.2/bin:$PATH\" && yarn workspace mobile android",
     "compile": "tsc -b --incremental",
-    "ios": "yarn workspace mobile ios",
+    "ios": "export PATH=\"/Users/koushikmondal/.nvm/versions/node/v16.20.2/bin:$PATH\" && yarn workspace mobile ios",
+    "start": "export PATH=\"/Users/koushikmondal/.nvm/versions/node/v16.20.2/bin:$PATH\" && yarn workspace mobile start",
     "studio": "yarn workspace mobile studio",
     "xcode": "yarn workspace mobile xcode",
     "postinstall": "patch-package"

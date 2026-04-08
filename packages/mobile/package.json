@@ -3,10 +3,10 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "android": "npx react-native run-android",
+    "android": "export PATH=\"/Users/koushikmondal/.nvm/versions/node/v16.20.2/bin:$PATH\" && npx react-native run-android",
     "compile": "tsc -b --incremental",
-    "ios": "npx react-native run-ios",
-    "start": "concurrently \"npm run compile -- -w\" \"npx react-native start\"",
+    "ios": "export PATH=\"/Users/koushikmondal/.nvm/versions/node/v16.20.2/bin:$PATH\" && npx react-native run-ios",
+    "start": "export PATH=\"/Users/koushikmondal/.nvm/versions/node/v16.20.2/bin:$PATH\" && concurrently \"npm run compile -- -w\" \"npx react-native start\"",
     "studio": "studio android",
     "xcode": "open ios/EtOHCoachFinal.xcworkspace"
   },
