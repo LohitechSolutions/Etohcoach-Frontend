@@ -55,23 +55,7 @@ public class MainApplication extends Application implements ReactApplication {
           @SuppressWarnings("UnnecessaryLocalVariable")
           List<ReactPackage> packages = new PackageList(this).getPackages();
           // Packages that cannot be autolinked yet can be added manually here
-          packages.add(new PickerPackage());
-          // packages.add(new ImagePickerPackage());
-          packages.add(new RNAndroidLocationEnablerPackage());
-          packages.add(new RNFusedLocationPackage());
-          packages.add(new SvgPackage());
-          packages.add(new RNGestureHandlerPackage());
-          packages.add( new RNDeviceInfo());
-          packages.add(new OrientationPackage());
-          packages.add(new LottiePackage());
-          // packages.add(new RNIapPackage());
-          // packages.add(new MainReactPackage(),
-            // new NetInfoPackage());
-          //=packages.add(new RNFirebaseMessagingPackage());
-          // packages.add(new MainReactPackage());
-          // packages.add(new ReactNativeFirebaseAppPackage());
-          // packages.add(new MainReactPackage());
-          packages.add(new ReactNativeLocalizationPackage());
+          android.util.Log.d("EtOHCoach", "MainApplication: getPackages called, total: " + packages.size());
           return packages;
         }
 
@@ -91,7 +75,7 @@ public class MainApplication extends Application implements ReactApplication {
   @Override 
   public Intent registerReceiver(@Nullable BroadcastReceiver receiver , IntentFilter filter) {
     if (Build.VERSION.SDK_INT >= 34 && getApplicationInfo().targetSdkVersion >= 34) {
-        return super.registerReceiver(receiver, filter, RECEIVER_EXPORTED);
+        return super.registerReceiver(receiver, filter, Context.RECEIVER_EXPORTED);
     } else {
         return super.registerReceiver(receiver, filter);
     }
@@ -101,6 +85,7 @@ public class MainApplication extends Application implements ReactApplication {
   @Override
   public void onCreate() {
     super.onCreate();
+    android.util.Log.d("EtOHCoach", "MainApplication: onCreate called");
     SoLoader.init(this, /* native exopackage */ false);
     FacebookSdk.sdkInitialize(getApplicationContext());
 // initializeFlipper(this, getReactNativeHost().getReactInstanceManager());

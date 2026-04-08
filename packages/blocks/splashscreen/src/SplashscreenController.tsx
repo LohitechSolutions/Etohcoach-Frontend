@@ -95,13 +95,13 @@ export default class SplashscreenController extends BlockComponent<
     this.send(new Message(getName(MessageEnum.RequestUserCredentials)));
     super.componentDidMount();
 
-    // Safety timeout: navigate after 10 seconds if nothing else triggers it
+    // Safety timeout: navigate after 5 seconds if nothing else triggers it
     setTimeout(() => {
       if (!this.navigated) {
-        console.log("Splashscreen - Safety timeout triggered");
+        console.log("Splashscreen - Safety timeout triggered (5s)");
         this.goingHome();
       }
-    }, 10000);
+    }, 5000);
 
     console.log("Splashscreen - Calling getAppdetails");
     await this.getAppdetails()

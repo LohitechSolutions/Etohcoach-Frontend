@@ -26,11 +26,12 @@ public class MainActivity extends ReactActivity {
   protected void onCreate(Bundle savedInstanceState) {
     SplashScreen.show(this);  // here
     super.onCreate(savedInstanceState);
+    android.util.Log.d("EtOHCoach", "MainActivity: onCreate called");
   }
      @Override 
   public Intent registerReceiver(@Nullable BroadcastReceiver receiver , IntentFilter filter) {
     if (Build.VERSION.SDK_INT >= 34 && getApplicationInfo().targetSdkVersion >= 34) {
-        return super.registerReceiver(receiver, filter, RECEIVER_EXPORTED);
+        return super.registerReceiver(receiver, filter, Context.RECEIVER_EXPORTED);
     } else {
         return super.registerReceiver(receiver, filter);
     }
