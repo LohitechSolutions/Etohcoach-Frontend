@@ -1,0 +1,82 @@
+yarn run v1.22.22
+$ NODE_OPTIONS=--openssl-legacy-provider yarn workspace mobile android
+$ NODE_OPTIONS=--openssl-legacy-provider npx react-native run-android
+warn Package write-json-file has been ignored because it contains invalid configuration. Reason: Package subpath './package.json' is not defined by "exports" in /Users/koushikmondal/Desktop/Etohcoach-Frontend/node_modules/write-json-file/package.json
+info Running jetifier to migrate libraries to AndroidX. You can disable it using "--no-jetifier" flag.
+Jetifier found 1647 file(s) to forward-jetify. Using 8 workers...
+info JS server already running.
+warn Invalid application's package name "com.EtOHCoachFinal" in 'AndroidManifest.xml'. Read guidelines for setting the package name here: https://developer.android.com/studio/build/application-id
+info Installing the app...
+Configuration on demand is an incubating feature.
+:ReactNative:Passing custom root is deprecated. CLI detects root automatically now.
+:ReactNative:Please remove second argument to `applyNativeModulesSettingsGradle`.
+
+> Configure project :app
+:ReactNative:Passing custom root is deprecated. CLI detects root automatically now
+:ReactNative:Please remove second argument to `applyNativeModulesAppBuildGradle`.
+
+Deprecated Gradle features were used in this build, making it incompatible with Gradle 9.0.
+
+You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.
+
+For more on this, please refer to https://docs.gradle.org/8.9/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
+
+FAILURE: Build failed with an exception.
+
+* Where:
+Script '/Users/koushikmondal/Desktop/Etohcoach-Frontend/node_modules/react-native/react.gradle' line: 303
+
+* What went wrong:
+A problem occurred configuring project ':app'.
+> Could not create task ':app:copyDebugBundledJs'.
+   > Could not create task ':app:mergeDebugAssets'.
+      > Cannot use @TaskAction annotation on method IncrementalTask.taskAction$gradle_core() because interface org.gradle.api.tasks.incremental.IncrementalTaskInputs is not a valid parameter to an action method.
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights.
+> Get more help at https://help.gradle.org.
+
+BUILD FAILED in 6s
+
+error Failed to install the app. Make sure you have the Android development environment set up: https://reactnative.dev/docs/environment-setup.
+Error: Command failed: ./gradlew app:installDebug -PreactNativeDevServerPort=8081
+
+FAILURE: Build failed with an exception.
+
+* Where:
+Script '/Users/koushikmondal/Desktop/Etohcoach-Frontend/node_modules/react-native/react.gradle' line: 303
+
+* What went wrong:
+A problem occurred configuring project ':app'.
+> Could not create task ':app:copyDebugBundledJs'.
+   > Could not create task ':app:mergeDebugAssets'.
+      > Cannot use @TaskAction annotation on method IncrementalTask.taskAction$gradle_core() because interface org.gradle.api.tasks.incremental.IncrementalTaskInputs is not a valid parameter to an action method.
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights.
+> Get more help at https://help.gradle.org.
+
+BUILD FAILED in 6s
+
+    at makeError (/Users/koushikmondal/Desktop/Etohcoach-Frontend/node_modules/execa/index.js:174:9)
+    at /Users/koushikmondal/Desktop/Etohcoach-Frontend/node_modules/execa/index.js:278:16
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async runOnAllDevices (/Users/koushikmondal/Desktop/Etohcoach-Frontend/node_modules/react-native/node_modules/@react-native-community/cli-platform-android/build/commands/runAndroid/runOnAllDevices.js:109:5)
+    at async Command.handleAction (/Users/koushikmondal/Desktop/Etohcoach-Frontend/node_modules/react-native/node_modules/@react-native-community/cli/build/index.js:192:9)
+info Run CLI with --verbose flag for more details.
+error Command failed with exit code 1.
+info Visit https://yarnpkg.com/en/docs/cli/run for documentation about this command.
+error Command failed.
+Exit code: 1
+Command: /opt/homebrew/Cellar/node/23.7.0/bin/node
+Arguments: /opt/homebrew/Cellar/yarn/1.22.22/libexec/lib/cli.js android
+Directory: /Users/koushikmondal/Desktop/Etohcoach-Frontend/packages/mobile
+Output:
+
+info Visit https://yarnpkg.com/en/docs/cli/workspace for documentation about this command.
+error Command failed with exit code 1.
+info Visit https://yarnpkg.com/en/docs/cli/run for documentation about this command.

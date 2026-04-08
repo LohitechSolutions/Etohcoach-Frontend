@@ -3,10 +3,10 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "android": "NODE_OPTIONS=--openssl-legacy-provider npx react-native run-android",
+    "android": "npx react-native run-android",
     "compile": "tsc -b --incremental",
-    "ios": "NODE_OPTIONS=--openssl-legacy-provider npx react-native run-ios",
-    "start": "NODE_OPTIONS=--openssl-legacy-provider concurrently \"npm run compile -- -w\" \"npx react-native start\"",
+    "ios": "npx react-native run-ios",
+    "start": "concurrently \"npm run compile -- -w\" \"npx react-native start\"",
     "studio": "studio android",
     "xcode": "open ios/EtOHCoachFinal.xcworkspace"
   },

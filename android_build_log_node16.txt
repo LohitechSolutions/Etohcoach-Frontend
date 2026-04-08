@@ -1,0 +1,96 @@
+yarn run v1.22.22
+$ yarn workspace mobile android
+$ npx react-native run-android
+warn Package write-json-file has been ignored because it contains invalid configuration. Reason: Package subpath './package.json' is not defined by "exports" in /Users/koushikmondal/Desktop/Etohcoach-Frontend/node_modules/write-json-file/package.json
+info Running jetifier to migrate libraries to AndroidX. You can disable it using "--no-jetifier" flag.
+Jetifier found 1668 file(s) to forward-jetify. Using 8 workers...
+info JS server already running.
+warn Invalid application's package name "com.EtOHCoachFinal" in 'AndroidManifest.xml'. Read guidelines for setting the package name here: https://developer.android.com/studio/build/application-id
+/bin/sh: adb: command not found
+info Launching emulator...
+error Failed to launch emulator. Reason: No emulators found as an output of `emulator -list-avds`.
+warn Please launch an emulator manually or connect a device. Otherwise app may fail to launch.
+info Installing the app...
+Configuration on demand is an incubating feature.
+:ReactNative:Passing custom root is deprecated. CLI detects root automatically now.
+:ReactNative:Please remove second argument to `applyNativeModulesSettingsGradle`.
+
+> Configure project :app
+:ReactNative:Passing custom root is deprecated. CLI detects root automatically now
+:ReactNative:Please remove second argument to `applyNativeModulesAppBuildGradle`.
+
+> Configure project :lottie-react-native
+WARNING:Software Components will not be created automatically for Maven publishing from Android Gradle Plugin 8.0. To opt-in to the future behavior, set the Gradle property android.disableAutomaticComponentCreation=true in the `gradle.properties` file or use the new publishing DSL.
+WARNING:The specified Android SDK Build Tools version (30.0.2) is ignored, as it is below the minimum supported version (30.0.3) for Android Gradle Plugin 7.1.2.
+Android SDK Build Tools 30.0.3 will be used.
+To suppress this warning, remove "buildToolsVersion '30.0.2'" from your build.gradle file, as each version of the Android Gradle Plugin now has a default version of the build tools.
+
+Deprecated Gradle features were used in this build, making it incompatible with Gradle 8.0.
+
+You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.
+
+See https://docs.gradle.org/7.4.2/userguide/command_line_interface.html#sec:command_line_warnings
+
+FAILURE: Build failed with an exception.
+
+* Where:
+Script '/Users/koushikmondal/Desktop/Etohcoach-Frontend/node_modules/lottie-react-native/src/android/gradle-maven-push.gradle' line: 104
+
+* What went wrong:
+Could not determine the dependencies of task ':app:mergeDebugAssets'.
+> Could not resolve all dependencies for configuration ':app:debugRuntimeClasspath'.
+   > A problem occurred configuring project ':lottie-react-native'.
+      > Failed to query the value of property 'bootClasspath'.
+         > SDK location not found. Define location with an ANDROID_SDK_ROOT environment variable or by setting the sdk.dir path in your project's local properties file at '/Users/koushikmondal/Desktop/Etohcoach-Frontend/packages/mobile/android/local.properties'.
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights.
+
+* Get more help at https://help.gradle.org
+
+BUILD FAILED in 6s
+
+error Failed to install the app. Make sure you have the Android development environment set up: https://reactnative.dev/docs/environment-setup.
+Error: Command failed: ./gradlew app:installDebug -PreactNativeDevServerPort=8081
+
+FAILURE: Build failed with an exception.
+
+* Where:
+Script '/Users/koushikmondal/Desktop/Etohcoach-Frontend/node_modules/lottie-react-native/src/android/gradle-maven-push.gradle' line: 104
+
+* What went wrong:
+Could not determine the dependencies of task ':app:mergeDebugAssets'.
+> Could not resolve all dependencies for configuration ':app:debugRuntimeClasspath'.
+   > A problem occurred configuring project ':lottie-react-native'.
+      > Failed to query the value of property 'bootClasspath'.
+         > SDK location not found. Define location with an ANDROID_SDK_ROOT environment variable or by setting the sdk.dir path in your project's local properties file at '/Users/koushikmondal/Desktop/Etohcoach-Frontend/packages/mobile/android/local.properties'.
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights.
+
+* Get more help at https://help.gradle.org
+
+BUILD FAILED in 6s
+
+    at makeError (/Users/koushikmondal/Desktop/Etohcoach-Frontend/node_modules/execa/index.js:174:9)
+    at /Users/koushikmondal/Desktop/Etohcoach-Frontend/node_modules/execa/index.js:278:16
+    at processTicksAndRejections (node:internal/process/task_queues:96:5)
+    at async runOnAllDevices (/Users/koushikmondal/Desktop/Etohcoach-Frontend/node_modules/react-native/node_modules/@react-native-community/cli-platform-android/build/commands/runAndroid/runOnAllDevices.js:109:5)
+    at async Command.handleAction (/Users/koushikmondal/Desktop/Etohcoach-Frontend/node_modules/react-native/node_modules/@react-native-community/cli/build/index.js:192:9)
+info Run CLI with --verbose flag for more details.
+error Command failed with exit code 1.
+info Visit https://yarnpkg.com/en/docs/cli/run for documentation about this command.
+error Command failed.
+Exit code: 1
+Command: /Users/koushikmondal/.nvm/versions/node/v16.20.2/bin/node
+Arguments: /opt/homebrew/Cellar/yarn/1.22.22/libexec/lib/cli.js android
+Directory: /Users/koushikmondal/Desktop/Etohcoach-Frontend/packages/mobile
+Output:
+
+info Visit https://yarnpkg.com/en/docs/cli/workspace for documentation about this command.
+error Command failed with exit code 1.
+info Visit https://yarnpkg.com/en/docs/cli/run for documentation about this command.
