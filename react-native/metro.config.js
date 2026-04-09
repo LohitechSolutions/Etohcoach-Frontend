@@ -55,6 +55,8 @@ const orientationShim = path.resolve(
   "src/shims/react-native-orientation.js"
 );
 
+const rnSoundShim = path.resolve(projectRoot, "src/shims/react-native-sound.js");
+
 const originalResolveRequest = config.resolver.resolveRequest;
 config.resolver.resolveRequest = (context, moduleName, platform) => {
   if (moduleName === "redux") {
@@ -101,6 +103,9 @@ config.resolver.resolveRequest = (context, moduleName, platform) => {
   }
   if (moduleName === "react-native-orientation") {
     return { filePath: orientationShim, type: "sourceFile" };
+  }
+  if (moduleName === "react-native-sound") {
+    return { filePath: rnSoundShim, type: "sourceFile" };
   }
   if (typeof originalResolveRequest === "function") {
     return originalResolveRequest(context, moduleName, platform);
@@ -161,6 +166,7 @@ config.resolver.extraNodeModules = {
     projectRoot,
     "src/shims/react-native-orientation.js"
   ),
+  "react-native-sound": path.resolve(projectRoot, "src/shims/react-native-sound.js"),
 };
 config.resolver.unstable_enableSymlinks = true;
 
