@@ -79,7 +79,6 @@ import ReviewModal from '../blocks/catalogue/src/ReviewModal';
 import CatalogueFive from '../blocks/catalogue/src/CatalogueFIve';
 import settings from '../blocks/user-profile-basic/src/settings';
 import {url} from 'inspector';
-import SplashScreen from 'react-native-splash-screen';
 import {DeviceEventEmitter, Linking, Platform,Dimensions} from 'react-native';
 //@ts-ignore
 import ThemesScr from '../blocks/catalogue/src/ThemesScr';
@@ -101,7 +100,6 @@ import ReArrangeOrder from '../blocks/catalogue/src/ReArrangeOrder';
 import MocExamInit from '../blocks/catalogue/src/MocExamInit';
 import QuizzesExamInit from '../blocks/catalogue/src/QuizzesExamInit';
 import Scale from '../components/src/Scale';
-import messaging from '@react-native-firebase/messaging';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import AsynchStoragekey from '../mobile/src/utils/asynchKeys';
 import {Provider} from 'react-redux';
@@ -115,6 +113,16 @@ import rootSaga from '../mobile/src/store/sagas';
 import { configStore, sagaMiddleware } from './src/store';
 import DeviceInfo from 'react-native-device-info';
 import { FONTS } from '../framework/src/Fonts';
+
+let messagingInstance: any = null;
+try {
+  const messagingModule = require('@react-native-firebase/messaging').default;
+  if (typeof messagingModule === 'function') {
+    messagingInstance = messagingModule();
+  }
+} catch (error) {
+  console.log('Firebase messaging unavailable in current runtime');
+}
 
 const {store,persistor} = configStore();
 // sagaMiddleware.run(rootSaga);
@@ -867,12 +875,15 @@ class App extends React.Component {
 
   requestUserPermission = async () => {
     console.log('request');
-    // return
-    const authStatus = await messaging().requestPermission();
+    if (!messagingInstance) {
+      return;
+    }
+
+    const authStatus = await messagingInstance.requestPermission();
     console.log('authStatus ::', authStatus);
     const enabled =
-      authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
-      authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+      authStatus === messagingInstance.AuthorizationStatus.AUTHORIZED ||
+      authStatus === messagingInstance.AuthorizationStatus.PROVISIONAL;
 
     if (enabled) {
       console.log('Authorization status:', authStatus);
@@ -881,7 +892,11 @@ class App extends React.Component {
   };
 
   getFcmToken = async () => {
-    let fcmToken = await messaging().getToken();
+    if (!messagingInstance) {
+      return;
+    }
+
+    let fcmToken = await messagingInstance.getToken();
     await AsyncStorage.setItem(
       AsynchStoragekey.AsynchStoragekey.FCM_TOKEN,
       fcmToken,
