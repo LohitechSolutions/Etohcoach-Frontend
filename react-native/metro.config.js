@@ -21,7 +21,8 @@ config.resolver.extraNodeModules = {
   "react-native-responsive-fontsize": path.resolve(projectRoot, "src/shims/react-native-responsive-fontsize.js"),
   "react-native-responsive-screen": path.resolve(projectRoot, "src/shims/react-native-responsive-screen.js"),
   "react-native-responsive-dimensions": path.resolve(projectRoot, "src/shims/react-native-responsive-dimensions.js"),
-  "react-native-app-intro-slider": path.resolve(projectRoot, "src/shims/react-native-app-intro-slider.js")
+  "react-native-app-intro-slider": path.resolve(projectRoot, "src/shims/react-native-app-intro-slider.js"),
+  "react-native-modal": path.resolve(projectRoot, "src/shims/react-native-modal.js")
 };
 config.resolver.unstable_enableSymlinks = true;
 
