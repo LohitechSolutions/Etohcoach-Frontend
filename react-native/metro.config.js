@@ -30,10 +30,11 @@ const reduxSagaEffectsShim = path.resolve(
   "src/shims/redux-saga-effects.js"
 );
 
-const appleAuthShim = path.resolve(
+const appleAuthPackageRoot = path.resolve(
   projectRoot,
-  "src/shims/@invertase/react-native-apple-authentication.js"
+  "src/shims/npm/@invertase/react-native-apple-authentication"
 );
+const appleAuthEntry = path.join(appleAuthPackageRoot, "index.js");
 
 const reactProgressLabelShim = path.resolve(
   projectRoot,
@@ -89,8 +90,11 @@ config.resolver.resolveRequest = (context, moduleName, platform) => {
       type: "sourceFile"
     };
   }
-  if (moduleName === "@invertase/react-native-apple-authentication") {
-    return { filePath: appleAuthShim, type: "sourceFile" };
+  if (
+    moduleName === "@invertase/react-native-apple-authentication" ||
+    moduleName.startsWith("@invertase/react-native-apple-authentication/")
+  ) {
+    return { filePath: appleAuthEntry, type: "sourceFile" };
   }
   if (moduleName === "react-progress-label") {
     return { filePath: reactProgressLabelShim, type: "sourceFile" };
@@ -149,10 +153,7 @@ config.resolver.extraNodeModules = {
   ),
   "redux-saga": path.resolve(projectRoot, "src/shims/redux-saga.js"),
   "redux-saga/effects": path.resolve(projectRoot, "src/shims/redux-saga-effects.js"),
-  "@invertase/react-native-apple-authentication": path.resolve(
-    projectRoot,
-    "src/shims/@invertase/react-native-apple-authentication.js"
-  ),
+  "@invertase/react-native-apple-authentication": appleAuthPackageRoot,
   "react-progress-label": path.resolve(projectRoot, "src/shims/react-progress-label.js"),
   "react-native-soundcloud-waveform": path.resolve(
     projectRoot,

@@ -1,6 +1,6 @@
 /**
- * Shim: real module is in root workspace; native Sign in with Apple is not wired in the Expo app.
- * Exposes the same surface the blocks use so Metro can bundle; Apple login shows "not supported".
+ * Stub: native Sign in with Apple is not wired in the Expo app.
+ * Metro maps this package via extraNodeModules (must be a directory with package.json).
  */
 const Operation = {
   LOGIN: 1,
