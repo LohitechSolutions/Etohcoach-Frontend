@@ -7,8 +7,8 @@ import MessageEnum, {
 import { runEngine } from "../../../framework/src/RunEngine";
 import {
   GoogleSignin,
-  statusCodes
-} from "@react-native-community/google-signin";
+  statusCodes,
+} from "../../../../react-native/src/shims/@react-native-community-google-signin";
 import { appleAuth, } from '@invertase/react-native-apple-authentication';
 import { Platform } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";

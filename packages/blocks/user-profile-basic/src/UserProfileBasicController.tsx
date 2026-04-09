@@ -10,7 +10,7 @@ import { runEngine } from "../../../framework/src/RunEngine";
 
 import {
   GoogleSignin
-} from "@react-native-community/google-signin";
+} from "../../../../react-native/src/shims/@react-native-community-google-signin";
 import { DeviceEventEmitter, Platform } from "react-native";
 import { NavigationActions, StackActions } from 'react-navigation';
 import { STRINGS, VALIDATION_TIMER } from "../../../mobile/src/utils";

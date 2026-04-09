@@ -201,6 +201,42 @@ function resolveExpoReactNativeTree(bare) {
   return null;
 }
 
+/** Expo Go has no react-native-vector-icons native bridge; use @expo/vector-icons instead. */
+function resolveVectorIconsToExpo(moduleName) {
+  const PREFIX = "react-native-vector-icons/";
+  const bare = bareModuleName(moduleName);
+  let setName = null;
+  if (bare === "react-native-vector-icons") {
+    return null;
+  }
+  if (bare.startsWith(PREFIX)) {
+    setName = bare.slice(PREFIX.length).split("/")[0];
+  } else {
+    const norm = String(moduleName).replace(/\\/g, "/");
+    const idx = norm.indexOf(PREFIX);
+    if (idx !== -1) {
+      const rest = norm.slice(idx + PREFIX.length).split("/")[0];
+      if (rest) {
+        setName = rest.replace(/\.(js|jsx|ts|tsx)$/, "");
+      }
+    }
+  }
+  if (!setName) {
+    return null;
+  }
+  const expoPath = path.join(
+    expoNodeModules,
+    "@expo",
+    "vector-icons",
+    "build",
+    `${setName}.js`
+  );
+  if (fs.existsSync(expoPath)) {
+    return { filePath: expoPath, type: "sourceFile" };
+  }
+  return null;
+}
+
 /** Real @react-native-community/google-signin loads native code; Expo must always use the shim. */
 function shouldUseGoogleSigninShim(moduleName) {
   const bare = bareModuleName(moduleName);
@@ -220,6 +256,10 @@ function shouldUseGoogleSigninShim(moduleName) {
 config.resolver.resolveRequest = (context, moduleName, platform) => {
   if (shouldUseGoogleSigninShim(moduleName)) {
     return { filePath: googleSigninShim, type: "sourceFile" };
+  }
+  const vectorIcons = resolveVectorIconsToExpo(moduleName);
+  if (vectorIcons) {
+    return vectorIcons;
   }
   const bare = bareModuleName(moduleName);
   const forcedRn = resolveExpoReactNativeTree(bare);

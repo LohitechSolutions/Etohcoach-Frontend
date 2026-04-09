@@ -2,8 +2,8 @@ import { runEngine } from "../../../framework/src/RunEngine";
 
 import {
   GoogleSignin,
-  statusCodes
-} from "@react-native-community/google-signin";
+  statusCodes,
+} from "../../../../react-native/src/shims/@react-native-community-google-signin";
 
 export class GoogleMobileDelegate {
   googleMobileUserStatusChanged(userInfo: any, isRegistration: boolean): void {}
