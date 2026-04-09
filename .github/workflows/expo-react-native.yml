@@ -1,0 +1,29 @@
+name: Expo React Native
+
+on:
+  push:
+    paths:
+      - "react-native/**"
+      - ".github/workflows/expo-react-native.yml"
+  pull_request:
+    paths:
+      - "react-native/**"
+      - ".github/workflows/expo-react-native.yml"
+
+jobs:
+  typecheck:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: react-native
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: react-native/package-lock.json
+      - name: Install
+        run: npm ci
+      - name: Typecheck
+        run: npm run typecheck

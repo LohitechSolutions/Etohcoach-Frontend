@@ -1,0 +1,80 @@
+export const coreRoutes = [
+  "Home",
+  "EmailAccountLoginBlock",
+  "EmailAccountRegistration",
+  "ForgotPassword",
+  "ForgotPasswordOTP",
+  "PasswordChanged",
+  "NewPassword",
+  "SubCriptionScreen",
+  "SubcriptionSuccsess",
+  "FilterModal",
+  "LanguageOptionModal",
+  "StartCourceModal",
+  "TakeQuizeModal",
+  "MockExamModal",
+  "ReviewModal",
+  "TermsAndConditions",
+  "Search",
+  "Sorting",
+  "Filteritems",
+  "Filteroptions",
+  "Notifications",
+  "Contactus",
+  "AddContactus",
+  "CountryCodeSelector",
+  "CountryCodeSelectorTable",
+  "Settings5",
+  "EditProfile",
+  "ChangePassword",
+  "ChangeEmail",
+  "ManageNotifications",
+  "OverView",
+  "CatalogueFive",
+  "CatalogueStudy",
+  "Themes",
+  "Notes"
+] as const;
+
+export const advancedRoutes = [
+  "Pushnotifications",
+  "Customisableusersubscriptions",
+  "SubscriptionDetails",
+  "SubscriptionBilling",
+  "SocialMediaAccountLoginScreen",
+  "SocialMediaAccountRegistrationScreen",
+  "OTPInputAuth",
+  "CfAppleLogin17",
+  "CfFlashcards2",
+  "Polling",
+  "PollingScr",
+  "MocExamInit",
+  "QuizzesExamInit",
+  "moxExamQuestionOne",
+  "ReArrangeOrder",
+  "RevealAnswer",
+  "Congratulation",
+  "QuestionBank",
+  "Scoring",
+  "Library2",
+  "DataImportexportcsv",
+  "Gamification",
+  "StripeIntegration",
+  "PaymentAdmin2",
+  "ContentManagement",
+  "Categoriessubcategories",
+  "AdminConsole3",
+  "AssessmentTest",
+  "NoInternet",
+  "InfoPage"
+] as const;
+
+export const legacyAliasRoutes = ["SPLASH", "UserProfileBasicBlock"] as const;
+
+export const allRoutes = [
+  ...coreRoutes,
+  ...advancedRoutes,
+  ...legacyAliasRoutes
+] as const;
+
+export type AppRouteName = (typeof allRoutes)[number];
