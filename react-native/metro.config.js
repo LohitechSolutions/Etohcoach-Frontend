@@ -87,6 +87,15 @@ const firebaseAnalyticsShim = path.resolve(
   "src/shims/react-native-firebase-analytics.js"
 );
 
+const rnDeviceInfoShim = path.resolve(
+  projectRoot,
+  "src/shims/react-native-device-info.js"
+);
+const rnLocalizeShim = path.resolve(
+  projectRoot,
+  "src/shims/react-native-localize.js"
+);
+
 const originalResolveRequest = config.resolver.resolveRequest;
 
 /** Lock React Native + React to this app's native binary (0.74.x). Root workspace hoists legacy 0.65.3. */
@@ -98,6 +107,22 @@ function bareModuleName(name) {
   const s = String(name);
   const q = s.indexOf("?");
   return (q === -1 ? s : s.slice(0, q)).trim();
+}
+
+/** Force Metro to our shims when hoisted node_modules would load the real native package. */
+function resolveStubPackage(moduleName, packageName, shimAbsolutePath) {
+  const bare = bareModuleName(moduleName);
+  if (bare === packageName || bare.startsWith(`${packageName}/`)) {
+    return { filePath: shimAbsolutePath, type: "sourceFile" };
+  }
+  const norm = String(moduleName).replace(/\\/g, "/");
+  if (
+    norm.includes(`/node_modules/${packageName}/`) ||
+    norm.endsWith(`/node_modules/${packageName}`)
+  ) {
+    return { filePath: shimAbsolutePath, type: "sourceFile" };
+  }
+  return null;
 }
 
 function resolveExistingFile(basePath) {
@@ -261,6 +286,22 @@ config.resolver.resolveRequest = (context, moduleName, platform) => {
   if (vectorIcons) {
     return vectorIcons;
   }
+  const deviceInfoRes = resolveStubPackage(
+    moduleName,
+    "react-native-device-info",
+    rnDeviceInfoShim
+  );
+  if (deviceInfoRes) {
+    return deviceInfoRes;
+  }
+  const localizeRes = resolveStubPackage(
+    moduleName,
+    "react-native-localize",
+    rnLocalizeShim
+  );
+  if (localizeRes) {
+    return localizeRes;
+  }
   const bare = bareModuleName(moduleName);
   const forcedRn = resolveExpoReactNativeTree(bare);
   if (forcedRn) {
@@ -359,6 +400,7 @@ config.resolver.extraNodeModules = {
   "react-i18next": path.resolve(projectRoot, "src/shims/react-i18next.js"),
   i18next: path.resolve(projectRoot, "src/shims/i18next.js"),
   "react-native-device-info": path.resolve(projectRoot, "src/shims/react-native-device-info.js"),
+  "react-native-localize": path.resolve(projectRoot, "src/shims/react-native-localize.js"),
   "react-native-responsive-fontsize": path.resolve(projectRoot, "src/shims/react-native-responsive-fontsize.js"),
   "react-native-responsive-screen": path.resolve(projectRoot, "src/shims/react-native-responsive-screen.js"),
   "react-native-responsive-dimensions": path.resolve(projectRoot, "src/shims/react-native-responsive-dimensions.js"),

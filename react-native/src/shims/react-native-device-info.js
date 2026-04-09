@@ -7,12 +7,12 @@ const deviceInfo = {
   getModel: () => DEVICE_MODEL,
   getManufacturer: async () => DEVICE_MANUFACTURER,
   getVersion: () => APP_VERSION,
-  getSystemVersion: () => SYSTEM_VERSION
+  getSystemVersion: () => SYSTEM_VERSION,
 };
 
-export const getModel = deviceInfo.getModel;
-export const getManufacturer = deviceInfo.getManufacturer;
-export const getVersion = deviceInfo.getVersion;
-export const getSystemVersion = deviceInfo.getSystemVersion;
-
-export default deviceInfo;
+module.exports = deviceInfo;
+module.exports.default = deviceInfo;
+module.exports.getModel = deviceInfo.getModel;
+module.exports.getManufacturer = deviceInfo.getManufacturer;
+module.exports.getVersion = deviceInfo.getVersion;
+module.exports.getSystemVersion = deviceInfo.getSystemVersion;
