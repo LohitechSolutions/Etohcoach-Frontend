@@ -57,14 +57,14 @@ class GoogleMobileController {
         );
         return resolve(true);
       } catch (error) {
-        if (error.code === statusCodes.SIGN_IN_CANCELLED) {
-          runEngine.debugLog(statusCodes.SIGN_IN_CANCELLED);
-        } else if (error.code === statusCodes.IN_PROGRESS) {
+        if (error.code === statusCodes?.SIGN_IN_CANCELLED) {
+          runEngine.debugLog(statusCodes?.SIGN_IN_CANCELLED);
+        } else if (error.code === statusCodes?.IN_PROGRESS) {
           // operation (e.g. sign in) is in progress already
           runEngine.debugLog(error);
-        } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
+        } else if (error.code === statusCodes?.PLAY_SERVICES_NOT_AVAILABLE) {
           // play services not available or outdated
-          runEngine.debugLog(statusCodes.PLAY_SERVICES_NOT_AVAILABLE);
+          runEngine.debugLog(statusCodes?.PLAY_SERVICES_NOT_AVAILABLE);
         } else {
           // some other error happened
           runEngine.debugLog("something went wrong!");

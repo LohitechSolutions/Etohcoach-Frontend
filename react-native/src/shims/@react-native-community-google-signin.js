@@ -12,8 +12,12 @@ const statusCodes = {
 
 const GoogleSignin = {
   configure: () => {},
-  hasPlayServices: async () => {},
-  signIn: async () => null,
+  hasPlayServices: async () => true,
+  signIn: async () => {
+    const err = new Error("Google Sign-In is not available in this Expo/dev build.");
+    err.code = statusCodes.SIGN_IN_CANCELLED;
+    throw err;
+  },
   signOut: async () => {},
   revokeAccess: async () => {},
   isSignedIn: async () => false,

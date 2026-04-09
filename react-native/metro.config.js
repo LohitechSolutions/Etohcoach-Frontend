@@ -183,10 +183,44 @@ function resolveExpoReactNativeTree(bare) {
       }
     }
   }
+  if (bare === "scheduler" || bare.startsWith("scheduler/")) {
+    const pkgRoot = path.join(expoNodeModules, "scheduler");
+    const rel = bare === "scheduler" ? "" : bare.slice("scheduler/".length);
+    if (!rel) {
+      const entry = resolvePackageEntry(pkgRoot);
+      if (entry) {
+        return { filePath: path.normalize(entry), type: "sourceFile" };
+      }
+    } else {
+      const resolved = resolveExistingFile(path.join(pkgRoot, rel));
+      if (resolved) {
+        return { filePath: path.normalize(resolved), type: "sourceFile" };
+      }
+    }
+  }
   return null;
 }
 
+/** Real @react-native-community/google-signin loads native code; Expo must always use the shim. */
+function shouldUseGoogleSigninShim(moduleName) {
+  const bare = bareModuleName(moduleName);
+  if (
+    bare === "@react-native-community/google-signin" ||
+    bare.startsWith("@react-native-community/google-signin/")
+  ) {
+    return true;
+  }
+  const norm = String(moduleName).replace(/\\/g, "/");
+  return (
+    norm.includes("@react-native-community/google-signin/") ||
+    norm.endsWith("@react-native-community/google-signin")
+  );
+}
+
 config.resolver.resolveRequest = (context, moduleName, platform) => {
+  if (shouldUseGoogleSigninShim(moduleName)) {
+    return { filePath: googleSigninShim, type: "sourceFile" };
+  }
   const bare = bareModuleName(moduleName);
   const forcedRn = resolveExpoReactNativeTree(bare);
   if (forcedRn) {
@@ -246,9 +280,6 @@ config.resolver.resolveRequest = (context, moduleName, platform) => {
   if (bare === "react-native-splash-screen") {
     return { filePath: splashScreenShim, type: "sourceFile" };
   }
-  if (bare === "@react-native-community/google-signin") {
-    return { filePath: googleSigninShim, type: "sourceFile" };
-  }
   if (bare === "@react-native-firebase/messaging") {
     return { filePath: firebaseMessagingShim, type: "sourceFile" };
   }
@@ -283,6 +314,7 @@ config.resolver.extraNodeModules = {
   ...(config.resolver.extraNodeModules || {}),
   react: expoReactRoot,
   "react-native": expoReactNativeRoot,
+  scheduler: path.join(expoNodeModules, "scheduler"),
   "react-redux": path.resolve(projectRoot, "src/shims/react-redux.js"),
   "react-i18next": path.resolve(projectRoot, "src/shims/react-i18next.js"),
   i18next: path.resolve(projectRoot, "src/shims/i18next.js"),

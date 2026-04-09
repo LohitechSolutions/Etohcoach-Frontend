@@ -262,11 +262,11 @@ if (getName(MessageEnum.RestAPIResponceMessage) === message.id) {
       setTimeout(() => {
         this.setState({ error: '' })
       }, VALIDATION_TIMER);
-      if (error.code === statusCodes.SIGN_IN_CANCELLED) {
+      if (error.code === statusCodes?.SIGN_IN_CANCELLED) {
 
-  } else if (error.code === statusCodes.IN_PROGRESS) {
+  } else if (error.code === statusCodes?.IN_PROGRESS) {
 
-  } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
+  } else if (error.code === statusCodes?.PLAY_SERVICES_NOT_AVAILABLE) {
 
   } else {
     // some other error happened
