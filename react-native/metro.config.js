@@ -58,6 +58,25 @@ const orientationShim = path.resolve(
 
 const rnSoundShim = path.resolve(projectRoot, "src/shims/react-native-sound.js");
 
+const splashScreenShim = path.resolve(
+  projectRoot,
+  "src/shims/react-native-splash-screen.js"
+);
+
+const googleSigninShim = path.resolve(
+  projectRoot,
+  "src/shims/@react-native-community-google-signin.js"
+);
+
+const firebaseMessagingShim = path.resolve(
+  projectRoot,
+  "src/shims/react-native-firebase-messaging.js"
+);
+
+const rnFsShim = path.resolve(projectRoot, "src/shims/react-native-fs.js");
+
+const rnIapShim = path.resolve(projectRoot, "src/shims/react-native-iap.js");
+
 const originalResolveRequest = config.resolver.resolveRequest;
 
 function bareModuleName(name) {
@@ -119,6 +138,21 @@ config.resolver.resolveRequest = (context, moduleName, platform) => {
   if (bare === "react-native-sound") {
     return { filePath: rnSoundShim, type: "sourceFile" };
   }
+  if (bare === "react-native-splash-screen") {
+    return { filePath: splashScreenShim, type: "sourceFile" };
+  }
+  if (bare === "@react-native-community/google-signin") {
+    return { filePath: googleSigninShim, type: "sourceFile" };
+  }
+  if (bare === "@react-native-firebase/messaging") {
+    return { filePath: firebaseMessagingShim, type: "sourceFile" };
+  }
+  if (bare === "react-native-fs") {
+    return { filePath: rnFsShim, type: "sourceFile" };
+  }
+  if (bare === "react-native-iap") {
+    return { filePath: rnIapShim, type: "sourceFile" };
+  }
   if (typeof originalResolveRequest === "function") {
     return originalResolveRequest(context, moduleName, platform);
   }
@@ -176,6 +210,20 @@ config.resolver.extraNodeModules = {
     "src/shims/react-native-orientation.js"
   ),
   "react-native-sound": path.resolve(projectRoot, "src/shims/react-native-sound.js"),
+  "react-native-splash-screen": path.resolve(
+    projectRoot,
+    "src/shims/react-native-splash-screen.js"
+  ),
+  "@react-native-community/google-signin": path.resolve(
+    projectRoot,
+    "src/shims/@react-native-community-google-signin.js"
+  ),
+  "@react-native-firebase/messaging": path.resolve(
+    projectRoot,
+    "src/shims/react-native-firebase-messaging.js"
+  ),
+  "react-native-fs": path.resolve(projectRoot, "src/shims/react-native-fs.js"),
+  "react-native-iap": path.resolve(projectRoot, "src/shims/react-native-iap.js"),
 };
 config.resolver.unstable_enableSymlinks = true;
 

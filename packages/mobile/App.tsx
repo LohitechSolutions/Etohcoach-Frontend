@@ -3,7 +3,11 @@ import React from 'react';
 import EditProfile from '../blocks/user-profile-basic/src/EditProfile';
 import ChangePassword from '../blocks/user-profile-basic/src/ChangePassword';
 import ChangeEmail from '../blocks/user-profile-basic/src/ChangeEmail';
-import {createStackNavigator, createBottomTabNavigator} from 'react-navigation';
+import {
+  createStackNavigator,
+  createBottomTabNavigator,
+  createNavigationContainer,
+} from 'react-navigation';
 import {StateProvider} from '../components/src/context/AppStateContext';
 import '../blocks/LanguageOptions/src/component/i18n/i18n.config';
 import {langaugeFunction} from '../blocks/LanguageOptions/src/component/i18n/i18n.config';
@@ -77,7 +81,6 @@ import MockExamModal from '../blocks/catalogue/src/MockExamModal';
 import ReviewModal from '../blocks/catalogue/src/ReviewModal';
 import CatalogueFive from '../blocks/catalogue/src/CatalogueFIve';
 import settings from '../blocks/user-profile-basic/src/settings';
-import {url} from 'inspector';
 import {DeviceEventEmitter, Linking, Platform,Dimensions} from 'react-native';
 //@ts-ignore
 import ThemesScr from '../blocks/catalogue/src/ThemesScr';
@@ -833,6 +836,7 @@ const MainStack = createStackNavigator(
     },
   },
   {
+    initialRouteName: 'SPLASH',
     headerMode: 'none',
     defaultNavigationOptions: {
       headerVisible: false,
@@ -840,6 +844,9 @@ const MainStack = createStackNavigator(
     },
   },
 );
+
+/** Stateful root — required in react-navigation 2.x or `navigation` is undefined and stacks render nothing. */
+const AppNavigationContainer = createNavigationContainer(MainStack);
 
 if (!HomeScreen.instance) {
   const defaultProps = {
@@ -938,7 +945,7 @@ class App extends React.Component {
         <Provider store={store}>
           <PersistGate loading={null} persistor={persistor}>
            <StateProvider>
-            <MainStack />
+            <AppNavigationContainer enableURLHandling={false} />
            </StateProvider>
           </PersistGate>
         </Provider>

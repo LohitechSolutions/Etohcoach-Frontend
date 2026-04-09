@@ -1,5 +1,11 @@
 import React from "react";
 
+/** Real i18next calls `.use(plugin).init()` — provide a minimal plugin object. */
+export const initReactI18next = {
+  type: "3rdParty",
+  init() {},
+};
+
 function identityTranslate(value) {
   return value;
 }

@@ -5,10 +5,11 @@
   "main": "node_modules/expo/AppEntry.js",
   "scripts": {
     "postinstall": "node ./scripts/ensure-apple-shim-link.js",
-    "start": "expo start",
-    "android": "expo run:android",
-    "ios": "expo run:ios",
-    "web": "expo start --web",
+    "start": "node ./scripts/run-expo.cjs start",
+    "start:clear": "node ./scripts/run-expo.cjs start --clear",
+    "android": "node ./scripts/run-expo.cjs run:android",
+    "ios": "node ./scripts/run-expo.cjs run:ios",
+    "web": "node ./scripts/run-expo.cjs start --web",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {

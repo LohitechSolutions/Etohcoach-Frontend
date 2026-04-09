@@ -214,12 +214,13 @@ const styles = StyleSheet.create({
     fontWeight: "900",
   },
 });
-const mapStateToProps =(state:any)=>{
-return{
-  userProfileState:state.rootReducer.userProfileReducer,
-  subscriptionState:state.rootReducer.subscriptionReducer
-}
-}
+const mapStateToProps = (state: any) => {
+  const r = state?.rootReducer ?? {};
+  return {
+    userProfileState: r.userProfileReducer,
+    subscriptionState: r.subscriptionReducer,
+  };
+};
 const mapDispatchToProps = (dispatch:any)=>{
   return{
     addUserProfile:(params:any)=>{

@@ -1150,33 +1150,34 @@ updatePurchase = async () => {
   );
 }
 
-  functionToReturnContinueCourses=()=>{
-    let thedata:any=[]
-    let mydata=this.state.dashboardData?.user_in_progress_courses
-    if(mydata.length==1){
-        thedata=[mydata[0]]
-    }else if(mydata.length>=2){
-        thedata=[mydata[0],mydata[1]]
+  functionToReturnContinueCourses = () => {
+    const thedata: any[] = [];
+    const mydata = this.state.dashboardData?.user_in_progress_courses;
+    if (!mydata?.length) {
+      return thedata;
     }
-    return thedata
-    
-  }
+    if (mydata.length == 1) {
+      return [mydata[0]];
+    }
+    if (mydata.length >= 2) {
+      return [mydata[0], mydata[1]];
+    }
+    return thedata;
+  };
 
-  seeAllCompletedCourses=()=>{
-
-  let theData=this.state.dashboardData?.user_completed_courses
-  if (theData.length==0 || theData.length<=2){
-    return theData;
-  }
-
-  if(theData.length>2 && this.state.seeAllcompleted){
-    return theData;
-  }
-
-  if(theData.length>2 && !this.state.seeAllcompleted){
-    return [theData[0],theData[1]]
-  }
-  }
+  seeAllCompletedCourses = () => {
+    const theData = this.state.dashboardData?.user_completed_courses;
+    if (!theData?.length) {
+      return [];
+    }
+    if (theData.length <= 2) {
+      return theData;
+    }
+    if (this.state.seeAllcompleted) {
+      return theData;
+    }
+    return [theData[0], theData[1]];
+  };
   sendAppTimeapicall=async ()=>{
     let timeValuestring=await AsyncStorage.getItem("APPtime")
 let prevdate=await AsyncStorage.getItem("APPdate")

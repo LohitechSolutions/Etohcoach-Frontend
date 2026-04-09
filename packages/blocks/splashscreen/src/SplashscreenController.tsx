@@ -230,6 +230,7 @@ export default class SplashscreenController extends BlockComponent<
             {
               console.log("Splashscreen - Single app detail, going home");
               this.goingHome()
+              return
             }
             let iosData=responseJson?.app_details?.filter((e:any)=>e?.update_version_ios)[0]
             let androidData=responseJson?.app_details?.filter((e:any)=>e?.android_app_link)[0]
@@ -239,6 +240,10 @@ export default class SplashscreenController extends BlockComponent<
              console.log(currentOS,"data from app details")
           if(currentOS=='ios')
           {
+          if (!iosData) {
+            this.goingHome()
+            return
+          }
           let compared=  this.compareVersions(version,iosData?.update_version_ios?.trim())
           console.log(compared,"data from app details")
               //  this.setState({appDetailapistatus:iosData,os:'ios',buildnumber:version})
@@ -302,8 +307,12 @@ export default class SplashscreenController extends BlockComponent<
               }
           }
           else{
+            if (!androidData) {
+              this.goingHome()
+              return
+            }
             console.log(androidData?.update_version_android,version,"data from app details")
-            let compared=  this.compareVersions(version,androidData?.update_version_android.trim())
+            let compared=  this.compareVersions(version,androidData?.update_version_android?.trim())
               if(androidData?.update_status=="force_update")
               {
                 if(compared==-1)
@@ -370,8 +379,11 @@ export default class SplashscreenController extends BlockComponent<
     }
   }
  compareVersions(version1:any, version2:any) {
-    const v1Parts = version1.split('.').map(Number);
-    const v2Parts = version2.split('.').map(Number);
+    if (version1 == null || version2 == null || String(version2).trim() === '') {
+      return 0
+    }
+    const v1Parts = String(version1).split('.').map(Number);
+    const v2Parts = String(version2).split('.').map(Number);
 
     for (let i = 0; i < 3; i++) {
         if (v1Parts[i] < v2Parts[i]) {
@@ -393,20 +405,49 @@ export default class SplashscreenController extends BlockComponent<
     this.navigated = true;
     console.log("Splashscreen - goingHome called");
 
-    Linking.getInitialURL().then((url) => {
-      if (url === null) {
-        console.log("Splashscreen - No deep link, proceeding to goToHome in", this.state.timeout, "ms");
-        setTimeout(() => {
-          this.goToHome()
-        }, this.state.timeout);
-      }
-      else {
+    const finishToHome = () => {
+      setTimeout(() => {
+        this.goToHome();
+      }, this.state.timeout);
+    };
+
+    /* If getInitialURL rejects or returns a URL we do not handle, we must still
+     * leave the splash. navigated is already true, so the 5s safety timeout
+     * will not run — without catch / fallback the UI stays blank forever. */
+    Linking.getInitialURL()
+      .then((url) => {
+        if (url == null || url === "") {
+          console.log(
+            "Splashscreen - No deep link, proceeding to goToHome in",
+            this.state.timeout,
+            "ms"
+          );
+          finishToHome();
+          return;
+        }
         console.log("Splashscreen - Deep link detected, navigating to", url);
         this.navigate(url);
-      } 
-    });
-    Linking.addEventListener('url', this.handleOpenURL);
-  }
+        try {
+          const parsedUrl = URLParse(url, true);
+          const pathname = parsedUrl.pathname || "";
+          const handled =
+            pathname === "/account/accounts/email_confirmation" ||
+            pathname === "/password/reset";
+          if (!handled) {
+            finishToHome();
+          }
+        } catch (e) {
+          console.warn("Splashscreen - URL parse failed", e);
+          finishToHome();
+        }
+      })
+      .catch((err) => {
+        console.warn("Splashscreen - getInitialURL failed", err);
+        finishToHome();
+      });
+
+    Linking.addEventListener("url", this.handleOpenURL);
+  };
 
 
   async goToHome() {
@@ -418,24 +459,63 @@ export default class SplashscreenController extends BlockComponent<
     console.log("Splashscreen - Hiding native splash and checking token");
     SplashScreen.hide();
     let token = await AsyncStorage.getItem(AsynchStoragekey.AsynchStoragekey.LOGIN_TOKEN)
-    if (token) {
-
-      this.props.navigation.dispatch(
-        StackActions.reset({
-          index: 0,
-          actions: [NavigationActions.navigate({ routeName: 'Authenticated' })],
-          key: null
-        })
-      )
-    }
-    else {
-      this.props.navigation.dispatch(
-        StackActions.reset({
-          index: 0,
-          actions: [NavigationActions.navigate({ routeName: 'NonAuthenticated' })],
-          key: null
-        })
-      )
+    const nav = this.props.navigation;
+    try {
+      if (token) {
+        nav.dispatch(
+          StackActions.reset({
+            index: 0,
+            actions: [
+              NavigationActions.navigate({
+                routeName: "Authenticated",
+                action: NavigationActions.navigate({ routeName: "Dashboard" }),
+              }),
+            ],
+            key: null,
+          })
+        );
+      } else {
+        nav.dispatch(
+          StackActions.reset({
+            index: 0,
+            actions: [
+              NavigationActions.navigate({
+                routeName: "NonAuthenticated",
+                action: NavigationActions.navigate({
+                  routeName: "EmailAccountLoginBlock",
+                }),
+              }),
+            ],
+            key: null,
+          })
+        );
+      }
+    } catch (e) {
+      console.warn("Splashscreen - StackActions.reset failed, retrying navigate", e);
+      if (token) {
+        try {
+          nav.navigate("Authenticated");
+        } catch (_) {}
+      } else {
+        try {
+          nav.dispatch(
+            StackActions.reset({
+              index: 0,
+              actions: [
+                NavigationActions.navigate({
+                  routeName: "NonAuthenticated",
+                  action: NavigationActions.navigate({
+                    routeName: "EmailAccountLoginBlock",
+                  }),
+                }),
+              ],
+              key: null,
+            })
+          );
+        } catch (_) {
+          nav.navigate("NonAuthenticated");
+        }
+      }
     }
   }
 

@@ -403,12 +403,13 @@ const styles = StyleSheet.create({
     fontWeight: "900",
   },
 });
-const mapStateToProps = (state : any) => {
+const mapStateToProps = (state: any) => {
+  const r = state?.rootReducer ?? {};
   return {
-    userProfileState: state.rootReducer.userProfileReducer,
-    subscriptionState:state.rootReducer.subscriptionReducer
-  }
-}
+    userProfileState: r.userProfileReducer,
+    subscriptionState: r.subscriptionReducer,
+  };
+};
 
 const mapDispatchToProps = (dispatch : any) => {
   return {

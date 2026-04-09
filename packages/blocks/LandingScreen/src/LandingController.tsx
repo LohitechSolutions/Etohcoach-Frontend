@@ -85,16 +85,22 @@ runEngine.attachBuildingBlock(this as IBlock, this.subScribedMessages);
       this.setState({language : "Français 🇫🇷"})
       await AsyncStorage.setItem("LangaugeDisplay",langue);
     }
-    if (Platform.OS == 'android') {
-      GoogleSignin.configure()
-    }
-    else {
-      GoogleSignin.configure({
-        webClientId:
-          Platform.OS === 'ios' ? '1097363110035-l6tqg6t332vhovlar0ukl8u7i36v1s2q.apps.googleusercontent.com' : '445080135670-usn9tepn8re2n7l9kkmum0tgv45eqf9o.apps.googleusercontent.com',
-        offlineAccess: true,
-        iosClientId: '1097363110035-l6tqg6t332vhovlar0ukl8u7i36v1s2q.apps.googleusercontent.com',
-      });
+    try {
+      if (Platform.OS == "android") {
+        GoogleSignin.configure();
+      } else {
+        GoogleSignin.configure({
+          webClientId:
+            Platform.OS === "ios"
+              ? "1097363110035-l6tqg6t332vhovlar0ukl8u7i36v1s2q.apps.googleusercontent.com"
+              : "445080135670-usn9tepn8re2n7l9kkmum0tgv45eqf9o.apps.googleusercontent.com",
+          offlineAccess: true,
+          iosClientId:
+            "1097363110035-l6tqg6t332vhovlar0ukl8u7i36v1s2q.apps.googleusercontent.com",
+        });
+      }
+    } catch (err) {
+      console.warn("Landing: GoogleSignin.configure failed", err);
     }
   }
 

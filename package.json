@@ -4,17 +4,16 @@
   "private": true,
   "workspaces": {
     "packages": [
-      "packages/*",
-      "react-native"
+      "packages/*"
     ]
   },
   "scripts": {
     "preinstall": "yarn --cwd ./packages/blocks/core",
-    "android": "yarn workspace etohcoach-nav-only-expo android",
+    "android": "yarn --cwd react-native android",
     "compile": "tsc -b --incremental",
-    "ios": "yarn workspace etohcoach-nav-only-expo ios",
-    "start": "yarn workspace etohcoach-nav-only-expo start",
-    "typecheck:app": "yarn workspace etohcoach-nav-only-expo typecheck",
+    "ios": "yarn --cwd react-native ios",
+    "start": "yarn --cwd react-native start",
+    "typecheck:app": "yarn --cwd react-native typecheck",
     "postinstall": "patch-package"
   },
   "resolutions": {
