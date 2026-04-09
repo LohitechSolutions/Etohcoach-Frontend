@@ -1,3 +1,4 @@
+const fs = require("fs");
 const path = require("path");
 const { getDefaultConfig } = require("expo/metro-config");
 
@@ -77,7 +78,21 @@ const rnFsShim = path.resolve(projectRoot, "src/shims/react-native-fs.js");
 
 const rnIapShim = path.resolve(projectRoot, "src/shims/react-native-iap.js");
 
+const lottieShim = path.resolve(projectRoot, "src/shims/lottie-react-native.js");
+
+const rnVideoShim = path.resolve(projectRoot, "src/shims/react-native-video.js");
+
+const firebaseAnalyticsShim = path.resolve(
+  projectRoot,
+  "src/shims/react-native-firebase-analytics.js"
+);
+
 const originalResolveRequest = config.resolver.resolveRequest;
+
+/** Lock React Native + React to this app's native binary (0.74.x). Root workspace hoists legacy 0.65.3. */
+const expoNodeModules = path.resolve(projectRoot, "node_modules");
+const expoReactNativeRoot = path.join(expoNodeModules, "react-native");
+const expoReactRoot = path.join(expoNodeModules, "react");
 
 function bareModuleName(name) {
   const s = String(name);
@@ -85,8 +100,98 @@ function bareModuleName(name) {
   return (q === -1 ? s : s.slice(0, q)).trim();
 }
 
+function resolveExistingFile(basePath) {
+  const candidates = [
+    basePath,
+    `${basePath}.js`,
+    `${basePath}.jsx`,
+    `${basePath}.ts`,
+    `${basePath}.tsx`,
+    `${basePath}.json`,
+    path.join(basePath, "index.js"),
+  ];
+  for (const p of candidates) {
+    try {
+      if (fs.existsSync(p) && fs.statSync(p).isFile()) {
+        return p;
+      }
+    } catch (_) {
+      // ignore
+    }
+  }
+  return null;
+}
+
+function resolvePackageEntry(packageRoot) {
+  try {
+    const pkgPath = path.join(packageRoot, "package.json");
+    const pkg = JSON.parse(fs.readFileSync(pkgPath, "utf8"));
+    const main = pkg.main || "index.js";
+    const entry = path.join(packageRoot, main);
+    if (fs.existsSync(entry) && fs.statSync(entry).isFile()) {
+      return entry;
+    }
+  } catch (_) {
+    // ignore
+  }
+  return resolveExistingFile(path.join(packageRoot, "index"));
+}
+
+function resolveExpoReactNativeTree(bare) {
+  if (bare === "react-native") {
+    const entry =
+      resolveExistingFile(path.join(expoReactNativeRoot, "index")) ||
+      path.join(expoReactNativeRoot, "index.js");
+    if (fs.existsSync(entry)) {
+      return { filePath: path.normalize(entry), type: "sourceFile" };
+    }
+  }
+  if (bare.startsWith("react-native/")) {
+    const rel = bare.slice("react-native/".length);
+    const resolved = resolveExistingFile(path.join(expoReactNativeRoot, rel));
+    if (resolved) {
+      return { filePath: path.normalize(resolved), type: "sourceFile" };
+    }
+  }
+  if (bare === "react") {
+    const entry = resolvePackageEntry(expoReactRoot);
+    if (entry) {
+      return { filePath: path.normalize(entry), type: "sourceFile" };
+    }
+  }
+  if (bare.startsWith("react/")) {
+    const rel = bare.slice("react/".length);
+    const resolved = resolveExistingFile(path.join(expoReactRoot, rel));
+    if (resolved) {
+      return { filePath: path.normalize(resolved), type: "sourceFile" };
+    }
+  }
+  if (bare.startsWith("@react-native/")) {
+    const parts = bare.split("/");
+    const scopePkg = `${parts[0]}/${parts[1]}`;
+    const subPath = parts.slice(2).join("/");
+    const pkgRoot = path.join(expoNodeModules, scopePkg);
+    if (!subPath) {
+      const entry = resolvePackageEntry(pkgRoot);
+      if (entry) {
+        return { filePath: path.normalize(entry), type: "sourceFile" };
+      }
+    } else {
+      const resolved = resolveExistingFile(path.join(pkgRoot, subPath));
+      if (resolved) {
+        return { filePath: path.normalize(resolved), type: "sourceFile" };
+      }
+    }
+  }
+  return null;
+}
+
 config.resolver.resolveRequest = (context, moduleName, platform) => {
   const bare = bareModuleName(moduleName);
+  const forcedRn = resolveExpoReactNativeTree(bare);
+  if (forcedRn) {
+    return forcedRn;
+  }
   if (bare === "redux") {
     return { filePath: reduxShim, type: "sourceFile" };
   }
@@ -147,6 +252,15 @@ config.resolver.resolveRequest = (context, moduleName, platform) => {
   if (bare === "@react-native-firebase/messaging") {
     return { filePath: firebaseMessagingShim, type: "sourceFile" };
   }
+  if (bare === "@react-native-firebase/analytics") {
+    return { filePath: firebaseAnalyticsShim, type: "sourceFile" };
+  }
+  if (bare === "lottie-react-native") {
+    return { filePath: lottieShim, type: "sourceFile" };
+  }
+  if (bare === "react-native-video") {
+    return { filePath: rnVideoShim, type: "sourceFile" };
+  }
   if (bare === "react-native-fs") {
     return { filePath: rnFsShim, type: "sourceFile" };
   }
@@ -163,10 +277,12 @@ config.watchFolders = [workspaceRoot];
 config.resolver.nodeModulesPaths = [
   path.resolve(projectRoot, "node_modules"),
   path.resolve(workspaceRoot, "node_modules"),
-  path.resolve(workspaceRoot, "packages/blocks/core/node_modules")
+  path.resolve(workspaceRoot, "packages/blocks/core/node_modules"),
 ];
 config.resolver.extraNodeModules = {
   ...(config.resolver.extraNodeModules || {}),
+  react: expoReactRoot,
+  "react-native": expoReactNativeRoot,
   "react-redux": path.resolve(projectRoot, "src/shims/react-redux.js"),
   "react-i18next": path.resolve(projectRoot, "src/shims/react-i18next.js"),
   i18next: path.resolve(projectRoot, "src/shims/i18next.js"),
@@ -222,6 +338,12 @@ config.resolver.extraNodeModules = {
     projectRoot,
     "src/shims/react-native-firebase-messaging.js"
   ),
+  "@react-native-firebase/analytics": path.resolve(
+    projectRoot,
+    "src/shims/react-native-firebase-analytics.js"
+  ),
+  "lottie-react-native": path.resolve(projectRoot, "src/shims/lottie-react-native.js"),
+  "react-native-video": path.resolve(projectRoot, "src/shims/react-native-video.js"),
   "react-native-fs": path.resolve(projectRoot, "src/shims/react-native-fs.js"),
   "react-native-iap": path.resolve(projectRoot, "src/shims/react-native-iap.js"),
 };

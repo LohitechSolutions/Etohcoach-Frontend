@@ -14,7 +14,7 @@ function createMessagingApi() {
     getInitialNotification: async () => null,
     getToken: async () => "",
     requestPermission: async () => AuthorizationStatus.DENIED,
-    setBackgroundMessageHandler: () => {},
+    setBackgroundMessageHandler: (_handler) => {},
     subscribeToTopic: async () => {},
     unsubscribeFromTopic: async () => {},
   };
