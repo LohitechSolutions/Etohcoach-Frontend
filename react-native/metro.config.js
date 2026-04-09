@@ -59,56 +59,64 @@ const orientationShim = path.resolve(
 const rnSoundShim = path.resolve(projectRoot, "src/shims/react-native-sound.js");
 
 const originalResolveRequest = config.resolver.resolveRequest;
+
+function bareModuleName(name) {
+  const s = String(name);
+  const q = s.indexOf("?");
+  return (q === -1 ? s : s.slice(0, q)).trim();
+}
+
 config.resolver.resolveRequest = (context, moduleName, platform) => {
-  if (moduleName === "redux") {
+  const bare = bareModuleName(moduleName);
+  if (bare === "redux") {
     return { filePath: reduxShim, type: "sourceFile" };
   }
-  if (moduleName === "redux-thunk") {
+  if (bare === "redux-thunk") {
     return { filePath: reduxThunkShim, type: "sourceFile" };
   }
-  if (moduleName === "redux-persist") {
+  if (bare === "redux-persist") {
     return { filePath: reduxPersistShim, type: "sourceFile" };
   }
-  if (moduleName === "redux-persist/integration/react") {
+  if (bare === "redux-persist/integration/react") {
     return { filePath: reduxPersistReactShim, type: "sourceFile" };
   }
-  if (moduleName === "redux-saga") {
+  if (bare === "redux-saga") {
     return { filePath: reduxSagaShim, type: "sourceFile" };
   }
-  if (moduleName === "redux-saga/effects") {
+  if (bare === "redux-saga/effects") {
     return { filePath: reduxSagaEffectsShim, type: "sourceFile" };
   }
-  if (moduleName === "@ptomasroos/react-native-multi-slider") {
+  if (bare === "@ptomasroos/react-native-multi-slider") {
     return {
       filePath: multiSliderShim,
       type: "sourceFile"
     };
   }
-  if (moduleName === "react-native-draggable-grid") {
+  if (bare === "react-native-draggable-grid") {
     return {
       filePath: draggableGridShim,
       type: "sourceFile"
     };
   }
   if (
-    moduleName === "@invertase/react-native-apple-authentication" ||
-    moduleName.startsWith("@invertase/react-native-apple-authentication/")
+    bare === "@invertase/react-native-apple-authentication" ||
+    bare.startsWith("@invertase/react-native-apple-authentication/")
   ) {
     return { filePath: appleAuthEntry, type: "sourceFile" };
   }
-  if (moduleName === "react-progress-label") {
+  if (bare === "react-progress-label") {
     return { filePath: reactProgressLabelShim, type: "sourceFile" };
   }
-  if (moduleName === "react-native-soundcloud-waveform") {
+  if (bare === "react-native-soundcloud-waveform") {
     return { filePath: soundcloudWaveformShim, type: "sourceFile" };
   }
-  if (moduleName === "react-native-media-controls") {
+  if (bare === "react-native-media-controls") {
     return { filePath: mediaControlsShim, type: "sourceFile" };
   }
-  if (moduleName === "react-native-orientation") {
+  if (bare === "react-native-orientation") {
     return { filePath: orientationShim, type: "sourceFile" };
   }
-  if (moduleName === "react-native-sound") {
+  if (bare === "react-native-sound") {
     return { filePath: rnSoundShim, type: "sourceFile" };
   }
   if (typeof originalResolveRequest === "function") {
