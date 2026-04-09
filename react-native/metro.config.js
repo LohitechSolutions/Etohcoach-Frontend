@@ -95,6 +95,10 @@ const rnLocalizeShim = path.resolve(
   projectRoot,
   "src/shims/react-native-localize.js"
 );
+const rnPermissionsShim = path.resolve(
+  projectRoot,
+  "src/shims/react-native-permissions.js"
+);
 
 const originalResolveRequest = config.resolver.resolveRequest;
 
@@ -122,6 +126,116 @@ function resolveStubPackage(moduleName, packageName, shimAbsolutePath) {
   ) {
     return { filePath: shimAbsolutePath, type: "sourceFile" };
   }
+  return null;
+}
+
+/**
+ * Legacy app: react-navigation 2.18.7 bundles react-navigation-stack@0.7.0 under
+ * node_modules/react-navigation/node_modules/. Hoisted react-navigation-stack@2.x
+ * imports useTheme from react-navigation, which v2 does not export → runtime crash.
+ */
+const NESTED_REACT_NAVIGATION_STACK = path.join(
+  workspaceRoot,
+  "node_modules",
+  "react-navigation",
+  "node_modules",
+  "react-navigation-stack"
+);
+
+function resolveNestedReactNavigationStack(moduleName) {
+  const pkg = "react-navigation-stack";
+  if (!fs.existsSync(path.join(NESTED_REACT_NAVIGATION_STACK, "package.json"))) {
+    return null;
+  }
+  const bare = bareModuleName(moduleName);
+  const norm = String(moduleName).replace(/\\/g, "/");
+
+  if (bare === pkg || bare.startsWith(`${pkg}/`)) {
+    const sub = bare === pkg ? "" : bare.slice(pkg.length + 1);
+    if (!sub) {
+      const entry = resolvePackageEntry(NESTED_REACT_NAVIGATION_STACK);
+      if (entry) {
+        return { filePath: path.normalize(entry), type: "sourceFile" };
+      }
+    } else {
+      const resolved = resolveExistingFile(path.join(NESTED_REACT_NAVIGATION_STACK, sub));
+      if (resolved) {
+        return { filePath: path.normalize(resolved), type: "sourceFile" };
+      }
+    }
+  }
+
+  const needle = `/node_modules/${pkg}/`;
+  const idx = norm.indexOf(needle);
+  if (idx !== -1) {
+    const rel = norm.slice(idx + needle.length).split("?")[0];
+    const resolved = resolveExistingFile(path.join(NESTED_REACT_NAVIGATION_STACK, rel));
+    if (resolved) {
+      return { filePath: path.normalize(resolved), type: "sourceFile" };
+    }
+  }
+
+  if (norm.endsWith(`/node_modules/${pkg}`)) {
+    const entry = resolvePackageEntry(NESTED_REACT_NAVIGATION_STACK);
+    if (entry) {
+      return { filePath: path.normalize(entry), type: "sourceFile" };
+    }
+  }
+
+  return null;
+}
+
+/** Legacy app lives under blocks/core; Metro was resolving react-navigation 2.x from there (unpatched). Pin to repo-root patched copies. */
+const REACT_NAVIGATION_PKGS = [
+  "react-navigation",
+  "react-navigation-drawer",
+  "react-navigation-tabs",
+  "react-navigation-deprecated-tab-navigator",
+];
+
+function resolveReactNavigationFromWorkspace(moduleName) {
+  const bare = bareModuleName(moduleName);
+  const norm = String(moduleName).replace(/\\/g, "/");
+
+  for (const pkg of REACT_NAVIGATION_PKGS) {
+    const pkgRoot = path.join(workspaceRoot, "node_modules", pkg);
+    if (!fs.existsSync(path.join(pkgRoot, "package.json"))) {
+      continue;
+    }
+
+    if (bare === pkg || bare.startsWith(`${pkg}/`)) {
+      const sub = bare === pkg ? "" : bare.slice(pkg.length + 1);
+      if (!sub) {
+        const entry = resolvePackageEntry(pkgRoot);
+        if (entry) {
+          return { filePath: path.normalize(entry), type: "sourceFile" };
+        }
+      } else {
+        const resolved = resolveExistingFile(path.join(pkgRoot, sub));
+        if (resolved) {
+          return { filePath: path.normalize(resolved), type: "sourceFile" };
+        }
+      }
+    }
+
+    const needle = `/node_modules/${pkg}/`;
+    const idx = norm.indexOf(needle);
+    if (idx !== -1) {
+      const rel = norm.slice(idx + needle.length).split("?")[0];
+      const resolved = resolveExistingFile(path.join(pkgRoot, rel));
+      if (resolved) {
+        return { filePath: path.normalize(resolved), type: "sourceFile" };
+      }
+    }
+
+    if (norm.endsWith(`/node_modules/${pkg}`)) {
+      const entry = resolvePackageEntry(pkgRoot);
+      if (entry) {
+        return { filePath: path.normalize(entry), type: "sourceFile" };
+      }
+    }
+  }
+
   return null;
 }
 
@@ -302,6 +416,22 @@ config.resolver.resolveRequest = (context, moduleName, platform) => {
   if (localizeRes) {
     return localizeRes;
   }
+  const permissionsRes = resolveStubPackage(
+    moduleName,
+    "react-native-permissions",
+    rnPermissionsShim
+  );
+  if (permissionsRes) {
+    return permissionsRes;
+  }
+  const nestedStackRes = resolveNestedReactNavigationStack(moduleName);
+  if (nestedStackRes) {
+    return nestedStackRes;
+  }
+  const reactNavRes = resolveReactNavigationFromWorkspace(moduleName);
+  if (reactNavRes) {
+    return reactNavRes;
+  }
   const bare = bareModuleName(moduleName);
   const forcedRn = resolveExpoReactNativeTree(bare);
   if (forcedRn) {
@@ -401,6 +531,7 @@ config.resolver.extraNodeModules = {
   i18next: path.resolve(projectRoot, "src/shims/i18next.js"),
   "react-native-device-info": path.resolve(projectRoot, "src/shims/react-native-device-info.js"),
   "react-native-localize": path.resolve(projectRoot, "src/shims/react-native-localize.js"),
+  "react-native-permissions": path.resolve(projectRoot, "src/shims/react-native-permissions.js"),
   "react-native-responsive-fontsize": path.resolve(projectRoot, "src/shims/react-native-responsive-fontsize.js"),
   "react-native-responsive-screen": path.resolve(projectRoot, "src/shims/react-native-responsive-screen.js"),
   "react-native-responsive-dimensions": path.resolve(projectRoot, "src/shims/react-native-responsive-dimensions.js"),

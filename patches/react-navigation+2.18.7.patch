@@ -1,5 +1,5 @@
 diff --git a/node_modules/react-navigation/src/createNavigationContainer.js b/node_modules/react-navigation/src/createNavigationContainer.js
-index 3cfc5e3..6a711f1 100644
+index 3cfc5e3..2e2837a 100644
 --- a/node_modules/react-navigation/src/createNavigationContainer.js
 +++ b/node_modules/react-navigation/src/createNavigationContainer.js
 @@ -1,6 +1,7 @@
@@ -8,18 +8,92 @@ index 3cfc5e3..6a711f1 100644
 +import { Linking, Platform, BackHandler } from 'react-native';
  import { polyfill } from 'react-lifecycles-compat';
 +import AsyncStorage from "@react-native-async-storage/async-storage";
-
+ 
  import NavigationActions from './NavigationActions';
  import getNavigation from './getNavigation';
+@@ -19,7 +20,12 @@ function validateProps(props) {
+ 
+   const { navigation, screenProps, ...containerProps } = props;
+ 
+-  const keys = Object.keys(containerProps);
++  const keys = Object.keys(containerProps).filter((key) => {
++    if (key === 'enableURLHandling' && containerProps[key] === false) {
++      return false;
++    }
++    return true;
++  });
+ 
+   if (keys.length !== 0) {
+     throw new Error(
+@@ -60,6 +66,8 @@ export default function createNavigationContainer(Component) {
+   class NavigationContainer extends React.Component {
+     subs = null;
+ 
++    _linkingSubscription = null;
++
+     static router = Component.router;
+     static navigationOptions = null;
+ 
+@@ -115,7 +123,12 @@ export default function createNavigationContainer(Component) {
+ 
+       const { navigation, screenProps, ...containerProps } = props;
+ 
+-      const keys = Object.keys(containerProps);
++      const keys = Object.keys(containerProps).filter((key) => {
++        if (key === 'enableURLHandling' && containerProps[key] === false) {
++          return false;
++        }
++        return true;
++      });
+ 
+       if (keys.length !== 0) {
+         throw new Error(
+@@ -200,7 +213,10 @@ export default function createNavigationContainer(Component) {
+         }
+       }
+       _statefulContainerCount++;
+-      Linking.addEventListener('url', this._handleOpenURL);
++      this._linkingSubscription = Linking.addEventListener(
++        'url',
++        this._handleOpenURL
++      );
+ 
+       // Pull out anything that can impact state
+       const { persistenceKey, uriPrefix, enableURLHandling } = this.props;
+@@ -293,7 +309,15 @@ export default function createNavigationContainer(Component) {
+ 
+     componentWillUnmount() {
+       this._isMounted = false;
+-      Linking.removeEventListener('url', this._handleOpenURL);
++      if (
++        this._linkingSubscription &&
++        typeof this._linkingSubscription.remove === 'function'
++      ) {
++        this._linkingSubscription.remove();
++        this._linkingSubscription = null;
++      } else if (typeof Linking.removeEventListener === 'function') {
++        Linking.removeEventListener('url', this._handleOpenURL);
++      }
+       this.subs && this.subs.remove();
+ 
+       if (this._isStateful()) {
 diff --git a/node_modules/react-navigation/node_modules/react-navigation-stack/dist/views/Header/Header.js b/node_modules/react-navigation/node_modules/react-navigation-stack/dist/views/Header/Header.js
-index 3cfc5e3..6a711f1 100644
+index 1111111..2222222 100644
 --- a/node_modules/react-navigation/node_modules/react-navigation-stack/dist/views/Header/Header.js
 +++ b/node_modules/react-navigation/node_modules/react-navigation-stack/dist/views/Header/Header.js
-@@ -1,1 +1,2 @@
+@@ -1,6 +1,7 @@
+ import React from 'react';
+ 
 -import { Animated, Image, Platform, StyleSheet, View, I18nManager, MaskedViewIOS } from 'react-native';
 +import { Animated, Image, Platform, StyleSheet, View, I18nManager } from 'react-native';
 +//import MaskedViewIOS from '@react-native-masked-view/masked-view';
-@@ -333,8 +333,1 @@
+ 
+ import { SafeAreaView, withOrientation } from 'react-navigation';
+ 
+@@ -330,14 +331,7 @@
+           {right}
+         </View>;
+     } else {
 -      return <MaskedViewIOS {...wrapperProps} maskElement={<View style={styles.iconMaskContainer}>
 -              <Image source={require('../assets/back-icon-mask.png')} style={styles.iconMask} />
 -              <View style={styles.iconMaskFillerRect} />
@@ -29,3 +103,7 @@ index 3cfc5e3..6a711f1 100644
 -          {right}
 -        </MaskedViewIOS>;
 +      return <></>;
+     }
+   }
+ 
+
