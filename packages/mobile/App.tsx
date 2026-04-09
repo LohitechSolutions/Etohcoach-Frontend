@@ -68,7 +68,6 @@ import Notifications from '../blocks/notifications/src/Notifications';
 import Catalogue from '../blocks/catalogue/src/Catalogue';
 import ManageNotifications from '../blocks/user-profile-basic/src/ManageNotifications';
 import SubCriptionScreen from '../blocks/SubCriptionScreen/src/Subcription';
-import {heightPercentageToDP as hp} from 'react-native-responsive-screen';
 import SubcriptionSuccsess from '../blocks/SubCriptionScreen/src/SubcriptionSuccsess';
 import OverView from '../blocks/catalogue/src/OverView';
 import FilterModal from '../blocks/catalogue/src/FilterModal';
@@ -133,6 +132,7 @@ const deviceModel = DeviceInfo.getModel();
 console.log("iphonedataredux",deviceModel)
 
 const windowHeight = Dimensions.get('window').height;
+const hp = (percentage: number) => (windowHeight * percentage) / 100;
 console.log("height of this device",windowHeight)
 let iphone11={
   paddingBottom:33,

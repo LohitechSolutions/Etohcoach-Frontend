@@ -1,18 +1,15 @@
 
 // Customizable Area Start
 import {
+    Dimensions,
     Image,
+    PixelRatio,
     SafeAreaView,
     StyleSheet,
     Text,
     View
 } from "react-native";
 import React from "react";
-import { RFValue as rf } from "react-native-responsive-fontsize";
-import {
-    heightPercentageToDP as hp,
-    widthPercentageToDP as wp
-} from "react-native-responsive-screen";
 import Context from "../../../components/src/context/context";
 import { FONTS } from "../../../framework/src/Fonts";
 import { COLORS } from "../../../framework/src/Globals";
@@ -26,6 +23,22 @@ import { withTranslation } from "react-i18next";
 import { connect } from 'react-redux';
 import { addUserProfile, removeUserProfile } from "../../../mobile/src/store/actions/UserProfile";
 // Customizable Area End
+
+const rf = (fontSize: number, standardScreenHeight = 812) => {
+    const { height } = Dimensions.get("window");
+    const responsiveSize = (fontSize * height) / standardScreenHeight;
+    return Math.round(PixelRatio.roundToNearestPixel(responsiveSize));
+};
+
+const hp = (percentage: number) => {
+    const { height } = Dimensions.get("window");
+    return (height * percentage) / 100;
+};
+
+const wp = (percentage: number) => {
+    const { width } = Dimensions.get("window");
+    return (width * percentage) / 100;
+};
 
 class EditProfile extends UserProfileBasicController {
     static contextType = Context;

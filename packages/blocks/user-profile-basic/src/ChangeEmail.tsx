@@ -2,18 +2,15 @@ import React from "react";
 
 // Customizable Area Start
 import {
+  Dimensions,
   StyleSheet,
   Text,
   View,
   Image,
   TouchableOpacity,
   SafeAreaView,
+  PixelRatio,
 } from "react-native";
-import {
-  widthPercentageToDP as wp,
-  heightPercentageToDP as hp,
-} from "react-native-responsive-screen";
-import { RFValue as rf } from "react-native-responsive-fontsize";
 import ButtonComponent from "../../../mobile/src/component/ButtonComponent";
 import { COLORS } from "../../../framework/src/Globals";
 import { back, email, emailImage } from "./assets";
@@ -30,6 +27,22 @@ import { connect } from 'react-redux';
 import { addUserProfile, removeUserProfile } from "../../../mobile/src/store/actions/UserProfile";
 
 // Customizable Area End
+
+const hp = (percentage: number) => {
+  const { height } = Dimensions.get("window");
+  return (height * percentage) / 100;
+};
+
+const wp = (percentage: number) => {
+  const { width } = Dimensions.get("window");
+  return (width * percentage) / 100;
+};
+
+const rf = (fontSize: number, standardScreenHeight = 812) => {
+  const { height } = Dimensions.get("window");
+  const responsiveSize = (fontSize * height) / standardScreenHeight;
+  return Math.round(PixelRatio.roundToNearestPixel(responsiveSize));
+};
 
 class ChangeEmail extends UserProfileBasicController {
 
