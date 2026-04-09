@@ -1,7 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { applyMiddleware, createStore } from 'redux';
-import { persistCombineReducers, persistStore } from 'redux-persist';
-import thunk from 'redux-thunk';
+import { applyMiddleware, createStore } from '../../../../react-native/src/shims/redux';
+import { persistCombineReducers, persistStore } from '../../../../react-native/src/shims/redux-persist';
+import thunk from '../../../../react-native/src/shims/redux-thunk';
 import rootReducer from './reducers';
 // export const sagaMiddleware = createSagaMiddleware();
 

@@ -1,4 +1,4 @@
-import { all } from 'redux-saga/effects';
+import { all } from '../../../../../react-native/src/shims/redux-saga-effects';
 
 import { userLoginActionWatcher } from './Login';
 import { userTermsActionWatcher } from './Terms/Terms';

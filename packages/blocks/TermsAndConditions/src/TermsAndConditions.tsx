@@ -24,7 +24,7 @@ import BottemButton from "../../../mobile/src/component/BottemButtonComponent";
 import { useWindowDimensions } from 'react-native';
 import RenderHtml from 'react-native-render-html';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
+import { bindActionCreators } from '../../../../react-native/src/shims/redux';
 import { userLoginWatcher } from '../../../mobile/src/store/actions';
 import { userTermsWatcher } from '../../../mobile/src/store/actions';
 import Context from "../../../components/src/context/context";

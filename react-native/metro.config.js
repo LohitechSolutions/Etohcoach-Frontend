@@ -16,8 +16,65 @@ const draggableGridShim = path.resolve(
   "src/shims/react-native-draggable-grid.js"
 );
 
+const reduxShim = path.resolve(projectRoot, "src/shims/redux.js");
+const reduxThunkShim = path.resolve(projectRoot, "src/shims/redux-thunk.js");
+const reduxPersistShim = path.resolve(projectRoot, "src/shims/redux-persist.js");
+const reduxPersistReactShim = path.resolve(
+  projectRoot,
+  "src/shims/redux-persist-integration-react.js"
+);
+
+const reduxSagaShim = path.resolve(projectRoot, "src/shims/redux-saga.js");
+const reduxSagaEffectsShim = path.resolve(
+  projectRoot,
+  "src/shims/redux-saga-effects.js"
+);
+
+const appleAuthShim = path.resolve(
+  projectRoot,
+  "src/shims/@invertase/react-native-apple-authentication.js"
+);
+
+const reactProgressLabelShim = path.resolve(
+  projectRoot,
+  "src/shims/react-progress-label.js"
+);
+
+const soundcloudWaveformShim = path.resolve(
+  projectRoot,
+  "src/shims/react-native-soundcloud-waveform.js"
+);
+
+const mediaControlsShim = path.resolve(
+  projectRoot,
+  "src/shims/react-native-media-controls.js"
+);
+
+const orientationShim = path.resolve(
+  projectRoot,
+  "src/shims/react-native-orientation.js"
+);
+
 const originalResolveRequest = config.resolver.resolveRequest;
 config.resolver.resolveRequest = (context, moduleName, platform) => {
+  if (moduleName === "redux") {
+    return { filePath: reduxShim, type: "sourceFile" };
+  }
+  if (moduleName === "redux-thunk") {
+    return { filePath: reduxThunkShim, type: "sourceFile" };
+  }
+  if (moduleName === "redux-persist") {
+    return { filePath: reduxPersistShim, type: "sourceFile" };
+  }
+  if (moduleName === "redux-persist/integration/react") {
+    return { filePath: reduxPersistReactShim, type: "sourceFile" };
+  }
+  if (moduleName === "redux-saga") {
+    return { filePath: reduxSagaShim, type: "sourceFile" };
+  }
+  if (moduleName === "redux-saga/effects") {
+    return { filePath: reduxSagaEffectsShim, type: "sourceFile" };
+  }
   if (moduleName === "@ptomasroos/react-native-multi-slider") {
     return {
       filePath: multiSliderShim,
@@ -29,6 +86,21 @@ config.resolver.resolveRequest = (context, moduleName, platform) => {
       filePath: draggableGridShim,
       type: "sourceFile"
     };
+  }
+  if (moduleName === "@invertase/react-native-apple-authentication") {
+    return { filePath: appleAuthShim, type: "sourceFile" };
+  }
+  if (moduleName === "react-progress-label") {
+    return { filePath: reactProgressLabelShim, type: "sourceFile" };
+  }
+  if (moduleName === "react-native-soundcloud-waveform") {
+    return { filePath: soundcloudWaveformShim, type: "sourceFile" };
+  }
+  if (moduleName === "react-native-media-controls") {
+    return { filePath: mediaControlsShim, type: "sourceFile" };
+  }
+  if (moduleName === "react-native-orientation") {
+    return { filePath: orientationShim, type: "sourceFile" };
   }
   if (typeof originalResolveRequest === "function") {
     return originalResolveRequest(context, moduleName, platform);
@@ -62,7 +134,33 @@ config.resolver.extraNodeModules = {
   "react-native-draggable-grid": path.resolve(
     projectRoot,
     "src/shims/react-native-draggable-grid.js"
-  )
+  ),
+  redux: path.resolve(projectRoot, "src/shims/redux.js"),
+  "redux-thunk": path.resolve(projectRoot, "src/shims/redux-thunk.js"),
+  "redux-persist": path.resolve(projectRoot, "src/shims/redux-persist.js"),
+  "redux-persist/integration/react": path.resolve(
+    projectRoot,
+    "src/shims/redux-persist-integration-react.js"
+  ),
+  "redux-saga": path.resolve(projectRoot, "src/shims/redux-saga.js"),
+  "redux-saga/effects": path.resolve(projectRoot, "src/shims/redux-saga-effects.js"),
+  "@invertase/react-native-apple-authentication": path.resolve(
+    projectRoot,
+    "src/shims/@invertase/react-native-apple-authentication.js"
+  ),
+  "react-progress-label": path.resolve(projectRoot, "src/shims/react-progress-label.js"),
+  "react-native-soundcloud-waveform": path.resolve(
+    projectRoot,
+    "src/shims/react-native-soundcloud-waveform.js"
+  ),
+  "react-native-media-controls": path.resolve(
+    projectRoot,
+    "src/shims/react-native-media-controls.js"
+  ),
+  "react-native-orientation": path.resolve(
+    projectRoot,
+    "src/shims/react-native-orientation.js"
+  ),
 };
 config.resolver.unstable_enableSymlinks = true;
 

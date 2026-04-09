@@ -1,4 +1,4 @@
-import {takeLatest, put, call} from 'redux-saga/effects';
+import {takeLatest, put, call} from '../../../../../../react-native/src/shims/redux-saga-effects';
 
 import {TERMS_CONDITIONS_WATCHER} from '../../constant';
 

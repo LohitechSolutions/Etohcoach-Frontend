@@ -1,4 +1,4 @@
-import {combineReducers} from 'redux';
+import {combineReducers} from '../../../../../react-native/src/shims/redux';
 
 import login from './Login';
 import Terms from './Terms/Terms';

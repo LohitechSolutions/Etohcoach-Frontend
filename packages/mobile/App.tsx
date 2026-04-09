@@ -103,11 +103,11 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import AsynchStoragekey from '../mobile/src/utils/asynchKeys';
 import {Provider} from 'react-redux';
 
-import { PersistGate } from 'redux-persist/integration/react'
+import { PersistGate } from '../../react-native/src/shims/redux-persist-integration-react'
 import {withTranslation} from 'react-i18next';
 import i18next from 'i18next';
 import { offlineDataCall, offlineDataWatcher } from './src/store/sagas/OfflineData';
-import createSagaMiddleware from 'redux-saga';
+import createSagaMiddleware from '../../react-native/src/shims/redux-saga';
 import rootSaga from '../mobile/src/store/sagas';
 import { configStore, sagaMiddleware } from './src/store';
 import DeviceInfo from 'react-native-device-info';
