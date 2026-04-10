@@ -20,6 +20,7 @@ Audit basis: compared legacy routes in `packages/mobile/App.tsx` with placeholde
 
 ### Snapshot
 - **Default Expo entry:** `react-native/App.js` mounts **`AppShell`** — RN6 + **legacy block components** + nested `Authenticated` / `NonAuthenticated` stacks (see `authStackRoutes.ts` / `nonAuthStackRoutes.ts`). Set **`EXPO_PUBLIC_USE_LEGACY_APP=true`** for the original v2 `packages/mobile/App` container only.
+- **Expo target column below:** References to `react-native/src/features/*` are **out of date** (that scaffold was removed). Implementation is **`react-native/src/migration/legacyBlockRegistry.ts`** → `packages/blocks/*` / `packages/components/*`.
 - Placeholder scaffold coverage: **41 routes + tab shell + splash/landing entrypoints** are already declared in Expo.
 - Legacy routes missing from Expo scaffold: **`NonAuthenticated`, `Authenticated`, `EmailNotifications`, `BulkUploading`, `LanguageOptions`, `Annotations`, `WebviewComponent`, `settings`, `OverViews`, `CfFlashCardOne`**.
 - Naming/alias differences: **`SPLASH` vs `Splashscreen`** both wired to the same splash screen; **`UserProfileBasicBlock`** now maps to **`ProfileScreen`** in `AppNavigator` (legacy route key preserved).

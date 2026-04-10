@@ -8,7 +8,7 @@ Expo in `react-native/` **defaults** to **`AppShell`**: React Navigation 6 + **l
 
 Set **`EXPO_PUBLIC_USE_LEGACY_APP=true`** to use the original **`packages/mobile/App.tsx`** react-navigation v2 container unchanged.
 
-`EXPO_PUBLIC_OFFLINE_MODE=false` is required for real API traffic from blocks (framework/runEngine); `react-native/src/services/api/client.ts` mocks are separate from block API calls.
+Network traffic from blocks uses `packages/framework` / `runEngine` against your configured backend.
 
 ## Getting Started
 

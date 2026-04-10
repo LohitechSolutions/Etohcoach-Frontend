@@ -7,7 +7,7 @@ import {
   StyleSheet,
   Text
 } from "react-native";
-import { allRoutes } from "../../navigation/routes";
+import { allRoutes } from "./routes";
 
 type Props = {
   navigation: {
@@ -15,13 +15,14 @@ type Props = {
   };
 };
 
+/** Shown when a route has no entry in `LEGACY_BLOCK_REGISTRY` (should be rare). */
 export function PlaceholderScreen({ navigation }: Props) {
   const route = useRoute();
   return (
     <SafeAreaView style={styles.screen}>
       <Text style={styles.title}>{route.name}</Text>
       <Text style={styles.subtitle}>
-        Expo migration in progress. This route is scaffolded and wired.
+        No legacy block mapped for this route. Use packages/blocks or add to legacyBlockRegistry.
       </Text>
 
       <FlatList

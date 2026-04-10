@@ -20,10 +20,7 @@ const { store, persistor } = configStore();
 
 const AppStateProvider = StateProvider as ComponentType<{ children?: ReactNode }>;
 
-/**
- * Full legacy blocks + Redux + RN6. API calls respect `EXPO_PUBLIC_OFFLINE_MODE`
- * (see `src/config/env.ts`); default avoids hitting a real backend.
- */
+/** Legacy block screens + Redux + RN6 (same modules as packages/mobile). */
 export function AppShell() {
   useEffect(() => {
     void langaugeFunction();

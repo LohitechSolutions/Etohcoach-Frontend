@@ -23,7 +23,7 @@
       "migration": {
         "defaultUi": "AppShell (RN6 + legacy blocks)",
         "legacyV2OptIn": "EXPO_PUBLIC_USE_LEGACY_APP=true for packages/mobile/App.",
-        "offlineApiClient": "EXPO_PUBLIC_OFFLINE_MODE=false for real HTTP in src/services/api only; blocks use framework APIs."
+        "apiNote": "Block API calls use packages/framework (runEngine), not the removed Expo-only API layer."
       }
     }
   }
