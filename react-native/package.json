@@ -10,7 +10,10 @@
     "android": "node ./scripts/run-expo.cjs run:android",
     "ios": "node ./scripts/run-expo.cjs run:ios",
     "web": "node ./scripts/run-expo.cjs start --web",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "prebuild:android": "CI=1 npx expo prebuild --platform android --no-install",
+    "build:apk": "cd android && ./gradlew assembleDebug",
+    "build:apk:release": "cd android && ./gradlew assembleRelease"
   },
   "dependencies": {
     "@invertase/react-native-apple-authentication": "file:./src/shims/npm/@invertase/react-native-apple-authentication",
