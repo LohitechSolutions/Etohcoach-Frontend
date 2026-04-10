@@ -15,12 +15,12 @@ function hp(percentage: number) {
   return (windowHeight * percentage) / 100;
 }
 
-/** PNG paths match packages/mobile/App.tsx `BottemStack` tabBarIcon assets. */
+/** Tab icons live under `react-native/assets/images/` (copied from `packages/mobile/assets/images/`). */
 const TAB_ICONS = {
-  dashboard: require("../../../packages/mobile/assets/images/dashboard.png"),
-  catalogue: require("../../../packages/mobile/assets/images/catalogue.png"),
-  leaderboard: require("../../../packages/mobile/assets/images/leaderBoard.png"),
-  profile: require("../../../packages/mobile/assets/images/profile.png")
+  dashboard: require("../../assets/images/dashboard.png"),
+  catalogue: require("../../assets/images/catalogue.png"),
+  leaderboard: require("../../assets/images/leaderBoard.png"),
+  profile: require("../../assets/images/profile.png")
 };
 
 function LegacyTabBarIcon({
