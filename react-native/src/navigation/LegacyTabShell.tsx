@@ -1,10 +1,10 @@
 import i18next from "i18next";
-import React from "react";
+import React, { useMemo } from "react";
 import { Dimensions, Image, Platform } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Scale from "../../../packages/components/src/Scale";
 import { FONTS } from "../../../packages/framework/src/Fonts";
-import { LEGACY_BLOCK_REGISTRY } from "../migration/legacyBlockRegistry";
+import { getLegacyBlock } from "../migration/legacyBlockRegistry";
 import { withLegacyNavigation } from "../migration/legacyNavigationCompat";
 
 const Tab = createBottomTabNavigator();
@@ -45,16 +45,29 @@ function LegacyTabBarIcon({
   );
 }
 
-const WDashboard = withLegacyNavigation(LEGACY_BLOCK_REGISTRY.Dashboard);
-const WCatalogue = withLegacyNavigation(LEGACY_BLOCK_REGISTRY.Catalogue);
-const WLeaderboard = withLegacyNavigation(LEGACY_BLOCK_REGISTRY.Leaderboard);
-const WProfile = withLegacyNavigation(LEGACY_BLOCK_REGISTRY.UserProfileBasicBlock);
-
 /**
  * Same tab keys and icon treatment as legacy `BottemStack` (packages/mobile/App.tsx).
  * Tab bar height/padding follows the legacy Android default; iOS uses a close default.
+ * Blocks load lazily via `getLegacyBlock` when this shell mounts (not at app import time).
  */
 export function LegacyTabShell() {
+  const WDashboard = useMemo(
+    () => withLegacyNavigation(getLegacyBlock("Dashboard")!),
+    []
+  );
+  const WCatalogue = useMemo(
+    () => withLegacyNavigation(getLegacyBlock("Catalogue")!),
+    []
+  );
+  const WLeaderboard = useMemo(
+    () => withLegacyNavigation(getLegacyBlock("Leaderboard")!),
+    []
+  );
+  const WProfile = useMemo(
+    () => withLegacyNavigation(getLegacyBlock("UserProfileBasicBlock")!),
+    []
+  );
+
   const tabBarHeight = Platform.OS === "android" ? Scale(75) : Scale(90);
   const tabPaddingBottom = Platform.OS === "android" ? Scale(15) : Scale(20);
 

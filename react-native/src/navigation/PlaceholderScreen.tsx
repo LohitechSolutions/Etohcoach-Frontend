@@ -15,7 +15,7 @@ type Props = {
   };
 };
 
-/** Shown when a route has no entry in `LEGACY_BLOCK_REGISTRY` (should be rare). */
+/** Shown when `getLegacyBlock` has no entry for a route (should be rare). */
 export function PlaceholderScreen({ navigation }: Props) {
   const route = useRoute();
   return (

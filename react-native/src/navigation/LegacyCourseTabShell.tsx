@@ -1,8 +1,8 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import React from "react";
+import React, { useMemo } from "react";
 
-import { LEGACY_BLOCK_REGISTRY } from "../migration/legacyBlockRegistry";
+import { getLegacyBlock } from "../migration/legacyBlockRegistry";
 import { withLegacyCourseTabScreen } from "../migration/legacyCourseTabNavigation";
 import { LegacyTabShell } from "./LegacyTabShell";
 
@@ -13,10 +13,22 @@ const ThemesStack = createNativeStackNavigator();
  * Nested themes stack — same route names as `themesRootStack` in `packages/mobile/App.tsx`.
  */
 function CourseThemesStack() {
-  const WThemes = withLegacyCourseTabScreen(LEGACY_BLOCK_REGISTRY.Themes);
-  const WProductCategory = withLegacyCourseTabScreen(LEGACY_BLOCK_REGISTRY.CatalogueFive);
-  const WCatalogueStudies = withLegacyCourseTabScreen(LEGACY_BLOCK_REGISTRY.CatalogueStudy);
-  const WCongratulation = withLegacyCourseTabScreen(LEGACY_BLOCK_REGISTRY.Congratulation);
+  const WThemes = useMemo(
+    () => withLegacyCourseTabScreen(getLegacyBlock("Themes")!),
+    []
+  );
+  const WProductCategory = useMemo(
+    () => withLegacyCourseTabScreen(getLegacyBlock("CatalogueFive")!),
+    []
+  );
+  const WCatalogueStudies = useMemo(
+    () => withLegacyCourseTabScreen(getLegacyBlock("CatalogueStudy")!),
+    []
+  );
+  const WCongratulation = useMemo(
+    () => withLegacyCourseTabScreen(getLegacyBlock("Congratulation")!),
+    []
+  );
 
   return (
     <ThemesStack.Navigator initialRouteName="ThemesScreen" screenOptions={{ headerShown: false }}>
@@ -34,8 +46,11 @@ function CourseThemesStack() {
  * legacy `tabBarVisible: false` on every tab.
  */
 export function LegacyCourseTabShell() {
-  const WOverView = withLegacyCourseTabScreen(LEGACY_BLOCK_REGISTRY.OverView);
-  const WNotes = withLegacyCourseTabScreen(LEGACY_BLOCK_REGISTRY.Notes);
+  const WOverView = useMemo(
+    () => withLegacyCourseTabScreen(getLegacyBlock("OverView")!),
+    []
+  );
+  const WNotes = useMemo(() => withLegacyCourseTabScreen(getLegacyBlock("Notes")!), []);
 
   return (
     <CourseTab.Navigator
