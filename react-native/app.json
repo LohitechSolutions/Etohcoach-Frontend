@@ -18,6 +18,12 @@
     "web": {
       "bundler": "metro"
     },
-    "plugins": []
+    "plugins": [],
+    "extra": {
+      "migration": {
+        "defaultUi": "packages/mobile (legacy)",
+        "newShellOptIn": "Set EXPO_PUBLIC_USE_EXPO_SHELL=true for AppNavigator scaffold."
+      }
+    }
   }
 }

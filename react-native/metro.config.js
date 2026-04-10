@@ -276,6 +276,54 @@ function resolvePackageEntry(packageRoot) {
   return resolveExistingFile(path.join(packageRoot, "index"));
 }
 
+/**
+ * `react-native-safe-area-context` must resolve to a single copy (Expo's). A second
+ * copy from workspace hoisting registers RNCSafeAreaProvider twice → native crash.
+ */
+function resolveReactNativeSafeAreaContext(moduleName) {
+  const pkg = "react-native-safe-area-context";
+  const pkgRoot = path.join(expoNodeModules, pkg);
+  if (!fs.existsSync(path.join(pkgRoot, "package.json"))) {
+    return null;
+  }
+  const bare = bareModuleName(moduleName);
+  const norm = String(moduleName).replace(/\\/g, "/");
+
+  if (bare === pkg || bare.startsWith(`${pkg}/`)) {
+    const sub = bare === pkg ? "" : bare.slice(pkg.length + 1);
+    if (!sub) {
+      const entry = resolvePackageEntry(pkgRoot);
+      if (entry) {
+        return { filePath: path.normalize(entry), type: "sourceFile" };
+      }
+    } else {
+      const resolved = resolveExistingFile(path.join(pkgRoot, sub));
+      if (resolved) {
+        return { filePath: path.normalize(resolved), type: "sourceFile" };
+      }
+    }
+  }
+
+  const needle = `/node_modules/${pkg}/`;
+  const idx = norm.indexOf(needle);
+  if (idx !== -1) {
+    const rel = norm.slice(idx + needle.length).split("?")[0];
+    const resolved = resolveExistingFile(path.join(pkgRoot, rel));
+    if (resolved) {
+      return { filePath: path.normalize(resolved), type: "sourceFile" };
+    }
+  }
+
+  if (norm.endsWith(`/node_modules/${pkg}`)) {
+    const entry = resolvePackageEntry(pkgRoot);
+    if (entry) {
+      return { filePath: path.normalize(entry), type: "sourceFile" };
+    }
+  }
+
+  return null;
+}
+
 function resolveExpoReactNativeTree(bare) {
   if (bare === "react-native") {
     const entry =
@@ -395,6 +443,10 @@ function shouldUseGoogleSigninShim(moduleName) {
 config.resolver.resolveRequest = (context, moduleName, platform) => {
   if (shouldUseGoogleSigninShim(moduleName)) {
     return { filePath: googleSigninShim, type: "sourceFile" };
+  }
+  const safeAreaRes = resolveReactNativeSafeAreaContext(moduleName);
+  if (safeAreaRes) {
+    return safeAreaRes;
   }
   const vectorIcons = resolveVectorIconsToExpo(moduleName);
   if (vectorIcons) {
@@ -591,6 +643,7 @@ config.resolver.extraNodeModules = {
   "react-native-video": path.resolve(projectRoot, "src/shims/react-native-video.js"),
   "react-native-fs": path.resolve(projectRoot, "src/shims/react-native-fs.js"),
   "react-native-iap": path.resolve(projectRoot, "src/shims/react-native-iap.js"),
+  "react-native-safe-area-context": path.join(expoNodeModules, "react-native-safe-area-context"),
 };
 config.resolver.unstable_enableSymlinks = true;
 

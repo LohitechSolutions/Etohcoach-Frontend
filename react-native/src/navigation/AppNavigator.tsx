@@ -100,6 +100,7 @@ function DashboardTabs() {
 
 export function AppNavigator() {
   const routedScreens = new Set([
+    "EmailAccountLoginBlock",
     "EmailAccountRegistration",
     "ForgotPassword",
     "ForgotPasswordOTP",
@@ -134,6 +135,7 @@ export function AppNavigator() {
         <RootStack.Screen name="Splashscreen" component={SplashScreen} options={{ headerShown: false }} />
         <RootStack.Screen name="SPLASH" component={SplashScreen} options={{ headerShown: false }} />
         <RootStack.Screen name="Landing" component={LoginScreen} options={{ title: "Login" }} />
+        <RootStack.Screen name="EmailAccountLoginBlock" component={LoginScreen} options={{ title: "Login" }} />
         <RootStack.Screen name="EmailAccountRegistration" component={RegisterScreen} />
         <RootStack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
         <RootStack.Screen name="ForgotPasswordOTP" component={ForgotPasswordOtpScreen} />
@@ -161,7 +163,7 @@ export function AppNavigator() {
         <RootStack.Screen name="StripeIntegration" component={StripeIntegrationScreen} />
         <RootStack.Screen name="PaymentAdmin2" component={PaymentAdmin2Screen} />
         <RootStack.Screen name="DashboardTabs" component={DashboardTabs} options={{ headerShown: false }} />
-        <RootStack.Screen name="UserProfileBasicBlock" component={PlaceholderScreen} />
+        <RootStack.Screen name="UserProfileBasicBlock" component={ProfileScreen} />
         {[...coreRoutes, ...advancedRoutes]
           .filter((routeName) => !routedScreens.has(routeName))
           .map((routeName) => (

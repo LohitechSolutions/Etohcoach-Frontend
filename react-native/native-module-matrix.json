@@ -1,0 +1,62 @@
+{
+  "description": "Live tracker for native dependencies: legacy bare app vs Expo shell. Aligns with EXPO_MIGRATION_MILESTONES.md §4.",
+  "updated": "2026-04-10",
+  "modules": [
+    {
+      "dependency": "@react-native-firebase/messaging",
+      "legacyLocation": "packages/mobile, root resolutions",
+      "expoStrategy": "replace",
+      "status": "not_started",
+      "notes": "Use expo-notifications + FCM or Firebase modular with dev build"
+    },
+    {
+      "dependency": "react-native-iap",
+      "legacyLocation": "root / blocks",
+      "expoStrategy": "keep_or_replace",
+      "status": "not_started",
+      "notes": "Expo dev build; evaluate expo-iap or RevenueCat"
+    },
+    {
+      "dependency": "react-native-fbsdk",
+      "legacyLocation": "packages/mobile",
+      "expoStrategy": "replace",
+      "status": "not_started",
+      "notes": "expo-auth-session / Facebook SDK plugin"
+    },
+    {
+      "dependency": "react-native-document-picker",
+      "legacyLocation": "blocks",
+      "expoStrategy": "replace",
+      "status": "not_started",
+      "notes": "expo-document-picker"
+    },
+    {
+      "dependency": "react-native-file-viewer",
+      "legacyLocation": "blocks",
+      "expoStrategy": "replace",
+      "status": "not_started",
+      "notes": "expo-sharing / intent"
+    },
+    {
+      "dependency": "react-native-video",
+      "legacyLocation": "root",
+      "expoStrategy": "keep",
+      "status": "not_started",
+      "notes": "expo-av or dev build with react-native-video"
+    },
+    {
+      "dependency": "react-native-permissions",
+      "legacyLocation": "blocks",
+      "expoStrategy": "replace",
+      "status": "not_started",
+      "notes": "expo-modules permissions APIs"
+    },
+    {
+      "dependency": "react-native-splash-screen",
+      "legacyLocation": "packages/mobile",
+      "expoStrategy": "replace",
+      "status": "not_started",
+      "notes": "expo-splash-screen"
+    }
+  ]
+}

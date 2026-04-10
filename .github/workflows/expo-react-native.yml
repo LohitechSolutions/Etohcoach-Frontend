@@ -4,10 +4,12 @@ on:
   push:
     paths:
       - "react-native/**"
+      - "packages/mobile/**"
       - ".github/workflows/expo-react-native.yml"
   pull_request:
     paths:
       - "react-native/**"
+      - "packages/mobile/**"
       - ".github/workflows/expo-react-native.yml"
 
 jobs:

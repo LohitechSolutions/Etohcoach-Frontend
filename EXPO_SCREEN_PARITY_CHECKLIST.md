@@ -19,9 +19,10 @@ Use it to track screen-by-screen migration from `packages/mobile/App.tsx` to `re
 Audit basis: compared legacy routes in `packages/mobile/App.tsx` with placeholder routes currently declared in `react-native/App.tsx`.
 
 ### Snapshot
+- **Default Expo entry:** `react-native/App.js` mounts **legacy** `packages/mobile` (full original UI). Set **`EXPO_PUBLIC_USE_EXPO_SHELL=true`** to run the **`AppNavigator`** (RN6) scaffold while migrating.
 - Placeholder scaffold coverage: **41 routes + tab shell + splash/landing entrypoints** are already declared in Expo.
-- Legacy routes missing from Expo scaffold: **`NonAuthenticated`, `Authenticated`, `UserProfileBasicBlock`, `EmailNotifications`, `BulkUploading`, `LanguageOptions`, `Annotations`, `WebviewComponent`, `settings`, `OverViews`, `CfFlashCardOne`**.
-- Naming/alias differences detected: **`SPLASH` (legacy) vs `Splashscreen` (Expo)** and **`UserProfileBasicBlock` (legacy) vs `Profile` tab (Expo)**.
+- Legacy routes missing from Expo scaffold: **`NonAuthenticated`, `Authenticated`, `EmailNotifications`, `BulkUploading`, `LanguageOptions`, `Annotations`, `WebviewComponent`, `settings`, `OverViews`, `CfFlashCardOne`**.
+- Naming/alias differences: **`SPLASH` vs `Splashscreen`** both wired to the same splash screen; **`UserProfileBasicBlock`** now maps to **`ProfileScreen`** in `AppNavigator` (legacy route key preserved).
 
 ### Status interpretation applied
 - `In Progress`: route exists as Expo placeholder scaffold.
@@ -64,7 +65,7 @@ Audit basis: compared legacy routes in `packages/mobile/App.tsx` with placeholde
 | Route Name | Source Screen | Expo Target | Feature Area | Critical Flow | Owner | Status | Dependency Risk | QA Scenarios | Notes |
 |---|---|---|---|---|---|---|---|---|---|
 | Landing | `../blocks/LandingScreen/src/Landing` | `react-native/src/features/auth/LandingScreen.tsx` | Onboarding | Yes |  | In Progress | Low | First app open, CTA routing | Placeholder exists |
-| EmailAccountLoginBlock | `../blocks/email-account-login/src/EmailAccountLoginBlock` | `react-native/src/features/auth/LoginScreen.tsx` | Auth | Yes |  | Not Started | Medium | Login success/failure, validation, token persist |  |
+| EmailAccountLoginBlock | `../blocks/email-account-login/src/EmailAccountLoginBlock` | `react-native/src/features/auth/LoginScreen.tsx` | Auth | Yes |  | In Progress | Medium | Login success/failure, validation, token persist | Stack route key `EmailAccountLoginBlock` registered alongside `Landing` |
 | EmailAccountRegistration | `../blocks/email-account-registration/src/EmailAccountRegistration` | `react-native/src/features/auth/RegisterScreen.tsx` | Auth | Yes |  | Not Started | Medium | Registration happy path + duplicate email |  |
 | ForgotPassword | `../blocks/forgot-password/src/ForgotPassword` | `react-native/src/features/auth/ForgotPasswordScreen.tsx` | Auth recovery | Yes |  | Not Started | Medium | Request OTP/email link |  |
 | ForgotPasswordOTP | `../blocks/forgot-password/src/ForgotPasswordOTP` | `react-native/src/features/auth/ForgotPasswordOtpScreen.tsx` | Auth recovery | Yes |  | Not Started | Medium | OTP invalid/expired/resend |  |
@@ -86,7 +87,7 @@ Audit basis: compared legacy routes in `packages/mobile/App.tsx` with placeholde
 | Dashboard | `../blocks/dashboard/src/Dashboard` | `react-native/src/features/dashboard/DashboardScreen.tsx` | Dashboard | Yes |  | In Progress | Medium | Data load, pull to refresh, errors | Tab placeholder exists |
 | Catalogue | `../blocks/catalogue/src/Catalogue` | `react-native/src/features/catalogue/CatalogueScreen.tsx` | Catalogue | Yes |  | In Progress | Medium | List load/filter/sort/search | Tab placeholder exists |
 | Leaderboard | `../blocks/Leaderboard/src/Leaderboard` | `react-native/src/features/leaderboard/LeaderboardScreen.tsx` | Leaderboard | Yes |  | In Progress | Medium | Rankings load + pagination | Tab placeholder exists |
-| UserProfileBasicBlock (Profile) | `../blocks/user-profile-basic/src/UserProfileBasicBlock` | `react-native/src/features/profile/ProfileScreen.tsx` | Profile | Yes |  | Not Started | Medium | Profile load/edit routing | Expo has `Profile` tab placeholder, but legacy route key `UserProfileBasicBlock` is not declared |
+| UserProfileBasicBlock (Profile) | `../blocks/user-profile-basic/src/UserProfileBasicBlock` | `react-native/src/features/profile/ProfileScreen.tsx` | Profile | Yes |  | In Progress | Medium | Profile load/edit routing | Stack route `UserProfileBasicBlock` → `ProfileScreen`; tab remains `Profile` |
 | EditProfile | `../blocks/user-profile-basic/src/EditProfile` | `react-native/src/features/profile/EditProfileScreen.tsx` | Profile | Yes |  | Not Started | Low | Edit + save + validation |  |
 | ChangePassword | `../blocks/user-profile-basic/src/ChangePassword` | `react-native/src/features/profile/ChangePasswordScreen.tsx` | Profile | Yes |  | Not Started | Low | Current/new password validation |  |
 | ChangeEmail | `../blocks/user-profile-basic/src/ChangeEmail` | `react-native/src/features/profile/ChangeEmailScreen.tsx` | Profile | No |  | Not Started | Low | Email update and verification |  |
