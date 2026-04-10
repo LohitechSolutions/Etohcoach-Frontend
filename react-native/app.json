@@ -27,7 +27,7 @@
       "migration": {
         "defaultUi": "AppShell (RN6 + legacy blocks)",
         "legacyV2OptIn": "EXPO_PUBLIC_USE_LEGACY_APP=true for packages/mobile/App.",
-        "apiNote": "Block API calls use packages/framework (runEngine), not the removed Expo-only API layer."
+        "apiNote": "Block API calls use packages/framework (runEngine). Point EXPO_PUBLIC_API_URL at Etohcoach-Backend (Rails), default http://127.0.0.1:3000."
       }
     }
   }

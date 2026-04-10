@@ -176,45 +176,82 @@ export default class EmailAccountRegistrationController extends BlockComponent<
 
 
   async receive(from: string, message: Message) {
-    if (getName(MessageEnum.RestAPIResponceMessage) === message.id) {
-      const apiRequestCallId = message.getData(
-        getName(MessageEnum.RestAPIResponceDataMessage)
-      );
-
-      var responseJson = message.getData(
-        getName(MessageEnum.RestAPIResponceSuccessMessage)
-      );
-
-      var errorReponse = message.getData(
-        getName(MessageEnum.RestAPIResponceErrorMessage)
-      );
-
-      if (apiRequestCallId && responseJson) {
-        if (apiRequestCallId === this.ApiCallId) {
-          console.log("reponse--------in registration", responseJson);
-          this.setState({ showLoader: false })
-          if (responseJson && responseJson.errors) {
-            this.setState({ error: responseJson.errors?.length > 0 ? Object.values(responseJson?.errors[0]) : STRINGS.MESSAGE.SINGUP_FAIL })
-            this.clearValidation()
-          }
-          else {
-            let usrObj = responseJson?.data?.attributes;
-            usrObj['type'] = 'EmailAccount'
-            await AsyncStorage.setItem(AsynchStoragekey.AsynchStoragekey.LOGIN_TOKEN, responseJson?.meta?.token);
-            await AsyncStorage.setItem(AsynchStoragekey.AsynchStoragekey.LOGIN_ID, `${responseJson?.data?.id}`);
-            await AsyncStorage.setItem(AsynchStoragekey.AsynchStoragekey.USER_INFO, JSON.stringify(usrObj));
-            await AsyncStorage.setItem(AsynchStoragekey.AsynchStoragekey.REGISTER_ACC_TYPE, responseJson?.data?.type
-            );
-            this.props.addUserProfile(usrObj)
-            // await AsyncStorage.setItem(AsynchStoragekey.AsynchStoragekey.USER_CREDITCARDID, "null");
-            // await AsyncStorage.setItem(AsynchStoragekey.AsynchStoragekey.USER_SUBSCRIPTION, "unsubscribed");
-              this.props.cancelSubscription();
-            this.props.navigation.replace('SubCriptionScreen',{itisfromloginOrSignUp:true})
-          }
-        }
-
-      }
+    if (getName(MessageEnum.RestAPIResponceMessage) !== message.id) {
+      return;
     }
+    const apiRequestCallId = message.getData(
+      getName(MessageEnum.RestAPIResponceDataMessage)
+    );
+    if (apiRequestCallId !== this.ApiCallId) {
+      return;
+    }
+
+    const responseJson = message.getData(
+      getName(MessageEnum.RestAPIResponceSuccessMessage)
+    );
+    const errorReponse = message.getData(
+      getName(MessageEnum.RestAPIResponceErrorMessage)
+    );
+
+    this.setState({ showLoader: false });
+
+    if (errorReponse != null && errorReponse !== "") {
+      this.setState({
+        error:
+          typeof errorReponse === "string"
+            ? errorReponse
+            : STRINGS.MESSAGE.SINGUP_FAIL,
+      });
+      this.clearValidation();
+      return;
+    }
+
+    if (responseJson == null || responseJson === undefined) {
+      this.setState({ error: STRINGS.MESSAGE.SINGUP_FAIL });
+      this.clearValidation();
+      return;
+    }
+
+    console.log("reponse--------in registration", responseJson);
+    if (responseJson.errors) {
+      this.setState({
+        error:
+          responseJson.errors?.length > 0
+            ? Object.values(responseJson.errors[0])
+            : STRINGS.MESSAGE.SINGUP_FAIL,
+      });
+      this.clearValidation();
+      return;
+    }
+
+    const usrObj = responseJson?.data?.attributes;
+    if (!usrObj) {
+      this.setState({ error: STRINGS.MESSAGE.SINGUP_FAIL });
+      this.clearValidation();
+      return;
+    }
+    usrObj["type"] = "EmailAccount";
+    await AsyncStorage.setItem(
+      AsynchStoragekey.AsynchStoragekey.LOGIN_TOKEN,
+      responseJson?.meta?.token
+    );
+    await AsyncStorage.setItem(
+      AsynchStoragekey.AsynchStoragekey.LOGIN_ID,
+      `${responseJson?.data?.id}`
+    );
+    await AsyncStorage.setItem(
+      AsynchStoragekey.AsynchStoragekey.USER_INFO,
+      JSON.stringify(usrObj)
+    );
+    await AsyncStorage.setItem(
+      AsynchStoragekey.AsynchStoragekey.REGISTER_ACC_TYPE,
+      responseJson?.data?.type
+    );
+    this.props.addUserProfile(usrObj);
+    this.props.cancelSubscription();
+    this.props.navigation.replace("SubCriptionScreen", {
+      itisfromloginOrSignUp: true,
+    });
   }
 
 

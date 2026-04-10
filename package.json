@@ -9,6 +9,13 @@
   },
   "scripts": {
     "preinstall": "yarn --cwd ./packages/blocks/core",
+    "local-api:hint": "node scripts/print-backend-setup-hint.js",
+    "install:backend": "node scripts/check-ruby-for-backend.js && sh scripts/bundle-in-backend.sh",
+    "install:backend:mac-pg": "sh scripts/macos-libpq-for-pg.sh",
+    "install:backend:force": "sh scripts/bundle-in-backend.sh",
+    "db:prepare:backend": "sh scripts/rails-in-backend.sh db:prepare",
+    "dev:backend": "node scripts/check-ruby-for-backend.js && sh scripts/rails-server-backend.sh",
+    "dev:expo-and-api": "concurrently -n rails,expo -c blue,magenta \"yarn dev:backend\" \"yarn start\"",
     "android": "yarn --cwd react-native android",
     "compile": "tsc -b --incremental",
     "ios": "yarn --cwd react-native ios",

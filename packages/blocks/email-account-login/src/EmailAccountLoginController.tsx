@@ -185,15 +185,7 @@ export default class EmailAccountLoginController extends BlockComponent<
   }
 
   onLoginSubmit() {
-    // this.submit()
-    AsyncStorage.setItem(AsynchStoragekey.AsynchStoragekey.LOGIN_TOKEN, "mock_token");
-    this.props.navigation.dispatch(
-      StackActions.reset({
-        index: 0,
-        actions: [NavigationActions.navigate({ routeName: 'Authenticated' })],
-        key: null
-      })
-    )
+    this.submit();
   }
 
   displaylanguage = async () => {
