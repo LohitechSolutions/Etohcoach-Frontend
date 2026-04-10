@@ -108,7 +108,7 @@ export function LegacyTabShell() {
         name="UserProfileBasicBlock"
         component={WProfile}
         options={{
-          headerShown: true,
+          headerShown: false,
           title: "Profile",
           tabBarIcon: ({ focused }) => (
             <LegacyTabBarIcon source={TAB_ICONS.profile} sizeHp={3.5} focused={focused} />
