@@ -3,13 +3,16 @@ import "./src/dimensions-rn-polyfill";
 import React from "react";
 import { AppShell } from "./src/bootstrap/AppShell";
 
-/** Same UI as the original app: legacy is the default. Set EXPO_PUBLIC_USE_EXPO_SHELL=true for the RN6 placeholder scaffold. */
-const useExpoShell = process.env.EXPO_PUBLIC_USE_EXPO_SHELL === "true";
+/**
+ * Default: migrated legacy blocks inside RN6 (`AppShell`).
+ * Set EXPO_PUBLIC_USE_LEGACY_APP=true to use packages/mobile/App (react-navigation v2 container).
+ */
+const useLegacyMobileApp = process.env.EXPO_PUBLIC_USE_LEGACY_APP === "true";
 
 export default function App() {
-  if (useExpoShell) {
-    return <AppShell />;
+  if (useLegacyMobileApp) {
+    const LegacyMobileApp = require("../packages/mobile/App").default;
+    return <LegacyMobileApp />;
   }
-  const LegacyMobileApp = require("../packages/mobile/App").default;
-  return <LegacyMobileApp />;
+  return <AppShell />;
 }

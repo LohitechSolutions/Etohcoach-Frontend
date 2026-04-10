@@ -1,3 +1,4 @@
+import { useRoute } from "@react-navigation/native";
 import React from "react";
 import {
   FlatList,
@@ -12,12 +13,10 @@ type Props = {
   navigation: {
     navigate: (routeName: string) => void;
   };
-  route: {
-    name: string;
-  };
 };
 
-export function PlaceholderScreen({ navigation, route }: Props) {
+export function PlaceholderScreen({ navigation }: Props) {
+  const route = useRoute();
   return (
     <SafeAreaView style={styles.screen}>
       <Text style={styles.title}>{route.name}</Text>

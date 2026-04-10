@@ -2,6 +2,31 @@ import { env } from "../../config/env";
 
 type HttpMethod = "GET" | "POST" | "PATCH" | "DELETE";
 
+function offlineMockResponse<T>(endpoint: string, method: HttpMethod): T {
+  const e = endpoint.toLowerCase();
+  const base = {
+    success: true,
+    errors: null
+  };
+  if (e.includes("login") || e.includes("sign_in") || e.includes("account/login")) {
+    return {
+      ...base,
+      meta: { token: "offline-token" },
+      data: { id: 1, email: "offline@example.com" }
+    } as T;
+  }
+  if (method === "GET") {
+    if (e.includes("notification")) {
+      return { ...base, data: [] } as T;
+    }
+    if (e.includes("catalogue") || e.includes("catalog")) {
+      return { ...base, data: [], list: [] } as T;
+    }
+    return { ...base, data: [], list: [], result: [] } as T;
+  }
+  return { ...base, data: {} } as T;
+}
+
 export async function apiRequest<T>(
   endpoint: string,
   method: HttpMethod,
@@ -10,6 +35,11 @@ export async function apiRequest<T>(
     body?: unknown;
   }
 ): Promise<T> {
+  if (env.useOfflineMode) {
+    await new Promise((r) => setTimeout(r, 30));
+    return offlineMockResponse<T>(endpoint, method);
+  }
+
   const url = endpoint.startsWith("http")
     ? endpoint
     : `${env.apiBaseUrl.replace(/\/$/, "")}/${endpoint.replace(/^\//, "")}`;

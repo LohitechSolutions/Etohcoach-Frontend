@@ -4,9 +4,11 @@ Building Blocks - React Native Master App - Mobile Router and App Projects
 
 ### Expo migration (maintenance mode)
 
-The **primary mobile entry** for day-to-day use is still this codebase: Expo in `react-native/` **defaults** to mounting **`packages/mobile/App`** so the **UI matches the original app**.
+Expo in `react-native/` **defaults** to **`AppShell`**: React Navigation 6 + **legacy block screens** (same sources as this app) + Redux (`packages/mobile/src/store`).
 
-The React Navigation 6 scaffold (`react-native/src/navigation/AppNavigator.tsx`) is for **incremental migration** only—enable it with **`EXPO_PUBLIC_USE_EXPO_SHELL=true`**. Plan: parity-driven retirement through `EXPO_SCREEN_PARITY_CHECKLIST.md` and `EXPO_MIGRATION_MILESTONES.md`.
+Set **`EXPO_PUBLIC_USE_LEGACY_APP=true`** to use the original **`packages/mobile/App.tsx`** react-navigation v2 container unchanged.
+
+`EXPO_PUBLIC_OFFLINE_MODE=false` is required for real API traffic from blocks (framework/runEngine); `react-native/src/services/api/client.ts` mocks are separate from block API calls.
 
 ## Getting Started
 

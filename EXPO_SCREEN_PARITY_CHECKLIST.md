@@ -19,7 +19,7 @@ Use it to track screen-by-screen migration from `packages/mobile/App.tsx` to `re
 Audit basis: compared legacy routes in `packages/mobile/App.tsx` with placeholder routes currently declared in `react-native/App.tsx`.
 
 ### Snapshot
-- **Default Expo entry:** `react-native/App.js` mounts **legacy** `packages/mobile` (full original UI). Set **`EXPO_PUBLIC_USE_EXPO_SHELL=true`** to run the **`AppNavigator`** (RN6) scaffold while migrating.
+- **Default Expo entry:** `react-native/App.js` mounts **`AppShell`** — RN6 + **legacy block components** + nested `Authenticated` / `NonAuthenticated` stacks (see `authStackRoutes.ts` / `nonAuthStackRoutes.ts`). Set **`EXPO_PUBLIC_USE_LEGACY_APP=true`** for the original v2 `packages/mobile/App` container only.
 - Placeholder scaffold coverage: **41 routes + tab shell + splash/landing entrypoints** are already declared in Expo.
 - Legacy routes missing from Expo scaffold: **`NonAuthenticated`, `Authenticated`, `EmailNotifications`, `BulkUploading`, `LanguageOptions`, `Annotations`, `WebviewComponent`, `settings`, `OverViews`, `CfFlashCardOne`**.
 - Naming/alias differences: **`SPLASH` vs `Splashscreen`** both wired to the same splash screen; **`UserProfileBasicBlock`** now maps to **`ProfileScreen`** in `AppNavigator` (legacy route key preserved).

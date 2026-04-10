@@ -207,7 +207,7 @@ Use this table as a live tracker. A machine-readable starter list lives at `reac
 
 ### Bootstrap status (2026-04)
 
-- **Default Expo entry** is **legacy** `packages/mobile/App.tsx` (same UI as the old app). Opt into the RN6 scaffold with **`EXPO_PUBLIC_USE_EXPO_SHELL=true`**.
+- **Default Expo entry** is **`AppShell`** (RN6 + legacy blocks + Redux). Opt into the original v2 container with **`EXPO_PUBLIC_USE_LEGACY_APP=true`**.
 - **Typecheck** for the Expo shell is scoped to `react-native/src/**/*.ts(x)` so CI validates the migrated code path without pulling the whole legacy graph (see `react-native/tsconfig.json`).
 
 | Dependency | Current Location | Expo Strategy (Keep/Replace/Defer) | Owner | Status | Notes |
