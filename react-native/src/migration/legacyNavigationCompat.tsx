@@ -88,6 +88,29 @@ function createLegacyDispatch(navigation: NavigationProp<ParamListBase>) {
   };
 }
 
+/** RN 2/4 used `didFocus` / `willFocus`; RN6 emits `focus` / `blur` only. */
+function createLegacyAddListener(navigation: NavigationProp<ParamListBase>) {
+  return (event: string, callback: (...args: unknown[]) => void) => {
+    let mapped: string = event;
+    if (event === "didFocus" || event === "willFocus") {
+      mapped = "focus";
+    } else if (event === "didBlur" || event === "willBlur") {
+      mapped = "blur";
+    }
+    const unsub = navigation.addListener(mapped as "focus", callback as never);
+    if ((event === "didFocus" || event === "willFocus") && navigation.isFocused()) {
+      queueMicrotask(() => {
+        try {
+          (callback as () => void)();
+        } catch {
+          /* ignore */
+        }
+      });
+    }
+    return unsub;
+  };
+}
+
 /** Minimal react-navigation 2.x-shaped object for legacy block screens under RN6. */
 export function buildLegacyNavigation<P extends ParamListBase, R extends keyof P>(
   navigation: NavigationProp<P>,
@@ -118,7 +141,7 @@ export function buildLegacyNavigation<P extends ParamListBase, R extends keyof P
     reset: (navigation as { reset?: (...a: unknown[]) => void }).reset?.bind(navigation),
     setParams: navigation.setParams.bind(navigation),
     dispatch: createLegacyDispatch(navigation),
-    addListener: navigation.addListener.bind(navigation),
+    addListener: createLegacyAddListener(navigation),
     isFocused: navigation.isFocused.bind(navigation),
     canGoBack: navigation.canGoBack.bind(navigation),
     getId: (navigation as { getId?: () => string }).getId?.bind(navigation),
