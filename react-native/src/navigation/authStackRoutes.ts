@@ -75,7 +75,11 @@ export const authStackRoutes = [
   "MocExamInit",
   "QuizzesExamInit",
   "Themes",
-  "OverViews"
+  "OverViews",
+  /** `themesRootStack` route names (aliases for flat stack / deep links; same blocks as Themes / CatalogueFive / CatalogueStudy). */
+  "ThemesScreen",
+  "ProductCategory",
+  "CatalogueStudies"
 ] as const;
 
 export type AuthStackRouteName = (typeof authStackRoutes)[number];

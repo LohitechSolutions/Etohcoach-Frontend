@@ -6,6 +6,7 @@ import { PlaceholderScreen } from "./PlaceholderScreen";
 import { LEGACY_BLOCK_REGISTRY } from "../migration/legacyBlockRegistry";
 import { withLegacyNavigation } from "../migration/legacyNavigationCompat";
 import { authStackRoutes } from "./authStackRoutes";
+import { LegacyCourseTabShell } from "./LegacyCourseTabShell";
 import { LegacyTabShell } from "./LegacyTabShell";
 import { nonAuthStackRoutes } from "./nonAuthStackRoutes";
 
@@ -23,6 +24,14 @@ function buildAuthScreens(): Record<string, ComponentType<Record<string, unknown
   for (const name of authStackRoutes) {
     if (name === "Dashboard") {
       m[name] = LegacyTabShell as ComponentType<Record<string, unknown>>;
+    } else if (name === "OverView") {
+      m[name] = LegacyCourseTabShell as ComponentType<Record<string, unknown>>;
+    } else if (name === "ThemesScreen") {
+      m[name] = withLegacyNavigation(LEGACY_BLOCK_REGISTRY.ThemesScreen);
+    } else if (name === "ProductCategory") {
+      m[name] = withLegacyNavigation(LEGACY_BLOCK_REGISTRY.ProductCategory);
+    } else if (name === "CatalogueStudies") {
+      m[name] = withLegacyNavigation(LEGACY_BLOCK_REGISTRY.CatalogueStudies);
     } else {
       const C = LEGACY_BLOCK_REGISTRY[name];
       m[name] = (C ? withLegacyNavigation(C) : Missing) as ComponentType<Record<string, unknown>>;

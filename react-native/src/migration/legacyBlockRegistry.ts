@@ -79,6 +79,12 @@ export const LEGACY_BLOCK_REGISTRY: Record<string, ComponentType<Record<string, 
   CatalogueFive: require("../../../packages/blocks/catalogue/src/CatalogueFIve").default,
   settings: require("../../../packages/blocks/user-profile-basic/src/settings").default,
   Themes: require("../../../packages/blocks/catalogue/src/ThemesScr").default,
+  /** Same as `Themes` — `themesRootStack` initial route key in v2. */
+  ThemesScreen: require("../../../packages/blocks/catalogue/src/ThemesScr").default,
+  /** Same component as `CatalogueFive` — `themesRootStack` route key from `OverView`. */
+  ProductCategory: require("../../../packages/blocks/catalogue/src/CatalogueFIve").default,
+  /** Same as `CatalogueStudy` — `themesRootStack` route key. */
+  CatalogueStudies: require("../../../packages/blocks/catalogue/src/CatalogueStudy").default,
   CatalogueStudy: require("../../../packages/blocks/catalogue/src/CatalogueStudy").default,
   PollingScr: require("../../../packages/blocks/CfFlashcards2/src/PollingScr").default,
   WebviewComponent: require("../../../packages/blocks/contactus/Component/WebviewComponent").default,
