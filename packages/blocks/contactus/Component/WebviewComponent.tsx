@@ -13,6 +13,7 @@ import BottemButton from "../../../mobile/src/component/BottemButtonComponent";
 import Loader from "../../../components/src/Loader";
 import Scale from "../../../components/src/Scale";
 import { FONTS } from "../../../framework/src/Fonts";
+import { apiUrl } from "../../../framework/src/config";
 
 
 function isUrl(s) {
@@ -39,7 +40,7 @@ export default class WebviewComponent extends Component {
         return this.props.navigation?.state?.params?.Data?.url
       }
       else {
-        return "https://etohcoachfinal-159129-ruby.b159129.dev.eastus.az.svc.builder.cafe/chat/display"
+        return apiUrl("chat/display");
       }
     }
 

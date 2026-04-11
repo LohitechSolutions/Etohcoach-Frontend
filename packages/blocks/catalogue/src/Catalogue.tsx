@@ -36,6 +36,10 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import asynchKeys from "../../../mobile/src/utils/asynchKeys";
 import { AsynchStoragekey } from "../../../mobile/src/utils";
 import NoInternet from "../../Internet/src/Internet";
+import { apiUrl } from "../../../framework/src/config";
+
+const CATALOGUE_PLACEHOLDER_IMAGE =
+  "rails/active_storage/blobs/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBYms9IiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--7ebbade4727829ddc614227538e7af6b084cf7ab/123.png";
 
 
 class Catalogue extends CatalogueController {
@@ -61,7 +65,7 @@ class Catalogue extends CatalogueController {
         <TouchableOpacity onPress={() => this.CourceNavigate(item)
           // this.props.navigation.navigate('OverView', { course_id: item?.id, courseImage: item?.course_attachment })
         }>
-          <Image source={{uri:item?.course_attachment ?? "https://etohcoachfinal-159129-ruby.b159129.dev.eastus.az.svc.builder.cafe/rails/active_storage/blobs/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBYms9IiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--7ebbade4727829ddc614227538e7af6b084cf7ab/123.png"} } style={styles.flatListImg} />
+          <Image source={{ uri: item?.course_attachment ?? apiUrl(CATALOGUE_PLACEHOLDER_IMAGE) }} style={styles.flatListImg} />
           {item?.value === 'Unpaid' && this.state.subscription === 'unsubscribed' ? <View style={{ flexDirection: 'row', position: 'absolute', alignSelf: 'flex-end', top: hp(15.5) }}>
             <View style={{ backgroundColor: COLORS.filterBackground, paddingHorizontal: hp(1), borderRadius: hp(1), height: hp(2.9), justifyContent: 'center', marginRight: hp(1) }}>
               <Text style={{ color: COLORS.white, fontFamily: FONTS.Roboto_Medium, fontSize: rf(1.7) }}>{t("FreeLessons")}</Text>

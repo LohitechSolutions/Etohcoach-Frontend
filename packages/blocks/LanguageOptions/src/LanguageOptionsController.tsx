@@ -11,9 +11,15 @@ import Context from "../../../components/src/context/context";
 import { langaugeFunction } from "./component/i18n/i18n.config";
 import { imgPasswordVisible, imgPasswordInVisible } from "./assets";
 import { isConnected } from "../../../mobile/src/utils/internetConnection";
+import { apiUrl } from "../../../framework/src/config";
 // Customizable Area End
 
 export const configJSON = require("./config");
+
+const LANG_FLAG_EN =
+  "rails/active_storage/blobs/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBQdz09IiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--21ba7c04c955b68db7c021ecfd5687a770f967d0/English.png";
+const LANG_FLAG_FR =
+  "rails/active_storage/blobs/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBRQT09IiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--4602d9c5f70fea6d1260496fe97e03a7e5a63f5e/France.png";
 
 export interface Props {
   navigation: any;
@@ -84,11 +90,11 @@ export default class LanguageOptionsController extends BlockComponent<
       totalLanguages: [
         {
           language: "English",
-          flag: "https://etohcoachfinal-159129-ruby.b159129.dev.eastus.az.svc.builder.cafe/rails/active_storage/blobs/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBQdz09IiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--21ba7c04c955b68db7c021ecfd5687a770f967d0/English.png",
+          flag: apiUrl(LANG_FLAG_EN),
         },
         {
           language: "Français",
-          flag: "https://etohcoachfinal-159129-ruby.b159129.dev.eastus.az.svc.builder.cafe/rails/active_storage/blobs/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBRQT09IiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--4602d9c5f70fea6d1260496fe97e03a7e5a63f5e/France.png",
+          flag: apiUrl(LANG_FLAG_FR),
         },
       ],
       token: "",
@@ -123,11 +129,11 @@ export default class LanguageOptionsController extends BlockComponent<
     this.setState({isItOffline:true,totalLanguages:[
       {
         language: "English",
-        flag: "https://etohcoachfinal-159129-ruby.b159129.dev.eastus.az.svc.builder.cafe/rails/active_storage/blobs/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBQdz09IiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--21ba7c04c955b68db7c021ecfd5687a770f967d0/English.png",
+        flag: apiUrl(LANG_FLAG_EN),
       },
       {
         language: "Français",
-        flag: "https://etohcoachfinal-159129-ruby.b159129.dev.eastus.az.svc.builder.cafe/rails/active_storage/blobs/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBRQT09IiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--4602d9c5f70fea6d1260496fe97e03a7e5a63f5e/France.png",
+        flag: apiUrl(LANG_FLAG_FR),
       },
     ]})
   }

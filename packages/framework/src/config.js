@@ -45,11 +45,18 @@ if (EXPO_PUBLIC_API_URL_RAW) {
   baseURL = normalizeBase(`http://${LOCAL_API_HOST}:${LOCAL_API_PORT}`);
 }
 
+/** Absolute URL for a path under the API host (no leading slash on `path`). */
+function apiUrl(path) {
+  const p = String(path || "").replace(/^\/+/, "");
+  return p ? `${baseURL}/${p}` : baseURL;
+}
+
 Object.defineProperty(exports, '__esModule', {
   value: true,
 });
 
 exports.baseURL = baseURL;
+exports.apiUrl = apiUrl;
 exports.USE_LOCAL_ROOT_BACKEND = USE_LOCAL_ROOT_BACKEND;
 exports.LOCAL_API_HOST = LOCAL_API_HOST;
 exports.LOCAL_API_PORT = LOCAL_API_PORT;
