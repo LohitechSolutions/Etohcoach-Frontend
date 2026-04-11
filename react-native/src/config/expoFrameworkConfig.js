@@ -1,14 +1,12 @@
 'use strict';
 
 /**
- * API base URL for packages/mobile, web, and other non-Expo bundles.
+ * API base URL for the Expo / react-native app only (Metro resolves * packages/framework/src/config imports to this file — see metro.config.js).
  *
- * The Expo app in `react-native/` does NOT use this file: Metro redirects
- * `packages/framework/src/config` → `react-native/src/config/expoFrameworkConfig.js`.
- *
- * Local Rails (this file): default http://127.0.0.1:3000 when USE_LOCAL_ROOT_BACKEND.
- * Optional: set MANUAL_BASE_URL for a fixed remote API (Builder, staging, etc.).
+ * Default: Railway production. Override with react-native/.env → EXPO_PUBLIC_API_URL.
  */
+
+const RAILWAY_PRODUCTION_API = 'https://etohcoach-backend-production.up.railway.app';
 
 const EXPO_PUBLIC_API_URL_RAW =
   typeof process !== 'undefined' &&
@@ -17,18 +15,13 @@ const EXPO_PUBLIC_API_URL_RAW =
     ? process.env.EXPO_PUBLIC_API_URL.trim()
     : '';
 
-const USE_LOCAL_ROOT_BACKEND = true;
+/** Expo app defaults to hosted API; set EXPO_PUBLIC_API_URL for local Rails only. */
+const USE_LOCAL_ROOT_BACKEND = false;
 
 const LOCAL_API_HOST = '127.0.0.1';
-
-/** Must match Etohcoach-Backend (config/puma.rb default PORT=3000) */
 const LOCAL_API_PORT = 3000;
 
-/**
- * Non-Expo remote override. Example (legacy hosted API):
- *   'https://etohcoachfinal-159129-ruby.b159129.dev.eastus.az.svc.builder.cafe'
- */
-const MANUAL_BASE_URL = '';
+const MANUAL_BASE_URL = RAILWAY_PRODUCTION_API;
 
 function normalizeBase(url) {
   const u = String(url || '').trim();

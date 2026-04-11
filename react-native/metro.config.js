@@ -5,6 +5,12 @@ const { getDefaultConfig } = require("expo/metro-config");
 const projectRoot = __dirname;
 const workspaceRoot = path.resolve(projectRoot, "..");
 
+/** Expo app only: blocks import `packages/framework/src/config` — serve Railway-aware config here. */
+const expoFrameworkConfigShim = path.join(
+  projectRoot,
+  "src/config/expoFrameworkConfig.js"
+);
+
 const config = getDefaultConfig(projectRoot);
 
 const multiSliderShim = path.resolve(
@@ -441,6 +447,13 @@ function shouldUseGoogleSigninShim(moduleName) {
 }
 
 config.resolver.resolveRequest = (context, moduleName, platform) => {
+  const normMod = String(moduleName).replace(/\\/g, "/");
+  if (
+    normMod.includes("framework/src/config") &&
+    !normMod.includes("expoFrameworkConfig")
+  ) {
+    return { filePath: expoFrameworkConfigShim, type: "sourceFile" };
+  }
   if (shouldUseGoogleSigninShim(moduleName)) {
     return { filePath: googleSigninShim, type: "sourceFile" };
   }
