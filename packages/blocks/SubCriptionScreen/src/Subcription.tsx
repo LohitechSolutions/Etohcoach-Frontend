@@ -194,8 +194,17 @@ handleBackNavigation = async()=>{
             <TouchableOpacity
               style={styles.buttonStyle}
               onPress={() => {
-                // this.setCancelModal()
-                this.props.navigation.navigate("Catalogue")
+                // Catalogue lives on the authenticated root stack / main tabs; from NonAuth
+                // stack a plain navigate("Catalogue") is not handled — use root navigator.
+                const nav = this.props.navigation;
+                const root = typeof nav.getParent === "function" ? nav.getParent() : undefined;
+                if (root && typeof (root as { navigate?: (a: string, b?: object) => void }).navigate === "function") {
+                  (root as { navigate: (a: string, b?: object) => void }).navigate("Authenticated", {
+                    screen: "Catalogue"
+                  });
+                } else {
+                  nav.navigate("Catalogue");
+                }
               }}
             >
               <Text

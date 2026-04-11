@@ -43,6 +43,13 @@ export function buildLegacyCourseTabNavigation<P extends ParamListBase, R extend
         navLoose(LEGACY_COURSE_TAB_OVERVIEW, params);
         return;
       }
+      if (name === "Catalogue") {
+        const courseTab = navigation.getParent?.();
+        if (courseTab && typeof (courseTab as { navigate?: LooseNavigate }).navigate === "function") {
+          (courseTab as { navigate: LooseNavigate }).navigate("Catalogue", params);
+          return;
+        }
+      }
       (base.navigate as unknown as LooseNavigate)(name, params);
     }
   };

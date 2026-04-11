@@ -291,10 +291,10 @@ export default class EmailAccountRegistrationController extends BlockComponent<
       this.clearValidation()
     }
     else {
-      // alert('hiiii')
-      this.setState({ showLoader: true })
-      this.api();
-    
+      this.setState({ showLoader: true });
+      void this.api().catch(() => {
+        this.setState({ showLoader: false, error: STRINGS.MESSAGE.SINGUP_FAIL });
+      });
     }
 
   }
