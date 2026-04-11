@@ -11,8 +11,12 @@ import { runEngine } from "../../../framework/src/RunEngine";
 import {
   GoogleSignin
 } from "../../../../react-native/src/shims/@react-native-community-google-signin";
+import { CommonActions } from "@react-navigation/native";
+import {
+  navigationRef,
+  resetNavigationToEmailLogin
+} from "../../../../react-native/src/navigation/rootNavigationRef";
 import { DeviceEventEmitter, Platform } from "react-native";
-import { NavigationActions, StackActions } from 'react-navigation';
 import { STRINGS, VALIDATION_TIMER } from "../../../mobile/src/utils";
 import AsynchStoragekey from '../../../mobile/src/utils/asynchKeys';
 import { isConnected } from "../../../mobile/src/utils/internetConnection";
@@ -20,6 +24,53 @@ import i18n from '../../LanguageOptions/src/component/i18n/i18n.config';
 
 export const configJSON = require("./config");
 const reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)([\.-]?\w+)$/;
+
+/** RN6 root stack: reset must run on root — tab/stack nesting has no `NonAuthenticated` route. */
+function getRootNavigation(navigation: {
+  getParent?: () => typeof navigation;
+  dispatch: (action: unknown) => void;
+}) {
+  let nav = navigation;
+  let parent = navigation.getParent?.();
+  while (parent) {
+    nav = parent;
+    parent = parent.getParent?.();
+  }
+  return nav;
+}
+
+const nonAuthLoginResetAction = CommonActions.reset({
+  index: 0,
+  routes: [
+    {
+      name: "NonAuthenticated",
+      state: {
+        routes: [{ name: "EmailAccountLoginBlock" }],
+        index: 0
+      }
+    }
+  ]
+});
+
+function resetToNonAuthLogin(navigation: { getParent?: () => unknown; dispatch: (action: unknown) => void }) {
+  getRootNavigation(navigation as Parameters<typeof getRootNavigation>[0]).dispatch(nonAuthLoginResetAction);
+}
+
+/** Prefer container ref (root); defer one frame so modal close does not race the reset. */
+function navigateToLoginAfterLogout(navigation: { getParent?: () => unknown; dispatch: (action: unknown) => void }) {
+  const run = () => {
+    if (navigationRef.isReady()) {
+      resetNavigationToEmailLogin();
+    } else {
+      resetToNonAuthLogin(navigation);
+    }
+  };
+  if (typeof requestAnimationFrame === "function") {
+    requestAnimationFrame(run);
+  } else {
+    setTimeout(run, 0);
+  }
+}
 
 // Customizable Area End
 // let apiRes = this.props.navigation.state.params?.apiSucess
@@ -294,23 +345,23 @@ export default class UserProfileBasicController extends BlockComponent<
 
 
   logout = async () => {
-    await AsyncStorage.removeItem(AsynchStoragekey.AsynchStoragekey.LOGIN_TOKEN);
-    await AsyncStorage.removeItem(AsynchStoragekey.AsynchStoragekey.USER_CREDITCARDID);
-    this.props.removeSubscription();
-    this.props.removeUserProfile();
-    
-    this.googleSignOut()
-    if (Platform.OS == 'ios') {
+    try {
+      await AsyncStorage.removeItem(AsynchStoragekey.AsynchStoragekey.LOGIN_TOKEN);
+      await AsyncStorage.removeItem(AsynchStoragekey.AsynchStoragekey.USER_CREDITCARDID);
+    } catch (e) {
+      console.warn("logout: async storage", e);
+    }
+    try {
+      this.props.removeSubscription();
+      this.props.removeUserProfile();
+    } catch (e) {
+      console.warn("logout: redux", e);
+    }
+    void this.googleSignOut();
+    if (Platform.OS == "ios") {
       // await appleAuth.performRequest({requestedOperation: AppleRequestOperation.LOGOUT})
     }
-    this.props.navigation.dispatch(
-      StackActions.reset({
-        index: 0,
-        actions: [NavigationActions.navigate({ routeName: 'NonAuthenticated' })],
-        key: null
-      })
-    )
-    // this.props.navigation.replace('EmailAccountLoginBlock')
+    navigateToLoginAfterLogout(this.props.navigation);
   }
 
   googleSignOut = async () => {
@@ -865,10 +916,9 @@ export default class UserProfileBasicController extends BlockComponent<
         }
 
         if (apiRequestCallId == this.dailyUsageTimeID) {
-          console.log("iam in the ddaily time sent-->", responseJson)
-          AsyncStorage.setItem("APPtime", "0")
-          AsyncStorage.setItem("APPdate", "0")
-          this.logout()
+          console.log("iam in the ddaily time sent-->", responseJson);
+          AsyncStorage.setItem("APPtime", "0");
+          AsyncStorage.setItem("APPdate", "0");
         }
 
       }
@@ -887,16 +937,9 @@ export default class UserProfileBasicController extends BlockComponent<
             await AsyncStorage.removeItem(AsynchStoragekey.AsynchStoragekey.SUBSCRIPTION_TRANSACTION_DATE);
             await AsyncStorage.removeItem(AsynchStoragekey.AsynchStoragekey.SUBSCRIPTION_TRANSACTION_RECEIPT);
 
-            this.setState({ showLoader: false })
+            this.setState({ showLoader: false });
             // await AsyncStorage.removeItem(AsynchStoragekey.AsynchStoragekey.USER_INFO);
-            // this.props.navigation.replace('EmailAccountLoginBlock')
-            this.props.navigation.dispatch(
-              StackActions.reset({
-                index: 0,
-                actions: [NavigationActions.navigate({ routeName: 'NonAuthenticated' })],
-                key: null
-              })
-            )
+            navigateToLoginAfterLogout(this.props.navigation);
           }
           else {
 
@@ -1014,10 +1057,9 @@ export default class UserProfileBasicController extends BlockComponent<
 
 
       if (apiRequestCallId == this.dailyUsageTimeID) {
-        console.log("iam in the ddaily time sent", responseJson)
-        AsyncStorage.setItem("APPtime", "0")
-        AsyncStorage.setItem("APPdate", "0")
-        this.logout()
+        console.log("iam in the ddaily time sent", responseJson);
+        AsyncStorage.setItem("APPtime", "0");
+        AsyncStorage.setItem("APPdate", "0");
       }
 
 

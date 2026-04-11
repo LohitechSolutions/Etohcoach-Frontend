@@ -175,7 +175,11 @@ class UserProfileBasicBlock extends UserProfileBasicController {
                       t("AreYouSureLogOut")
                     }
                     height={hp(35)}
-                    confirmBtn={() => this.sendAppTimeapicall()}
+                    confirmBtn={() => {
+                      this.setState({ isVisible: false });
+                      void this.sendAppTimeapicall();
+                      void this.logout();
+                    }}
                   />
                 ) : null}
               </View>

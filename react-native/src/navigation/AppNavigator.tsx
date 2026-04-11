@@ -2,6 +2,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import type { ComponentType } from "react";
 import React from "react";
+import { navigationRef } from "./rootNavigationRef";
 import { getLegacyBlock } from "../migration/legacyBlockRegistry";
 import { withLegacyNavigation } from "../migration/legacyNavigationCompat";
 import { PlaceholderScreen } from "./PlaceholderScreen";
@@ -89,7 +90,7 @@ function NonAuthenticatedNavigator() {
 /** Legacy block UI under RN6 + nested stacks matching packages/mobile/App.tsx. */
 export function AppNavigator() {
   return (
-    <NavigationContainer>
+    <NavigationContainer ref={navigationRef}>
       <RootStack.Navigator initialRouteName="SPLASH" screenOptions={{ headerShown: false }}>
         <RootStack.Screen name="SPLASH" getComponent={getSplashScreen} />
         <RootStack.Screen name="Splashscreen" getComponent={getSplashScreen} />
