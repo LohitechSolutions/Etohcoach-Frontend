@@ -301,7 +301,9 @@ class EmailAccountRegistration extends EmailAccountRegistrationController {
               </View>
               {this.state.error != "" ? (
                 <ToastMassge
-                  toastMassage={i18next.t(this.state.error)}
+                  toastMassage={i18next.t(this.state.error, {
+                    defaultValue: this.state.error
+                  })}
                   isSuccess={false}
                 />
               ) : null}

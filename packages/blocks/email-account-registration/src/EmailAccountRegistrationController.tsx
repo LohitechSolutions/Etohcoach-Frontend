@@ -14,6 +14,7 @@ import AsynchStoragekey from '../../../mobile/src/utils/asynchKeys';
 import { STRINGS, VALIDATION_TIMER } from "../../../mobile/src/utils";
 import DeviceInfo from 'react-native-device-info';
 import { Platform } from "react-native";
+import { resetNavigationToAuthenticated } from "../../../../react-native/src/navigation/rootNavigationRef";
 
 
 
@@ -21,6 +22,39 @@ import { Platform } from "react-native";
 
 export const configJSON = require("./config");
 const reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)([\.-]?\w+)$/;
+
+function formatSignupApiError(responseJson: any): string | null {
+  if (!responseJson || typeof responseJson !== "object") {
+    return null;
+  }
+  const errs = responseJson.errors;
+  if (Array.isArray(errs) && errs.length > 0) {
+    const e0 = errs[0];
+    if (typeof e0 === "string") {
+      return e0;
+    }
+    if (e0 && typeof e0 === "object") {
+      if (typeof e0.detail === "string") {
+        return e0.detail;
+      }
+      if (typeof e0.title === "string") {
+        return e0.title;
+      }
+      const flat = Object.values(e0).flat(Infinity) as unknown[];
+      const firstStr = flat.find((v) => typeof v === "string" && String(v).length > 0);
+      if (firstStr) {
+        return String(firstStr);
+      }
+    }
+  }
+  if (typeof responseJson.message === "string") {
+    return responseJson.message;
+  }
+  if (typeof responseJson.error === "string") {
+    return responseJson.error;
+  }
+  return null;
+}
 
 export interface Props {
   navigation: any;
@@ -214,11 +248,9 @@ export default class EmailAccountRegistrationController extends BlockComponent<
 
     console.log("reponse--------in registration", responseJson);
     if (responseJson.errors) {
+      const detail = formatSignupApiError(responseJson);
       this.setState({
-        error:
-          responseJson.errors?.length > 0
-            ? Object.values(responseJson.errors[0])
-            : STRINGS.MESSAGE.SINGUP_FAIL,
+        error: detail || STRINGS.MESSAGE.SINGUP_FAIL,
       });
       this.clearValidation();
       return;
@@ -226,7 +258,14 @@ export default class EmailAccountRegistrationController extends BlockComponent<
 
     const usrObj = responseJson?.data?.attributes;
     if (!usrObj) {
-      this.setState({ error: STRINGS.MESSAGE.SINGUP_FAIL });
+      const detail = formatSignupApiError(responseJson);
+      if (__DEV__) {
+        console.warn(
+          "[Signup] Missing data.attributes; response:",
+          JSON.stringify(responseJson).slice(0, 500)
+        );
+      }
+      this.setState({ error: detail || STRINGS.MESSAGE.SINGUP_FAIL });
       this.clearValidation();
       return;
     }
@@ -249,9 +288,15 @@ export default class EmailAccountRegistrationController extends BlockComponent<
     );
     this.props.addUserProfile(usrObj);
     this.props.cancelSubscription();
-    this.props.navigation.replace("SubCriptionScreen", {
-      itisfromloginOrSignUp: true,
-    });
+    const goSubscribe = () =>
+      resetNavigationToAuthenticated("SubCriptionScreen", {
+        itisfromloginOrSignUp: true,
+      });
+    if (typeof requestAnimationFrame === "function") {
+      requestAnimationFrame(goSubscribe);
+    } else {
+      setTimeout(goSubscribe, 0);
+    }
   }
 
 
@@ -310,8 +355,14 @@ export default class EmailAccountRegistrationController extends BlockComponent<
     let fcmtoken: any = await AsyncStorage.getItem('FCM_TOKEN');
     const langue = await AsyncStorage.getItem("appLanguage");
     console.log(langue, "appLanguage from Login");
-    let Devices=DeviceInfo.getModel()
-    let version=DeviceInfo.getSystemVersion();
+    let Devices = "unknown";
+    let version = "unknown";
+    try {
+      Devices = DeviceInfo.getModel();
+      version = DeviceInfo.getSystemVersion();
+    } catch {
+      /* Expo shim / missing native module */
+    }
     let date= new Date()
     let user_time=date.toLocaleDateString()+" "+date.toLocaleTimeString("en-GB")
    
@@ -352,7 +403,7 @@ console.log(timeOffset,"checking what is it gmt gmt");
       email: this.state.email,
       password: this.state.password,
       activated: true,
-      device_id:fcmtoken,
+      device_id: fcmtoken ?? "",
       language: langue,
       devices_type:Devices,
       ios_version:version,
