@@ -23,3 +23,49 @@ export function resetNavigationToEmailLogin(): void {
     })
   );
 }
+
+type AuthenticatedInitialRoute = "Dashboard" | "SubCriptionScreen";
+
+function dispatchAuthenticatedReset(
+  initialRouteName: AuthenticatedInitialRoute,
+  params?: Record<string, unknown>
+): void {
+  const initial =
+    params && Object.keys(params).length > 0
+      ? { name: initialRouteName, params }
+      : { name: initialRouteName };
+  navigationRef.dispatch(
+    CommonActions.reset({
+      index: 0,
+      routes: [
+        {
+          name: "Authenticated",
+          state: {
+            routes: [initial],
+            index: 0
+          }
+        }
+      ]
+    })
+  );
+}
+
+/** Root reset into Authenticated stack (NonAuth navigator cannot reset to Authenticated). */
+export function resetNavigationToAuthenticated(
+  initialRouteName: AuthenticatedInitialRoute = "Dashboard",
+  params?: Record<string, unknown>,
+  attemptsLeft: number = 12
+): void {
+  if (navigationRef.isReady()) {
+    dispatchAuthenticatedReset(initialRouteName, params);
+    return;
+  }
+  if (attemptsLeft <= 0) {
+    return;
+  }
+  const schedule =
+    typeof requestAnimationFrame === "function"
+      ? (cb: () => void) => requestAnimationFrame(cb)
+      : (cb: () => void) => setTimeout(cb, 16);
+  schedule(() => resetNavigationToAuthenticated(initialRouteName, params, attemptsLeft - 1));
+}

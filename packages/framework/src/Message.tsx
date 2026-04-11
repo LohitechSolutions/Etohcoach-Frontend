@@ -17,11 +17,11 @@ export class Message {
   }
 
   getData(key: any) {
-    let val = this.properties[key];
-    if (val) {
-      return val;
+    if (Object.prototype.hasOwnProperty.call(this.properties, key)) {
+      return this.properties[key];
     }
     console.log('properties = ', this.properties, key);
+    return undefined;
   }
 
   initializeFromObject = (from: any) => {

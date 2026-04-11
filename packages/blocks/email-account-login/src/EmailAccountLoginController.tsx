@@ -9,8 +9,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 // Customizable Area Start
 import { imgPasswordInVisible, imgPasswordVisible } from "./assets";
 import { AsynchStoragekey, STRINGS, VALIDATION_TIMER } from '../../../mobile/src/utils/index'
-import { StackActions, NavigationActions } from 'react-navigation';
 import { setAsyncData } from "../../../mobile/src/utils/AsyncKeysStorage";
+import { resetNavigationToAuthenticated } from "../../../../react-native/src/navigation/rootNavigationRef";
 // Customizable Area End
 
 export const configJSON = require("./config");
@@ -69,6 +69,7 @@ export default class EmailAccountLoginController extends BlockComponent<
   // Customizable Area Start
   ApiCallId: any;
   userInfoApiCallId: any;
+  postLoginIsSubscribed: boolean | undefined;
   apiEmailLoginCallId: string = "";
   validationApiCallId: string = "";
   emailReg: RegExp;
@@ -308,8 +309,13 @@ export default class EmailAccountLoginController extends BlockComponent<
 
         this.CustomCheckBoxProps.isChecked = true;
       }
+      return;
     }
-    // else if (getName(MessageEnum.RestAPIResponceMessage) === message.id) {
+
+    if (getName(MessageEnum.RestAPIResponceMessage) !== message.id) {
+      return;
+    }
+
     const apiRequestCallId = message.getData(
       getName(MessageEnum.RestAPIResponceDataMessage)
     );
@@ -322,24 +328,40 @@ export default class EmailAccountLoginController extends BlockComponent<
     var errorReponse = message.getData(
       getName(MessageEnum.RestAPIResponceErrorMessage)
     );
-    if (apiRequestCallId && responseJson) {
 
-      if (apiRequestCallId === this.ApiCallId) {
+    if (!apiRequestCallId || (apiRequestCallId !== this.ApiCallId && apiRequestCallId !== this.userInfoApiCallId)) {
+      return;
+    }
+
+    if (errorReponse) {
+      this.setState({
+        showLoader: false,
+        error: typeof errorReponse === "string" ? errorReponse : STRINGS.MESSAGE.LOGIN_FAIL
+      });
+      this.clearValidation();
+      return;
+    }
+
+    if (responseJson === undefined || responseJson === null) {
+      this.setState({ showLoader: false, error: STRINGS.MESSAGE.LOGIN_FAIL });
+      this.clearValidation();
+      return;
+    }
+
+    if (apiRequestCallId === this.ApiCallId) {
         console.log("@@@ login reponse ===", responseJson,responseJson?.errors);
          let dataArrtibute = {
             push: responseJson?.meta?.push_notificable,
             mail: responseJson?.meta?.mail_notificable
           }
-        // setTimeout(async () => {
         this.setState({ showLoader: false })
         if (!responseJson?.errors) {
-         
+          const subRaw = responseJson?.meta?.is_subscribed;
+          this.postLoginIsSubscribed =
+            subRaw === true || subRaw === "true" || subRaw === 1 || subRaw === "1";
           await AsyncStorage.setItem(AsynchStoragekey.AsynchStoragekey.LOGIN_TOKEN, responseJson?.meta?.token);
           await AsyncStorage.setItem(AsynchStoragekey.AsynchStoragekey.LOGIN_ID, `${responseJson?.meta?.id}`);
           await AsyncStorage.setItem(AsynchStoragekey.AsynchStoragekey.USER_CREDITCARDID, `${responseJson?.meta?.stripe_id}`);
-          // await AsyncStorage.setItem(AsynchStoragekey.AsynchStoragekey.USER_SUBSCRIPTION, `${responseJson?.meta?.stripe_subscription_id}`);
-          
-          // await AsyncStorage.setItem(AsynchStoragekey.AsynchStoragekey.USER_SUBSCRIPTION, `${responseJson?.meta?.is_subscribed?"subscribed":"unsubscribed"}`);
           this.props.addSubscription({
             subscriptionId: responseJson?.meta?.subscription_id,
             transactionDate: responseJson?.meta?.subscription_date,
@@ -357,33 +379,44 @@ export default class EmailAccountLoginController extends BlockComponent<
           this.clearValidation()
         }
 
-      }
-      else if (apiRequestCallId === this.userInfoApiCallId) {
+    }
+    else if (apiRequestCallId === this.userInfoApiCallId) {
         if (!responseJson?.errors) {
           this.props.addUserProfile(responseJson?.data?.attributes)
           await AsyncStorage.setItem(AsynchStoragekey.AsynchStoragekey.USER_INFO, JSON.stringify(responseJson?.data?.attributes));
 
-          // let userSubscription = await AsyncStorage.getItem("USER_SUBSCRIPTION");
-          let userSubscription = this.props.subscriptionState?.subscriptionInfo?.userSubscription;
-
-          if (userSubscription == 'null') {
-            this.props.navigation.navigate('SubCriptionScreen',{itisfromloginOrSignUp:true})
+          const fromRedux = this.props.subscriptionState?.subscriptionInfo?.userSubscription;
+          let needsSubscriptionScreen: boolean;
+          if (this.postLoginIsSubscribed === true) {
+            needsSubscriptionScreen = false;
+          } else if (this.postLoginIsSubscribed === false) {
+            needsSubscriptionScreen = true;
+          } else {
+            needsSubscriptionScreen =
+              fromRedux === "unsubscribed" || fromRedux === "null" || fromRedux == null;
           }
-          else {
-            this.props.navigation.dispatch(
-              StackActions.reset({
-                index: 0,
-                actions: [NavigationActions.navigate({ routeName: 'Authenticated' })],
-                key: null
-              })
-            )
+
+          const runReset = () => {
+            if (needsSubscriptionScreen) {
+              resetNavigationToAuthenticated("SubCriptionScreen", { itisfromloginOrSignUp: true });
+            } else {
+              resetNavigationToAuthenticated("Dashboard");
+            }
+          };
+          if (typeof requestAnimationFrame === "function") {
+            requestAnimationFrame(runReset);
+          } else {
+            setTimeout(runReset, 0);
           }
 
         }
         else {
-          this.setState({ error: !!responseJson?.errors && responseJson?.errors?.length > 0 ? Object.values(responseJson?.errors[0]) : STRINGS.MESSAGE.LOGIN_FAIL })
+          this.setState({
+            showLoader: false,
+            error: !!responseJson?.errors && responseJson?.errors?.length > 0 ? Object.values(responseJson?.errors[0]) : STRINGS.MESSAGE.LOGIN_FAIL
+          })
+          this.clearValidation()
         }
-      }
     }
     // Customizable Area End
     // if (apiRequestCallId != null) {

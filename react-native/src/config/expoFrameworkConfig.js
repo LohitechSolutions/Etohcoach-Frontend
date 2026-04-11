@@ -9,12 +9,16 @@
 
 const DEFAULT_HOSTED_API = "https://etohcoach-backend-production.up.railway.app";
 
-const EXPO_PUBLIC_API_URL_RAW =
-  typeof process !== 'undefined' &&
-  process.env &&
-  typeof process.env.EXPO_PUBLIC_API_URL === 'string'
-    ? process.env.EXPO_PUBLIC_API_URL.trim()
-    : '';
+/** EXPO_PUBLIC_API_URL or alias EXPO_PUBLIC_API_BASE_URL (playbook name). */
+const EXPO_PUBLIC_API_URL_RAW = (() => {
+  const env = typeof process !== 'undefined' && process.env ? process.env : undefined;
+  const a = env && typeof env.EXPO_PUBLIC_API_URL === 'string' ? env.EXPO_PUBLIC_API_URL.trim() : '';
+  const b =
+    env && typeof env.EXPO_PUBLIC_API_BASE_URL === 'string'
+      ? env.EXPO_PUBLIC_API_BASE_URL.trim()
+      : '';
+  return a || b;
+})();
 
 /** Expo app defaults to hosted API; set EXPO_PUBLIC_API_URL for local Rails only. */
 const USE_LOCAL_ROOT_BACKEND = false;
