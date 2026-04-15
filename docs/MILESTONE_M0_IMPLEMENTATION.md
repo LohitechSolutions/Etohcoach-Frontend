@@ -42,7 +42,7 @@ Remove ambiguity so engineering can implement without rework.
 
 ## After M0
 
-Continue with **Milestone M1 — Firebase foundation** in [ROADMAP_IMPLEMENTATION_MILESTONES.md](./ROADMAP_IMPLEMENTATION_MILESTONES.md).
+Continue with **[Milestone M1 — Firebase foundation](./MILESTONE_M1_IMPLEMENTATION.md)** (full sequence: [ROADMAP_IMPLEMENTATION_MILESTONES.md](./ROADMAP_IMPLEMENTATION_MILESTONES.md)).
 
 ---
 
