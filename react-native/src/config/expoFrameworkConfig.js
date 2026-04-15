@@ -20,6 +20,19 @@ const EXPO_PUBLIC_API_URL_RAW = (() => {
   return a || b;
 })();
 
+/**
+ * Catalogue/content source (M0): `rest` = Railway Rails API (default); `firestore` = direct reads when app implements them.
+ * Set in `.env`: EXPO_PUBLIC_CONTENT_SOURCE=firestore
+ */
+const EXPO_PUBLIC_CONTENT_SOURCE_RAW = (() => {
+  const env = typeof process !== 'undefined' && process.env ? process.env : undefined;
+  const v =
+    env && typeof env.EXPO_PUBLIC_CONTENT_SOURCE === 'string'
+      ? env.EXPO_PUBLIC_CONTENT_SOURCE.trim().toLowerCase()
+      : '';
+  return v === 'firestore' ? 'firestore' : 'rest';
+})();
+
 /** Expo app defaults to hosted API; set EXPO_PUBLIC_API_URL for local Rails only. */
 const USE_LOCAL_ROOT_BACKEND = false;
 
@@ -57,3 +70,4 @@ exports.apiUrl = apiUrl;
 exports.USE_LOCAL_ROOT_BACKEND = USE_LOCAL_ROOT_BACKEND;
 exports.LOCAL_API_HOST = LOCAL_API_HOST;
 exports.LOCAL_API_PORT = LOCAL_API_PORT;
+exports.CONTENT_SOURCE = EXPO_PUBLIC_CONTENT_SOURCE_RAW;

@@ -17,6 +17,15 @@ const EXPO_PUBLIC_API_URL_RAW =
     ? process.env.EXPO_PUBLIC_API_URL.trim()
     : '';
 
+const EXPO_PUBLIC_CONTENT_SOURCE_RAW = (() => {
+  const env = typeof process !== 'undefined' && process.env ? process.env : undefined;
+  const v =
+    env && typeof env.EXPO_PUBLIC_CONTENT_SOURCE === 'string'
+      ? env.EXPO_PUBLIC_CONTENT_SOURCE.trim().toLowerCase()
+      : '';
+  return v === 'firestore' ? 'firestore' : 'rest';
+})();
+
 const USE_LOCAL_ROOT_BACKEND = true;
 
 const LOCAL_API_HOST = '127.0.0.1';
@@ -60,3 +69,4 @@ exports.apiUrl = apiUrl;
 exports.USE_LOCAL_ROOT_BACKEND = USE_LOCAL_ROOT_BACKEND;
 exports.LOCAL_API_HOST = LOCAL_API_HOST;
 exports.LOCAL_API_PORT = LOCAL_API_PORT;
+exports.CONTENT_SOURCE = EXPO_PUBLIC_CONTENT_SOURCE_RAW;
