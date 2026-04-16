@@ -241,7 +241,9 @@ This document turns [CLIENT_SPEC_AND_IMPLEMENTATION_ROADMAP.md](./CLIENT_SPEC_AN
 |------|------|
 | Client spec & phases | [docs/CLIENT_SPEC_AND_IMPLEMENTATION_ROADMAP.md](./CLIENT_SPEC_AND_IMPLEMENTATION_ROADMAP.md) |
 | Firestore types / collections | [`firebase/content-schema.ts`](../firebase/content-schema.ts) |
-| Rules / indexes | [`firebase/firestore.rules`](../firebase/firestore.rules), [`firebase/firestore.indexes.json`](../firebase/firestore.indexes.json) |
+| Rules / indexes | [`firebase/firestore.rules`](../firebase/firestore.rules), [`firebase/firestore.indexes.json`](../firebase/firestore.indexes.json), [`firebase/storage.rules`](../firebase/storage.rules) |
+| Functions (admin claim) | [`firebase/functions/src/index.ts`](../firebase/functions/src/index.ts) |
+| Firebase CLI / emulators | [`firebase/firebase.json`](../firebase/firebase.json), [`firebase/package.json`](../firebase/package.json) |
 | Catalogue REST config (today) | [`packages/blocks/catalogue/src/config.js`](../packages/blocks/catalogue/src/config.js) |
 | Expo API base URL | [`react-native/src/config/expoFrameworkConfig.js`](../react-native/src/config/expoFrameworkConfig.js) |
 | Admin placeholder | [`packages/blocks/ContentManagement/`](../packages/blocks/ContentManagement/) |

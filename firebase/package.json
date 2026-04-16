@@ -1,0 +1,16 @@
+{
+  "name": "etoh-firebase-infra",
+  "private": true,
+  "description": "Firestore, Storage, Functions — deploy from this directory after copying .firebaserc.example to .firebaserc",
+  "scripts": {
+    "emulators": "firebase emulators:start",
+    "deploy": "firebase deploy",
+    "deploy:rules": "firebase deploy --only firestore:rules,firestore:indexes,storage",
+    "deploy:functions": "firebase deploy --only functions",
+    "functions:install": "npm install --prefix functions",
+    "functions:build": "npm run build --prefix functions"
+  },
+  "devDependencies": {
+    "firebase-tools": "^13.29.1"
+  }
+}

@@ -1,7 +1,13 @@
 /**
  * Firestore content model for EtOH Coach CMS + app reads (M0 frozen).
  * Decisions: docs/decisions/0001-m0-architecture-product-decisions.md
+ *
+ * Storage (M1): upload CMS binaries under prefix `etoh_cms/` — see `storage.rules`.
+ * Store resulting download URLs in `cover_image_url`, `image_url`, `video_url`, etc.
  */
+
+/** Prefix for Firebase Storage objects governed by `storage.rules` */
+export const STORAGE_CMS_PREFIX = 'etoh_cms' as const;
 
 /** Collection ids — keep in sync with firestore.rules */
 export const COLLECTIONS = {

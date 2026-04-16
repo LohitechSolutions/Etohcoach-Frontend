@@ -21,6 +21,10 @@
     "ios": "yarn --cwd react-native ios",
     "start": "yarn --cwd react-native start",
     "typecheck:app": "yarn --cwd react-native typecheck",
+    "firebase:install": "npm install --prefix firebase && npm install --prefix firebase/functions && npm run build --prefix firebase/functions",
+    "firebase:emulators": "npm run emulators --prefix firebase",
+    "firebase:deploy:rules": "npm run deploy:rules --prefix firebase",
+    "firebase:deploy:functions": "npm run deploy:functions --prefix firebase",
     "postinstall": "patch-package"
   },
   "resolutions": {

@@ -4,6 +4,8 @@ Independent implementation plan extracted from [ROADMAP_IMPLEMENTATION_MILESTONE
 
 **Companion docs:** Expo work: [`EXPO_MIGRATION_MILESTONES.md`](../EXPO_MIGRATION_MILESTONES.md), [`EXPO_SCREEN_PARITY_CHECKLIST.md`](../EXPO_SCREEN_PARITY_CHECKLIST.md). **Prerequisite:** [Milestone M0](./MILESTONE_M0_IMPLEMENTATION.md) complete ([ADR 0001](./decisions/0001-m0-architecture-product-decisions.md)).
 
+**Implementation record (repo):** Firestore rules and indexes were started in M0. M1 adds **Storage rules** (`firebase/storage.rules`), **Firebase CLI layout** (`firebase/firebase.json`, `firebase/package.json`), **emulator config**, **Cloud Function `grantAdmin`** (`firebase/functions/`), and root **`yarn firebase:*`** scripts. You still must create/link a **Firebase project** in the console and run deploy (below).
+
 ---
 
 ## Goal
@@ -46,11 +48,27 @@ Proceed to [Milestone M2 — Admin dashboard MVP](./MILESTONE_M2_IMPLEMENTATION.
 
 ---
 
+## Deploy & bootstrap runbook
+
+1. In [Firebase Console](https://console.firebase.google.com), create or select the EtOH project; enable **Authentication** (Email/Password or as needed), **Firestore**, **Storage**, and **Functions** (Blaze may be required for Functions).
+2. `cd firebase && cp .firebaserc.example .firebaserc` — set `"default"` to your **project id**.
+3. `npm install` in `firebase/` (installs `firebase-tools`) and `npm install` in `firebase/functions` (or from repo root: `yarn firebase:install`).
+4. Deploy rules and indexes: `yarn firebase:deploy:rules` (or `npm run deploy:rules` from `firebase/`).
+5. Set super-admin allowlist for the **first** bootstrap (comma-separated emails matching Firebase Auth):  
+   `firebase functions:config:set superadmin.emails="founder@example.com"`  
+   then `yarn firebase:deploy:functions`.
+6. Sign in to the app/admin as that user, call callable **`grantAdmin`** with `{ uid: "<firebaseAuthUid>" }` — including **`uid` equal to your own** to promote yourself after first deploy (e.g. one-off script or temporary UI). Then grant other operators the same way. Tighten or remove `superadmin.emails` after bootstrap if desired.
+7. **Exit criteria / QA:** In emulator or staging (`yarn firebase:emulators`), confirm a **non-admin** client cannot read a **draft** course/lesson and cannot write Storage/Firestore; confirm **admin** can CRUD and upload under `etoh_cms/`.
+
+---
+
 ## Reference paths (repo)
 
 | Area | Path |
 |------|------|
 | Firestore types / collections | [`firebase/content-schema.ts`](../firebase/content-schema.ts) |
-| Rules / indexes | [`firebase/firestore.rules`](../firebase/firestore.rules), [`firebase/firestore.indexes.json`](../firebase/firestore.indexes.json) |
-| Firebase CLI config | [`firebase/firebase.json`](../firebase/firebase.json) |
+| Firestore rules / indexes | [`firebase/firestore.rules`](../firebase/firestore.rules), [`firebase/firestore.indexes.json`](../firebase/firestore.indexes.json) |
+| Storage rules | [`firebase/storage.rules`](../firebase/storage.rules) |
+| Admin claim callable | [`firebase/functions/src/index.ts`](../firebase/functions/src/index.ts) |
+| Firebase CLI config | [`firebase/firebase.json`](../firebase/firebase.json), [`firebase/.firebaserc.example`](../firebase/.firebaserc.example) |
 | Testing & ops (emulator, secrets) | [Milestone — Cross-cutting](./MILESTONE_CROSS_CUTTING_TESTING_OPS.md) |
