@@ -7,6 +7,8 @@ import MessageEnum, {
 } from "../../../framework/src/Messages/MessageEnum";
 import { runEngine } from "../../../framework/src/RunEngine";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { CONTENT_SOURCE } from "../../../framework/src/config";
+import { loadOverViewCourseShell } from "./content/firestoreRepository";
 
 import { imgPasswordInVisible, imgPasswordVisible } from "./assets";
 
@@ -202,6 +204,17 @@ export default class CongratulationController extends BlockComponent<
   congratulationsData = async () => {
     console.log("start course detail --",this.state.course_id)
     this.setState({ isLoading: true })
+    const cid = this.props?.navigation?.state?.params?.course_id;
+    if (CONTENT_SOURCE === 'firestore' && cid) {
+      try {
+        const data = await loadOverViewCourseShell(String(cid));
+        this.congratulationsSuccessCallBack({ data });
+      } catch (e) {
+        console.warn(e);
+        this.congratulationsFailureCallBack({ errors: [e] });
+      }
+      return;
+    }
     this.congratulationsApiCallId = await this.apiCall({
       contentType: configJSON.productApiContentType,
       method: configJSON.apiMethodTypeGet,

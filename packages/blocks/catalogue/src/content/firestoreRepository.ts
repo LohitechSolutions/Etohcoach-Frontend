@@ -363,6 +363,8 @@ export async function loadOverViewCourseShell(courseId: string) {
       id: courseId,
       course_name: String(c['title'] || ''),
       description,
+      /** Used by Congratulation screen (`course.did_you_know`). */
+      did_you_know: String(c['short_description'] || c['full_description'] || '').trim(),
       difficulty: '—',
       duration: '0h 0m',
       drink_type: mapCategoryToDrinkType(c['category']),

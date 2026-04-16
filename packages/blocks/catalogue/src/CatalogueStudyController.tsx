@@ -563,6 +563,9 @@ export default class CatalogueStudyController extends BlockComponent<Props, S, S
 
  
   getLessonCourseDataNext = async (item: any) => {
+    if (CONTENT_SOURCE === 'firestore') {
+      return;
+    }
     let connectionStatus = await isConnected().then(response => response).catch(err => console.log(err))
     if (item?.attributes?.status != "complete") {
       this.courseLessonApiCallId = await this.apiCall({
@@ -597,6 +600,27 @@ export default class CatalogueStudyController extends BlockComponent<Props, S, S
 
 
   getLessonCourseDataNextAltered = async (item: any, nextIndex: any) => {
+    if (CONTENT_SOURCE === 'firestore') {
+      if (item?.attributes?.status === 'complete') {
+        return;
+      }
+      const nextRow = this.state.lessionList[nextIndex];
+      const myCourseId = nextRow?.id;
+      const courseId = this.props.navigation.state?.params?.course_id;
+      if (!myCourseId || !courseId || nextRow?.type !== 'lesson') {
+        this.setState({ isLoading: false, showLoader: false });
+        return;
+      }
+      try {
+        const responseJson = await loadLessonShowPayload(String(myCourseId), String(courseId));
+        this.setState({ showLoader: false, isLoading: false });
+        this.courseLessonSuccessCallBack(responseJson);
+      } catch (e) {
+        console.warn(e);
+        this.setState({ showLoader: false, isLoading: false });
+      }
+      return;
+    }
     let connectionStatus = await isConnected().then(response => response).catch(err => console.log(err))
 
     console.log("@@@ item in catalogue 5===", item)

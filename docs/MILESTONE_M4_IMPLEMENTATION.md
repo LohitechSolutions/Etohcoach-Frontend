@@ -50,6 +50,8 @@ Proceed to [Milestone M5 — Compliance onboarding](./MILESTONE_M5_IMPLEMENTATIO
 | Area | Path |
 |------|------|
 | Catalogue REST config (today) | [`packages/blocks/catalogue/src/config.js`](../packages/blocks/catalogue/src/config.js) |
+| Firestore client + repository (M4) | [`packages/blocks/catalogue/src/content/firebaseClient.ts`](../packages/blocks/catalogue/src/content/firebaseClient.ts), [`packages/blocks/catalogue/src/content/firestoreRepository.ts`](../packages/blocks/catalogue/src/content/firestoreRepository.ts) |
 | Firestore types | [`firebase/content-schema.ts`](../firebase/content-schema.ts) |
 | Expo API / flags | [`react-native/src/config/expoFrameworkConfig.js`](../react-native/src/config/expoFrameworkConfig.js) |
 | Framework config | [`packages/framework/src/config.js`](../packages/framework/src/config.js) |
+| Expo env example | [`react-native/.env.example`](../react-native/.env.example) |
