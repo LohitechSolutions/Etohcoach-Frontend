@@ -45,5 +45,6 @@ Proceed to [Milestone M4 — Consumer app: Firestore read path](./MILESTONE_M4_I
 | Area | Path |
 |------|------|
 | Schema target | [`firebase/content-schema.ts`](../firebase/content-schema.ts) |
+| **ETL script (Rails → Firestore)** | [`firebase/etl/`](../firebase/etl/) — `yarn etl:install` then `yarn etl:migrate` (see `env.example`) |
 | Catalogue REST (source) | [`packages/blocks/catalogue/src/config.js`](../packages/blocks/catalogue/src/config.js) |
-| Content source flag | [`react-native/src/config/expoFrameworkConfig.js`](../react-native/src/config/expoFrameworkConfig.js), [`packages/framework/src/config.js`](../packages/framework/src/config.js) |
+| Content source flag | [`react-native/src/config/expoFrameworkConfig.js`](../react-native/src/config/expoFrameworkConfig.js), [`packages/framework/src/config.js`](../packages/framework/src/config.js) — `EXPO_PUBLIC_CONTENT_SOURCE` or `CONTENT_SOURCE` (`rest` \| `firestore`) |

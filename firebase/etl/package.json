@@ -1,0 +1,20 @@
+{
+  "name": "@etoh/etl-rails-firestore",
+  "private": true,
+  "type": "module",
+  "description": "M3: one-off / repeatable ETL from Railway Rails catalogue API to Firestore (content-schema)",
+  "scripts": {
+    "build": "tsc",
+    "migrate": "npm run build && node dist/migrate.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "firebase-admin": "^12.7.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "typescript": "^5.7.2"
+  }
+}

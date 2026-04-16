@@ -19,10 +19,12 @@ const EXPO_PUBLIC_API_URL_RAW =
 
 const EXPO_PUBLIC_CONTENT_SOURCE_RAW = (() => {
   const env = typeof process !== 'undefined' && process.env ? process.env : undefined;
-  const v =
+  const a =
     env && typeof env.EXPO_PUBLIC_CONTENT_SOURCE === 'string'
       ? env.EXPO_PUBLIC_CONTENT_SOURCE.trim().toLowerCase()
       : '';
+  const b = env && typeof env.CONTENT_SOURCE === 'string' ? env.CONTENT_SOURCE.trim().toLowerCase() : '';
+  const v = a || b;
   return v === 'firestore' ? 'firestore' : 'rest';
 })();
 

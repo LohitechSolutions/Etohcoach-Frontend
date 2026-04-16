@@ -8,7 +8,9 @@
     "deploy:rules": "firebase deploy --only firestore:rules,firestore:indexes,storage",
     "deploy:functions": "firebase deploy --only functions",
     "functions:install": "npm install --prefix functions",
-    "functions:build": "npm run build --prefix functions"
+    "functions:build": "npm run build --prefix functions",
+    "etl:install": "npm install --prefix etl",
+    "etl:migrate": "npm run migrate --prefix etl"
   },
   "devDependencies": {
     "firebase-tools": "^13.29.1"
