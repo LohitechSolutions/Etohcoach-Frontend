@@ -19,6 +19,7 @@ import { COLORS } from "../../../framework/src/Globals";
 import BottemButton from "../../../mobile/src/component/BottemButtonComponent";
 import ToastMassage from "../../../mobile/src/component/ToastMassage";
 import { AsynchStoragekey } from "../../../mobile/src/utils";
+import { PRODUCT_COPY } from "../../catalogue/src/productCopyKeys";
 import SubcriptionController, { Props } from "./SubcriptionController";
 import { connect } from 'react-redux';
 // import { addUserProfile, removeUserProfile } from "../../../mobile/src/store/actions/UserProfile";
@@ -252,10 +253,10 @@ handleBackNavigation = async()=>{
               {t("Remember")}
             </Text>
             <Text style={{ fontSize: hp("1.8%"), color: "#7A7586", marginTop: 7 }}>
-              {t("EtoHCoachPartner")}
+              {t(PRODUCT_COPY.subscriptionTaglineA)}
             </Text>
             <Text style={{ fontSize: hp("1.8%"), color: "#7A7586", marginTop: 1 }}>
-              {t("BeersCertification")}
+              {t(PRODUCT_COPY.subscriptionTaglineB)}
             </Text>
             <Text style={{ fontSize: hp("1.8%"), marginTop: 10, color: "#7A7586" }}>
               {t("ThanksToItsAdaptive")}

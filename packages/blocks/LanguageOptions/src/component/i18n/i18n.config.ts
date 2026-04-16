@@ -1,7 +1,7 @@
 import i18n from "i18next";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { initReactI18next } from "react-i18next";
-import {enus, en, fr} from "../translations";
+import { enus, en, fr, es, pt, it } from "../translations";
 
 export const langaugeFunction = async () => {
   console.log("i18n", i18n.language);
@@ -23,14 +23,27 @@ export const langaugeFunction = async () => {
   //     parseData
   // );
 
-  const resources = {
-    enus: {
-      translation: enus
-    },
-    [languename]: {
-      translation: parseData,
-    },
+  /** M6 — shell bundles for EN/FR/ES/PT/IT; `languename` bundle from storage overrides when present. */
+  const resources: Record<string, { translation: Record<string, string> }> = {
+    enus: { translation: enus },
+    en: { translation: en },
+    English: { translation: en },
+    fr: { translation: fr },
+    French: { translation: fr },
+    Français: { translation: fr },
+    es: { translation: es },
+    Spanish: { translation: es },
+    Español: { translation: es },
+    pt: { translation: pt },
+    Portuguese: { translation: pt },
+    Português: { translation: pt },
+    it: { translation: it },
+    Italian: { translation: it },
+    Italiano: { translation: it },
   };
+  if (languename) {
+    resources[languename] = { translation: parseData };
+  }
 
   console.log("resourcesss", resources);
 

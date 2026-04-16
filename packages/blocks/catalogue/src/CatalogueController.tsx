@@ -15,7 +15,12 @@ import { COLORS } from "../../../framework/src/Globals";
 import { Alert } from "react-native";
 import i18n from "../../LanguageOptions/src/component/i18n/i18n.config";
 import { CONTENT_SOURCE } from "../../../framework/src/config";
-import { loadProfileCoursesShape } from "./content/firestoreRepository";
+import {
+  applyCatalogueClientFilters,
+  buildCmsTagFlatlistData,
+  loadProfileCoursesShape,
+  type CatalogueFilterBucket,
+} from "./content/firestoreRepository";
 
 export const configJSON = require("./config");
 
@@ -56,6 +61,13 @@ interface S {
   dynamicCertificate:any,
   dynamicDrinktype:any,
   headerIconList:any
+  /** M6 — CMS tags from Firestore `moment` / `situation` / `skill` */
+  dynamicMomentTags: any[];
+  dynamicSituationTags: any[];
+  dynamicSkillTags: any[];
+  cms_moment: string[];
+  cms_situation: string[];
+  cms_skill: string[];
   
   
 }
@@ -113,7 +125,13 @@ export default class CatalogueController extends BlockComponent<Props, S, SS> {
       drinks_typesbeta:[],
       dynamicCertificate:[],
   dynamicDrinktype:[],
-  headerIconList:[]
+  headerIconList:[],
+  dynamicMomentTags: [],
+  dynamicSituationTags: [],
+  dynamicSkillTags: [],
+  cms_moment: [''],
+  cms_situation: [''],
+  cms_skill: [''],
   
     };
 
@@ -161,7 +179,12 @@ export default class CatalogueController extends BlockComponent<Props, S, SS> {
     this.focusListener = navigation.addListener("didFocus", async () => {
     this.functionTogetnotifications()
 
-      this.setState({drinks_types: [''] })
+      this.setState({
+        drinks_types: [''],
+        cms_moment: [''],
+        cms_situation: [''],
+        cms_skill: [''],
+      })
       let connectionStatus = await isConnected().then(response => response).catch(err => console.log(err))
       if (connectionStatus !== undefined) {
         console.log("load.....")
@@ -186,15 +209,65 @@ export default class CatalogueController extends BlockComponent<Props, S, SS> {
 
   }
  async  componentWillUnmount(){
-  this.setState({ search_key: '', drinks_types: [''] })
+  this.setState({
+    search_key: '',
+    drinks_types: [''],
+    cms_moment: [''],
+    cms_situation: [''],
+    cms_skill: [''],
+  })
 this.focusListener.remove()
     
   }
 
+  getCatalogueFilterBucket(): CatalogueFilterBucket {
+    return {
+      drinks_types: this.state.drinks_types,
+      difficulty: this.state.difficulty,
+      certificate: this.state.certificate,
+      completion: this.state.completion,
+      content_availability: this.state.content_availability,
+      cms_moment: this.state.cms_moment,
+      cms_situation: this.state.cms_situation,
+      cms_skill: this.state.cms_skill,
+    };
+  }
+
+  buildFirestoreFilterChromeStatic = () => {
+    const t = i18n.t.bind(i18n);
+    return {
+      dynamicDrinktype: [
+        { id: 1, type: 'drinks_type', title: '', mytitle: '' },
+        { id: 2, type: 'drinks_type', title: t('Wine'), mytitle: 'wine' },
+        { id: 3, type: 'drinks_type', title: t('Beer'), mytitle: 'beer' },
+        { id: 4, type: 'drinks_type', title: t('Spirits'), mytitle: 'Spirits' },
+      ],
+      dynamicCertificate: [
+        { id: 1, type: 'certificate', title: '', mytitle: '' },
+        { id: 2, type: 'certificate', title: '\u2014', mytitle: '\u2014' },
+      ],
+      headerIconList: [
+        { id: 0, name: image_filter, iconName: t('Filters'), value: 'Filters' },
+        { id: 1, name: image_wine, iconName: t('Wine'), value: 'wine' },
+        { id: 2, name: image_beer, iconName: t('Beer'), value: 'Beer' },
+        { id: 3, name: image_spirits, iconName: t('Spirits'), value: 'Spirits' },
+      ],
+    };
+  };
+
   async loadCatalogueFromFirestore() {
     try {
-      const rows = await loadProfileCoursesShape();
-      this.setState({ catlogue_data: rows, isLoading: false });
+      const raw = await loadProfileCoursesShape();
+      const filtered = applyCatalogueClientFilters(raw, this.getCatalogueFilterBucket());
+      const chrome = this.buildFirestoreFilterChromeStatic();
+      this.setState({
+        catlogue_data: filtered,
+        dynamicMomentTags: buildCmsTagFlatlistData(raw, 'cms_moment'),
+        dynamicSituationTags: buildCmsTagFlatlistData(raw, 'cms_situation'),
+        dynamicSkillTags: buildCmsTagFlatlistData(raw, 'cms_skill'),
+        ...chrome,
+        isLoading: false,
+      });
     } catch (e) {
       console.warn('Firestore catalogue', e);
       this.setState({ catlogue_data: [], isLoading: false });
@@ -352,10 +425,19 @@ this.setState({search_key:''})
       try {
         const all = await loadProfileCoursesShape();
         const kw = String(this.state.search_key || '').toLowerCase();
-        const filtered = kw
+        const keywordFiltered = kw
           ? all.filter((row: any) => String(row?.course_name || '').toLowerCase().includes(kw))
           : all;
-        this.setState({ catlogue_data: filtered, isLoading: false });
+        const filtered = applyCatalogueClientFilters(keywordFiltered, this.getCatalogueFilterBucket());
+        const chrome = this.buildFirestoreFilterChromeStatic();
+        this.setState({
+          catlogue_data: filtered,
+          dynamicMomentTags: buildCmsTagFlatlistData(all, 'cms_moment'),
+          dynamicSituationTags: buildCmsTagFlatlistData(all, 'cms_situation'),
+          dynamicSkillTags: buildCmsTagFlatlistData(all, 'cms_skill'),
+          ...chrome,
+          isLoading: false,
+        });
       } catch (e) {
         console.warn(e);
         this.setState({ catlogue_data: [], isLoading: false });
@@ -795,7 +877,10 @@ return  "#777185"
     }
 
     getCertificates = async () => {
-      // this.setState({ isLoading: true })
+      if (CONTENT_SOURCE === 'firestore') {
+        this.setState(this.buildFirestoreFilterChromeStatic());
+        return;
+      }
        this.getCertificatesapiId = await this.apiCall({
          contentType: configJSON.dashboarContentType,
          method: configJSON.dashboarApiMethodType,

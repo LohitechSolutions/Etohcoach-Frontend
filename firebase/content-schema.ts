@@ -39,6 +39,13 @@ export interface CourseDoc {
   status: PublishStatus;
   /** Display order within lists (e.g. catalogue). */
   order: number;
+  /**
+   * Store & catalogue filters (M6) — optional tags for Moment / Situation / Skill.
+   * Freeform strings from CMS; app filters client-side (Firestore) or via API when available.
+   */
+  moment?: string;
+  situation?: string;
+  skill?: string;
 }
 
 export interface LessonDoc {

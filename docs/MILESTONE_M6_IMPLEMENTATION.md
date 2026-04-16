@@ -44,5 +44,12 @@ Roadmap core milestones for EtOH Coach + admin are complete for this document se
 | Area | Path |
 |------|------|
 | Catalogue / filters | [`packages/blocks/catalogue/`](../packages/blocks/catalogue/) |
-| i18n | [`packages/blocks/LanguageOptions/`](../packages/blocks/LanguageOptions/) (and translation assets as used today) |
+| Firestore filter helpers | [`packages/blocks/catalogue/src/content/firestoreRepository.ts`](../packages/blocks/catalogue/src/content/firestoreRepository.ts) (`applyCatalogueClientFilters`, `buildCmsTagFlatlistData`) |
+| Product copy i18n keys (M6) | [`packages/blocks/catalogue/src/productCopyKeys.ts`](../packages/blocks/catalogue/src/productCopyKeys.ts) |
+| i18n | [`packages/blocks/LanguageOptions/`](../packages/blocks/LanguageOptions/) (`en`, `fr`, `enus`, `es`, `pt`, `it` under `src/component/translations/`) |
 | CMS schema | [`firebase/content-schema.ts`](../firebase/content-schema.ts) |
+| Admin course tags | [`admin/src/pages/CourseDetailPage.tsx`](../admin/src/pages/CourseDetailPage.tsx) |
+
+## Store assets checklist (often outside repo)
+
+Track with product / ASO owner: **subtitle**, **long description**, **short description**, **keywords** (iOS), **Play tags** (Android), promotional text, screenshots, privacy policy URL, support URL. Update store listings when marketing copy in `LanguageOptions` changes materially.

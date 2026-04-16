@@ -93,6 +93,9 @@ export function CourseDetailPage() {
         cover_image_url: draft.cover_image_url ?? '',
         status: draft.status,
         order: draft.order,
+        moment: draft.moment ?? '',
+        situation: draft.situation ?? '',
+        skill: draft.skill ?? '',
       });
       dirtyRef.current = false;
       setDirty(false);
@@ -230,6 +233,39 @@ export function CourseDetailPage() {
               markDirty();
               setDraft({ ...draft, language: e.target.value });
             }}
+          />
+        </label>
+        <label>
+          Moment (catalogue filter tag)
+          <input
+            value={draft.moment ?? ''}
+            onChange={(e) => {
+              markDirty();
+              setDraft({ ...draft, moment: e.target.value });
+            }}
+            placeholder="e.g. First contact"
+          />
+        </label>
+        <label>
+          Situation (catalogue filter tag)
+          <input
+            value={draft.situation ?? ''}
+            onChange={(e) => {
+              markDirty();
+              setDraft({ ...draft, situation: e.target.value });
+            }}
+            placeholder="e.g. Tasting room"
+          />
+        </label>
+        <label>
+          Skill (catalogue filter tag)
+          <input
+            value={draft.skill ?? ''}
+            onChange={(e) => {
+              markDirty();
+              setDraft({ ...draft, skill: e.target.value });
+            }}
+            placeholder="e.g. Closing"
           />
         </label>
         <label>

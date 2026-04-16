@@ -54,7 +54,101 @@ export async function loadProfileCoursesShape(): Promise<Record<string, unknown>
       course_attachment: x['cover_image_url'] || '',
       value: 'Unpaid',
       drink_type: mapCategoryToDrinkType(x['category']),
+      cms_moment: String(x['moment'] ?? '').trim(),
+      cms_situation: String(x['situation'] ?? '').trim(),
+      cms_skill: String(x['skill'] ?? '').trim(),
+      difficulty: 'Beginner',
+      certificate: '—',
+      course_status: 'not_started',
+      completion: 'not_started',
+      language_type: String(x['language'] || 'en'),
+      description: String(x['short_description'] || ''),
+      themes_count: 1,
+      user_theme_count: 0,
+      user_completed_point: 0,
+      course_total_point: 0,
+      user_course_percentage: 0,
     };
+  });
+}
+
+/** M6 — client-side catalogue filters (Firestore path; REST may adopt same row shape later). */
+export type CatalogueFilterBucket = {
+  drinks_types: string[];
+  difficulty: string[];
+  certificate: string[];
+  completion: string[];
+  content_availability: string[];
+  cms_moment: string[];
+  cms_situation: string[];
+  cms_skill: string[];
+};
+
+function filterDimensionAllSelected(sel: string[] | undefined): boolean {
+  if (!sel || sel.length === 0) return true;
+  return sel.includes('');
+}
+
+function matchesDrinkSelection(selected: string[], rowDrink: string): boolean {
+  if (filterDimensionAllSelected(selected)) return true;
+  const r = String(rowDrink || '').toLowerCase();
+  return selected.some((raw) => {
+    const s = String(raw || '').toLowerCase();
+    if (!s) return false;
+    if (s === 'wine' && r === 'wine') return true;
+    if (s === 'beer' && r === 'beer') return true;
+    if ((s === 'spirits' || s === 'spirit') && r === 'spirits') return true;
+    return r === s;
+  });
+}
+
+function matchesStringSelection(selected: string[], value: string): boolean {
+  if (filterDimensionAllSelected(selected)) return true;
+  const v = String(value || '').trim().toLowerCase();
+  if (!v) return false;
+  return selected.some((s) => s && String(s).trim().toLowerCase() === v);
+}
+
+/** Build horizontal chip data for FilterModal (`mytitle` empty = “All”). */
+export function buildCmsTagFlatlistData(
+  rows: Record<string, unknown>[],
+  field: 'cms_moment' | 'cms_situation' | 'cms_skill',
+): { id: number; type: string; title: string; mytitle: string }[] {
+  const uniq = new Set<string>();
+  for (const r of rows) {
+    const v = String(r[field] || '').trim();
+    if (v) uniq.add(v);
+  }
+  const sorted = [...uniq].sort((a, b) => a.localeCompare(b));
+  const out: { id: number; type: string; title: string; mytitle: string }[] = [
+    { id: 1, type: field, title: '', mytitle: '' },
+  ];
+  let id = 2;
+  for (const s of sorted) {
+    out.push({ id: id++, type: field, title: s, mytitle: s });
+  }
+  return out;
+}
+
+export function applyCatalogueClientFilters(
+  rows: Record<string, unknown>[],
+  f: CatalogueFilterBucket,
+): Record<string, unknown>[] {
+  return rows.filter((row) => {
+    if (!matchesDrinkSelection(f.drinks_types, String(row['drink_type'] || ''))) return false;
+    if (!matchesStringSelection(f.difficulty, String(row['difficulty'] || ''))) return false;
+    if (!matchesStringSelection(f.certificate, String(row['certificate'] || ''))) return false;
+    const completionVal = String(row['course_status'] || row['completion'] || '');
+    if (!matchesStringSelection(f.completion, completionVal)) return false;
+    if (!filterDimensionAllSelected(f.content_availability)) {
+      const val = String(row['value'] || '');
+      const ok = f.content_availability.some((c) => c && val === c);
+      if (!ok) return false;
+    }
+    if (!matchesStringSelection(f.cms_moment, String(row['cms_moment'] || ''))) return false;
+    if (!matchesStringSelection(f.cms_situation, String(row['cms_situation'] || ''))) return false;
+    if (!matchesStringSelection(f.cms_skill, String(row['cms_skill'] || ''))) return false;
+    return true;
   });
 }
 

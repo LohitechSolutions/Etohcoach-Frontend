@@ -258,6 +258,54 @@ class FilterModal extends CatalogueController {
                                     />
 
                                 </View>
+                                {this.props.state.dynamicMomentTags?.length > 1 ? (
+                                    <>
+                                        <View style={styles.drinkConatiner}>
+                                            <Text style={styles.drinkText}>{t("FilterMoment")}</Text>
+                                        </View>
+                                        <View style={[styles.drinksContainer]}>
+                                            <FlatList
+                                                data={this.props.state.dynamicMomentTags}
+                                                horizontal={true}
+                                                renderItem={({ item }: { item: any }) =>
+                                                    <TouchableOpacity onPress={() => { this.props.AddremoveFilteronPress(item.mytitle, "cms_moment", this.props.state.dynamicMomentTags) }} style={this.props.state.cms_moment.includes(item.mytitle) ? styles.allConatinerPressed : styles.allConatiner}><Text style={this.props.state.cms_moment.includes(item.mytitle) ? styles.allTextPressed : {color:COLORS.black}}>{item?.mytitle == '' ? t("All") : item?.title}</Text></TouchableOpacity>
+                                                }
+                                            />
+                                        </View>
+                                    </>
+                                ) : null}
+                                {this.props.state.dynamicSituationTags?.length > 1 ? (
+                                    <>
+                                        <View style={styles.drinkConatiner}>
+                                            <Text style={styles.drinkText}>{t("FilterSituation")}</Text>
+                                        </View>
+                                        <View style={[styles.drinksContainer]}>
+                                            <FlatList
+                                                data={this.props.state.dynamicSituationTags}
+                                                horizontal={true}
+                                                renderItem={({ item }: { item: any }) =>
+                                                    <TouchableOpacity onPress={() => { this.props.AddremoveFilteronPress(item.mytitle, "cms_situation", this.props.state.dynamicSituationTags) }} style={this.props.state.cms_situation.includes(item.mytitle) ? styles.allConatinerPressed : styles.allConatiner}><Text style={this.props.state.cms_situation.includes(item.mytitle) ? styles.allTextPressed : {color:COLORS.black}}>{item?.mytitle == '' ? t("All") : item?.title}</Text></TouchableOpacity>
+                                                }
+                                            />
+                                        </View>
+                                    </>
+                                ) : null}
+                                {this.props.state.dynamicSkillTags?.length > 1 ? (
+                                    <>
+                                        <View style={styles.drinkConatiner}>
+                                            <Text style={styles.drinkText}>{t("FilterSkill")}</Text>
+                                        </View>
+                                        <View style={[styles.drinksContainer]}>
+                                            <FlatList
+                                                data={this.props.state.dynamicSkillTags}
+                                                horizontal={true}
+                                                renderItem={({ item }: { item: any }) =>
+                                                    <TouchableOpacity onPress={() => { this.props.AddremoveFilteronPress(item.mytitle, "cms_skill", this.props.state.dynamicSkillTags) }} style={this.props.state.cms_skill.includes(item.mytitle) ? styles.allConatinerPressed : styles.allConatiner}><Text style={this.props.state.cms_skill.includes(item.mytitle) ? styles.allTextPressed : {color:COLORS.black}}>{item?.mytitle == '' ? t("All") : item?.title}</Text></TouchableOpacity>
+                                                }
+                                            />
+                                        </View>
+                                    </>
+                                ) : null}
                                 <View style={styles.buttonContain}>
                                     <ButtonComponent BtnText={t("APPLYFILTER")} testID={'Filter'} onpress={() => { this.props.GetFilterList(); this.props.closeModal(); console.log(this.state, 'checking the state just') }} />
                                 </View>
