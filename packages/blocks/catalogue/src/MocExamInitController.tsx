@@ -15,7 +15,8 @@ import { COLORS } from "../../../framework/src/Globals";
 import { setAsyncData } from "../../../mobile/src/utils/AsyncKeysStorage";
 
 import { isConnected } from "../../../mobile/src/utils/internetConnection";
-
+import { CONTENT_SOURCE } from "../../../framework/src/config";
+import { loadQuizExamRailsData } from "./content/firestoreRepository";
 
 export const configJSON = require("./config");
 
@@ -533,6 +534,17 @@ export default class MocExamInitController extends BlockComponent<
   };
 
   getQuizzeAndMocExamData = async () => {
+    if (CONTENT_SOURCE === 'firestore') {
+      const tid = String(this.state.quizThemeId || this.props?.navigation?.state?.params?.quizThemeId || '');
+      try {
+        const data = await loadQuizExamRailsData(tid);
+        this.setState({ mockexamdata: data });
+      } catch (e) {
+        console.warn(e);
+        this.setState({ mockexamdata: [] });
+      }
+      return;
+    }
 
     console.log("this.state @@ &&", this.state.quizThemeId, "hvdhjasvd")
     // return

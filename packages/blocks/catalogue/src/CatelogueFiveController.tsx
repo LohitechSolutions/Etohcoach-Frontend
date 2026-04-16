@@ -10,8 +10,8 @@ import { AsynchStoragekey } from "../../../mobile/src/utils";
 import { getAsyncDataKeys } from "../../../mobile/src/utils/AsyncKeysStorage";
 import { COLORS } from "../../../framework/src/Globals";
 import DeviceInfo from "react-native-device-info";
-
-
+import { CONTENT_SOURCE } from "../../../framework/src/config";
+import { loadLessonsListBundle } from "./content/firestoreRepository";
 
 export const configJSON = require("./config");
 
@@ -322,6 +322,19 @@ console.log("checkthe theme",this.state.themeId,this.props.navigation?.state?.pa
 
 
   getLessonCourseData = async () => {
+    if (CONTENT_SOURCE === 'firestore') {
+      const courseId = this.props.navigation.state.params.course_id;
+      const courseName = this.props.navigation.state.params.course_name || '';
+      try {
+        this.setState({ isLoading: true });
+        const bundle = await loadLessonsListBundle(courseId, courseName);
+        this.courseLessonSuccessCallBack(bundle);
+      } catch (e) {
+        console.warn(e);
+        this.setState({ isLoading: false });
+      }
+      return;
+    }
     this.setState({ isLoading: true })
     console.log("this.state.themeId :::::::::::::::::::::::::::::",this.state.themeId)
     this.courseLessonApiCallId = await this.apiCall({

@@ -10,7 +10,8 @@ import { runEngine } from "../../../framework/src/RunEngine";
 
 
 import { isConnected } from "../../../mobile/src/utils/internetConnection";
-
+import { CONTENT_SOURCE } from "../../../framework/src/config";
+import { loadFlashcardsRevealList } from "./content/firestoreRepository";
 
 export const configJSON = require("./config");
 
@@ -403,6 +404,18 @@ export default class CfFlashCardOneController extends BlockComponent<
   }
 
   getFlashCard = async () => {
+    if (CONTENT_SOURCE === 'firestore') {
+      this.setState({ isLoading: true });
+      try {
+        const cid = String(this.state.flashCardID || '');
+        const res = await loadFlashcardsRevealList(cid);
+        this.flashcardReavealAnswerSuccessCallBack(res);
+      } catch (e) {
+        console.warn(e);
+        this.setState({ isLoading: false });
+      }
+      return;
+    }
     this.setState({ isLoading: true })
     this.flashcardReavealAnswerApiCallId = await this.apiCall({
       contentType: "application/json",
@@ -443,6 +456,18 @@ export default class CfFlashCardOneController extends BlockComponent<
   }
 
   userRating = async (userFlashCardId: any, rating: any) => {
+    if (CONTENT_SOURCE === 'firestore') {
+      this.setState({ previousindex: 0, nextIndex: 0, isSelect: false });
+      const updated = (this.state.flashdata || []).map((c: any) =>
+        c.id === userFlashCardId
+          ? { ...c, attributes: { ...c.attributes, rating } }
+          : c,
+      );
+      this.setState({ flashdata: updated, isLoading: false }, () => {
+        this.functionResponsibleForMoveNext();
+      });
+      return;
+    }
     let connectionStatus = await isConnected().then(response => response).catch(err => console.log(err))
     this.setState({ previousindex: 0, nextIndex: 0 })
     let body = {

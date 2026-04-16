@@ -15,9 +15,8 @@ import { COLORS } from "../../../framework/src/Globals";
 import {readFile} from "../../../mobile/src/utils/downloadingFiles";
 import DeviceInfo from "react-native-device-info";
 import { CommonActions } from "@react-navigation/native";
-
-
-
+import { CONTENT_SOURCE } from "../../../framework/src/config";
+import { loadSyntheticThemeRow } from "./content/firestoreRepository";
 
 export const configJSON = require("./config");
 
@@ -367,8 +366,26 @@ this.setState({isLoading:false})
     });
    }
 
-  getLessonCourseData = async () => {
-    // this.setState({ isLoading: true })
+   getLessonCourseData = async () => {
+    if (CONTENT_SOURCE === 'firestore') {
+      const cid = this.props.navigation.state.params.course_id;
+      const cname = this.props.navigation.state.params.course_name || '';
+      try {
+        this.setState({ isLoading: true });
+        const row = await loadSyntheticThemeRow(cid, cname);
+        this.setState({
+          themes_data: [row],
+          course_name: cname,
+          coures_id: cid,
+          mockExamdata: [],
+          isLoading: false,
+        });
+      } catch (e) {
+        console.warn(e);
+        this.setState({ themes_data: [], isLoading: false });
+      }
+      return;
+    }
     console.log("course theme id ======== ", this.props.navigation.state.params.course_id)
     this.getThemesApiCallId = await this.apiCall({
       contentType: "application/json",

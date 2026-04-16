@@ -14,6 +14,8 @@ import { image_spirits, image_beer, image_wine, image_filter, noData } from "./a
 import { COLORS } from "../../../framework/src/Globals";
 import { Alert } from "react-native";
 import i18n from "../../LanguageOptions/src/component/i18n/i18n.config";
+import { CONTENT_SOURCE } from "../../../framework/src/config";
+import { loadProfileCoursesShape } from "./content/firestoreRepository";
 
 export const configJSON = require("./config");
 
@@ -189,6 +191,16 @@ this.focusListener.remove()
     
   }
 
+  async loadCatalogueFromFirestore() {
+    try {
+      const rows = await loadProfileCoursesShape();
+      this.setState({ catlogue_data: rows, isLoading: false });
+    } catch (e) {
+      console.warn('Firestore catalogue', e);
+      this.setState({ catlogue_data: [], isLoading: false });
+    }
+  }
+
   async getToken() {
   
     const msg: Message = new Message(
@@ -198,7 +210,11 @@ this.focusListener.remove()
     // let unseenNotify : any = await AsyncStorage.getItem('NOTIFICATION_UNREAD')
     
     // this.setState({ notificationUnreadCount: unseenNotify})
-    this.setState({ user_token: token }, () => this.getListRequest())
+    if (CONTENT_SOURCE === 'firestore') {
+      this.setState({ user_token: token }, () => this.loadCatalogueFromFirestore());
+    } else {
+      this.setState({ user_token: token }, () => this.getListRequest());
+    }
 
     console.log('checking the state in did mount', this)
     this.getDashboardData()
@@ -253,6 +269,11 @@ this.focusListener.remove()
   };
 
   GetFilterList = async () => {
+  if (CONTENT_SOURCE === 'firestore') {
+    this.setState({ isLoading: true });
+    await this.loadCatalogueFromFirestore();
+    return;
+  }
   this.setState({ isLoading: true })
     const header = {
       "Content-Type": configJSON.productApiContentType,
@@ -326,6 +347,21 @@ this.setState({search_key:''})
 
 
   getSearchresults = async () => {
+    if (CONTENT_SOURCE === 'firestore') {
+      this.setState({ isLoading: true });
+      try {
+        const all = await loadProfileCoursesShape();
+        const kw = String(this.state.search_key || '').toLowerCase();
+        const filtered = kw
+          ? all.filter((row: any) => String(row?.course_name || '').toLowerCase().includes(kw))
+          : all;
+        this.setState({ catlogue_data: filtered, isLoading: false });
+      } catch (e) {
+        console.warn(e);
+        this.setState({ catlogue_data: [], isLoading: false });
+      }
+      return;
+    }
     this.setState({isLoading:true})
     const header = {
       "Content-Type": configJSON.productApiContentType,

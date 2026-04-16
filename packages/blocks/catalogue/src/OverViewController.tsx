@@ -18,7 +18,9 @@ import { boolean } from "yup";
 
 
 
-  
+import { CONTENT_SOURCE } from "../../../framework/src/config";
+import { loadOverViewCourseShell } from "./content/firestoreRepository";
+
 export const configJSON = require("./config");
 
 export interface Props {
@@ -281,6 +283,33 @@ export default class OverViewController extends BlockComponent<Props, S, SS>{
   async getToken() {
     let token: any = await AsyncStorage.getItem('LOGIN_TOKEN')
     this.setState({ mocExam_data: [] })
+    if (CONTENT_SOURCE === 'firestore') {
+      const cid = String(this.props?.navigation?.state?.params?.course_id || '');
+      try {
+        const shell = await loadOverViewCourseShell(cid);
+        this.setState({
+          user_token: token,
+          course_id: cid,
+          theme_id: this.props?.navigation?.state?.params?.item?.attributes?.theme_id,
+          lessonFlashcard: this.props?.navigation?.state?.params?.theme_id,
+          theme_type: this.props?.navigation?.state?.params?.item?.type,
+          testing: this.props?.navigation?.state?.params?.testing,
+          courseImage: this.props?.navigation?.state?.params?.courseImage,
+          isItOffline: this.props?.navigation?.state?.params?.isItOffline,
+          course_Details: shell,
+          courseId: cid,
+          themeGetid: cid,
+          quizzExamData: [],
+          isLoading: false,
+          ismockexmloading: false,
+          isquizzloading: false,
+        });
+      } catch (e) {
+        console.warn(e);
+        this.setState({ isLoading: false });
+      }
+      return;
+    }
     this.setState({
       user_token: token,
       course_id: this.props?.navigation?.state?.params?.course_id,
@@ -720,6 +749,14 @@ export default class OverViewController extends BlockComponent<Props, S, SS>{
   // }
 
   onPressCourseStart = async () => {
+    if (CONTENT_SOURCE === 'firestore') {
+      const cur = this.state.course_Details;
+      this.setState({
+        isLoading: false,
+        course_Details: { ...cur, status: 'current' },
+      });
+      return;
+    }
     this.setState({ isLoading: true });
     if (this.state.courseId) {
       let body = {
@@ -749,6 +786,16 @@ export default class OverViewController extends BlockComponent<Props, S, SS>{
   }
 
   onPressFlashcardStart = async () => {
+    if (CONTENT_SOURCE === 'firestore') {
+      const cid = String(this.state.courseId || this.props?.navigation?.state?.params?.course_id || '');
+      this.setState({
+        courseThemeListData: [
+          { id: cid, theme_id: cid, name: 'Flashcards', title: 'Flashcards' },
+        ],
+        isflahscardloading: false,
+      });
+      return;
+    }
     // this.setState({isflahscardloading:true})
     this.createFlashcardApiCallId = await this.apiCall({
       contentType: configJSON.productApiContentType,

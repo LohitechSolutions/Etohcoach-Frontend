@@ -11,6 +11,8 @@ import { runEngine } from "../../../framework/src/RunEngine";
 import { getAsyncDataKeys } from "../../../mobile/src/utils/AsyncKeysStorage";
 import { readFile } from "../../../mobile/src/utils/downloadingFiles";
 import { isConnected } from "../../../mobile/src/utils/internetConnection";
+import { CONTENT_SOURCE } from "../../../framework/src/config";
+import { loadLessonShowPayload } from "./content/firestoreRepository";
 
 export const configJSON = require("./config");
 
@@ -516,6 +518,23 @@ export default class CatalogueStudyController extends BlockComponent<Props, S, S
   }
 
   getLessonCourseData = async () => {
+    if (CONTENT_SOURCE === 'firestore') {
+      const item = this.state.clickItem;
+      const courseId = this.props.navigation.state?.params?.course_id;
+      if (!item?.id || !courseId) {
+        this.setState({ showLoader: false, isLoading: false });
+        return;
+      }
+      try {
+        const responseJson = await loadLessonShowPayload(String(item.id), String(courseId));
+        this.setState({ showLoader: false, isLoading: false });
+        this.courseLessonSuccessCallBack(responseJson);
+      } catch (e) {
+        console.warn(e);
+        this.setState({ showLoader: false, isLoading: false });
+      }
+      return;
+    }
     let connectionStatus = await isConnected().then(response => response).catch(err => console.log(err))
     console.log("iamindattata")
     this.state.lessionList.map(async (item: any) => {
