@@ -45,6 +45,11 @@ Proceed to [Milestone M6 — Polish & store readiness](./MILESTONE_M6_IMPLEMENTA
 
 | Area | Path |
 |------|------|
+| Consent persistence & legal URLs | [`react-native/src/compliance/consentStorage.ts`](../react-native/src/compliance/consentStorage.ts) |
+| Splash routing (age / legal gates) | [`react-native/src/compliance/splashRouting.ts`](../react-native/src/compliance/splashRouting.ts) |
+| Compliance UI (Expo root stack) | [`react-native/src/compliance/ComplianceOnboardingScreen.tsx`](../react-native/src/compliance/ComplianceOnboardingScreen.tsx) |
+| Post-login navigation | [`react-native/src/navigation/rootNavigationRef.ts`](../react-native/src/navigation/rootNavigationRef.ts) (`resetNavigationAfterLogin`) |
+| Analytics shim (consent gate) | [`react-native/src/shims/react-native-firebase-analytics.js`](../react-native/src/shims/react-native-firebase-analytics.js) |
 | Analytics | [`packages/blocks/analytics/src/AnalyticsController.tsx`](../packages/blocks/analytics/src/AnalyticsController.tsx) |
 | Terms (existing) | [`packages/blocks/TermsAndConditions/`](../packages/blocks/TermsAndConditions/) |
 | Client spec (compliance) | [docs/CLIENT_SPEC_AND_IMPLEMENTATION_ROADMAP.md](./CLIENT_SPEC_AND_IMPLEMENTATION_ROADMAP.md) §4.3 |

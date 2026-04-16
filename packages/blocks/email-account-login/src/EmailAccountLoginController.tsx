@@ -10,7 +10,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { imgPasswordInVisible, imgPasswordVisible } from "./assets";
 import { AsynchStoragekey, STRINGS, VALIDATION_TIMER } from '../../../mobile/src/utils/index'
 import { setAsyncData } from "../../../mobile/src/utils/AsyncKeysStorage";
-import { resetNavigationToAuthenticated } from "../../../../react-native/src/navigation/rootNavigationRef";
+import { resetNavigationAfterLogin } from "../../../../react-native/src/navigation/rootNavigationRef";
 // Customizable Area End
 
 export const configJSON = require("./config");
@@ -398,9 +398,9 @@ export default class EmailAccountLoginController extends BlockComponent<
 
           const runReset = () => {
             if (needsSubscriptionScreen) {
-              resetNavigationToAuthenticated("SubCriptionScreen", { itisfromloginOrSignUp: true });
+              void resetNavigationAfterLogin("SubCriptionScreen", { itisfromloginOrSignUp: true });
             } else {
-              resetNavigationToAuthenticated("Dashboard");
+              void resetNavigationAfterLogin("Dashboard");
             }
           };
           if (typeof requestAnimationFrame === "function") {

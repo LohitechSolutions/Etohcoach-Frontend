@@ -17,6 +17,7 @@ import Context from "../../../components/src/context/context";
 import { langaugeFunction } from "../../LanguageOptions/src/component/i18n/i18n.config";
 import DeviceInfo from "react-native-device-info";
 import { isConnected } from "../../../mobile/src/utils/internetConnection";
+import { getSplashResetKind } from "../../../../react-native/src/compliance/splashRouting";
 
 
 // Customizable Area Start
@@ -460,8 +461,9 @@ export default class SplashscreenController extends BlockComponent<
     SplashScreen.hide();
     let token = await AsyncStorage.getItem(AsynchStoragekey.AsynchStoragekey.LOGIN_TOKEN)
     const nav = this.props.navigation;
+    const splashKind = await getSplashResetKind(token);
     try {
-      if (token) {
+      if (splashKind === "authenticated") {
         nav.dispatch(
           StackActions.reset({
             index: 0,
@@ -474,7 +476,7 @@ export default class SplashscreenController extends BlockComponent<
             key: null,
           })
         );
-      } else {
+      } else if (splashKind === "non_auth") {
         nav.dispatch(
           StackActions.reset({
             index: 0,
@@ -489,14 +491,40 @@ export default class SplashscreenController extends BlockComponent<
             key: null,
           })
         );
+      } else if (splashKind === "compliance_age") {
+        nav.dispatch(
+          StackActions.reset({
+            index: 0,
+            actions: [
+              NavigationActions.navigate({
+                routeName: "ComplianceOnboarding",
+                params: { step: "age" },
+              }),
+            ],
+            key: null,
+          })
+        );
+      } else {
+        nav.dispatch(
+          StackActions.reset({
+            index: 0,
+            actions: [
+              NavigationActions.navigate({
+                routeName: "ComplianceOnboarding",
+                params: { step: "legal" },
+              }),
+            ],
+            key: null,
+          })
+        );
       }
     } catch (e) {
       console.warn("Splashscreen - StackActions.reset failed, retrying navigate", e);
-      if (token) {
+      if (splashKind === "authenticated") {
         try {
           nav.navigate("Authenticated");
         } catch (_) {}
-      } else {
+      } else if (splashKind === "non_auth") {
         try {
           nav.dispatch(
             StackActions.reset({
@@ -515,6 +543,12 @@ export default class SplashscreenController extends BlockComponent<
         } catch (_) {
           nav.navigate("NonAuthenticated");
         }
+      } else {
+        try {
+          nav.navigate("ComplianceOnboarding", {
+            step: splashKind === "compliance_age" ? "age" : "legal",
+          });
+        } catch (_) {}
       }
     }
   }

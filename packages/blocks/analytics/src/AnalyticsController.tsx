@@ -67,6 +67,7 @@ export default class AnalyticsController extends BlockComponent<Props, S, SS> {
   };
 
   async doButtonPressed() {
+    /** Expo: `@react-native-firebase/analytics` resolves to a consent-gated shim (M5). */
     await analytics().logEvent("button_click", {
       button: "doButtonPressed",
       screen: "AnalyticsController"

@@ -14,7 +14,7 @@ import AsynchStoragekey from '../../../mobile/src/utils/asynchKeys';
 import { STRINGS, VALIDATION_TIMER } from "../../../mobile/src/utils";
 import DeviceInfo from 'react-native-device-info';
 import { Platform } from "react-native";
-import { resetNavigationToAuthenticated } from "../../../../react-native/src/navigation/rootNavigationRef";
+import { resetNavigationAfterLogin } from "../../../../react-native/src/navigation/rootNavigationRef";
 
 
 
@@ -289,7 +289,7 @@ export default class EmailAccountRegistrationController extends BlockComponent<
     this.props.addUserProfile(usrObj);
     this.props.cancelSubscription();
     const goSubscribe = () =>
-      resetNavigationToAuthenticated("SubCriptionScreen", {
+      void resetNavigationAfterLogin("SubCriptionScreen", {
         itisfromloginOrSignUp: true,
       });
     if (typeof requestAnimationFrame === "function") {
