@@ -24,7 +24,7 @@ Operators can create and publish **courses → lessons → flashcards → quiz**
 
 ## How to implement
 
-1. **Stack:** Greenfield **React** (Vite or Next.js) or extend [`packages/web`](../packages/web) — avoid relying on legacy `rnmasterapp-c11e9` Firebase init for CMS; point admin at **EtOH** Firebase config.
+1. **Stack:** Greenfield **React + Vite** in [`admin/`](../admin/) (outside the legacy `packages/web` / `rnmasterapp-c11e9` Firebase init); configure **EtOH** Firebase via `admin/.env.local` from [`admin/env.example`](../admin/env.example).
 2. **SDK:** `firebase` JS modular SDK — Auth (sign-in), Firestore (`getFirestore`), Storage (`getStorage`).
 3. **Auth gating:** After login, decode ID token or use `onIdTokenChanged`; redirect if `admin` claim missing.
 4. **Import (MVP+):** Defer to [M2b](./MILESTONE_M2B_IMPLEMENTATION.md) if needed; parser for CSV/XLSX with **all-or-nothing** validation (see M2b).
@@ -50,5 +50,6 @@ Operators can create and publish **courses → lessons → flashcards → quiz**
 |------|------|
 | Client spec (CMS fields) | [docs/CLIENT_SPEC_AND_IMPLEMENTATION_ROADMAP.md](./CLIENT_SPEC_AND_IMPLEMENTATION_ROADMAP.md) |
 | Firestore types | [`firebase/content-schema.ts`](../firebase/content-schema.ts) |
+| **EtOH admin (M2)** | [`admin/`](../admin/) — Vite + React; `yarn admin:dev` / `npm run dev --prefix admin` |
 | Admin placeholder (legacy) | [`packages/blocks/ContentManagement/`](../packages/blocks/ContentManagement/) |
 | Bulk import detail | [MILESTONE_M2B_IMPLEMENTATION.md](./MILESTONE_M2B_IMPLEMENTATION.md) |

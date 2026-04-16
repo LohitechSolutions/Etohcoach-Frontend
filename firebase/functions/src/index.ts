@@ -46,3 +46,9 @@ export const grantAdmin = functions.region(REGION).https.onCall(async (data, con
   await admin.auth().setCustomUserClaims(targetUid, { admin: true });
   return { ok: true as const };
 });
+
+export {
+  syncLessonStatusToChildren,
+  onFlashcardDeleted,
+  onQuizQuestionWrite,
+} from './lessonSync';

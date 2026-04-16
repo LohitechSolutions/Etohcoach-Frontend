@@ -51,6 +51,8 @@ export interface LessonDoc {
   image_url?: string;
   status: PublishStatus;
   order: number;
+  /** Set when publish rules reject a write or invalidate a previously published lesson (Cloud Functions). */
+  publish_validation_error?: string;
 }
 
 export interface FlashcardDoc {
