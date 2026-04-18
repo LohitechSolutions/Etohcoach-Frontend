@@ -8,7 +8,7 @@ Independent implementation plan extracted from [ROADMAP_IMPLEMENTATION_MILESTONE
 
 ## Goal
 
-Operators can create and publish **courses → lessons → flashcards → quiz** without touching Rails.
+Operators can create and publish **courses → lessons → flashcards → quiz** via **`Etohcoach-Backend`** (Rails + ActiveAdmin / admin API), not a separate Vite admin in this repo.
 
 ---
 
@@ -24,17 +24,17 @@ Operators can create and publish **courses → lessons → flashcards → quiz**
 
 ## How to implement
 
-1. **Stack:** Greenfield **React + Vite** in [`admin/`](../admin/) (outside the legacy `packages/web` / `rnmasterapp-c11e9` Firebase init); configure **EtOH** Firebase via `admin/.env.local` from [`admin/env.example`](../admin/env.example).
-2. **SDK:** `firebase` JS modular SDK — Auth (sign-in), Firestore (`getFirestore`), Storage (`getStorage`).
-3. **Auth gating:** After login, decode ID token or use `onIdTokenChanged`; redirect if `admin` claim missing.
+1. **Stack (current):** Operator CMS lives in **`Etohcoach-Backend`** — Rails API, **ActiveAdmin** (`config/routes.rb`), and `namespace :admin` JSON endpoints — not a separate Vite app in this repo.
+2. **Firebase path (if you return to it later):** `firebase` JS modular SDK — Auth, Firestore, Storage — can power a future admin SPA; rules and `grantAdmin` in `firebase/` remain available.
+3. **Auth:** Rails/ActiveAdmin sessions for back office; Firebase **admin** custom claim only applies if you ship a Firebase-backed admin UI again.
 4. **Import (MVP+):** Defer to [M2b](./MILESTONE_M2B_IMPLEMENTATION.md) if needed; parser for CSV/XLSX with **all-or-nothing** validation (see M2b).
 
 ---
 
 ## Exit criteria
 
-- End-to-end: create draft course → add lesson → add flashcards/quiz → publish → documents visible in Firestore console with correct `lesson_status` on children.
-- Non-admin user cannot write CMS collections (verify with rules).
+- End-to-end: create draft course → add lesson → add flashcards/quiz → publish → data persisted via **Rails** (DB / API) as the source of truth for the live app path you use.
+- If you also use **Firestore** for CMS: non-admin cannot write CMS collections (verify with rules); children stay in sync with `lesson_status` as designed.
 
 ---
 
@@ -50,6 +50,6 @@ Operators can create and publish **courses → lessons → flashcards → quiz**
 |------|------|
 | Client spec (CMS fields) | [docs/CLIENT_SPEC_AND_IMPLEMENTATION_ROADMAP.md](./CLIENT_SPEC_AND_IMPLEMENTATION_ROADMAP.md) |
 | Firestore types | [`firebase/content-schema.ts`](../firebase/content-schema.ts) |
-| **EtOH admin (M2)** | [`admin/`](../admin/) — Vite + React; `yarn admin:dev` / `npm run dev --prefix admin` |
+| **Operator CMS (Rails)** | [`Etohcoach-Backend`](../Etohcoach-Backend) — ActiveAdmin + admin API routes (`config/routes.rb`) |
 | Admin placeholder (legacy) | [`packages/blocks/ContentManagement/`](../packages/blocks/ContentManagement/) |
 | Bulk import detail | [MILESTONE_M2B_IMPLEMENTATION.md](./MILESTONE_M2B_IMPLEMENTATION.md) |

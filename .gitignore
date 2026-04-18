@@ -78,6 +78,11 @@ buck-out/
 # Sensitive files - do not commit
 env.txt
 encryption.txt
+.env
+.env.local
+.env*.local
+firebase/.env
+firebase/.env.local
 
 # Local API overrides (optional; prefer toggles in packages/framework/src/config.js)
 packages/framework/src/config.local.js

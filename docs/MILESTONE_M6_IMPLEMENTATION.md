@@ -48,7 +48,7 @@ Roadmap core milestones for EtOH Coach + admin are complete for this document se
 | Product copy i18n keys (M6) | [`packages/blocks/catalogue/src/productCopyKeys.ts`](../packages/blocks/catalogue/src/productCopyKeys.ts) |
 | i18n | [`packages/blocks/LanguageOptions/`](../packages/blocks/LanguageOptions/) (`en`, `fr`, `enus`, `es`, `pt`, `it` under `src/component/translations/`) |
 | CMS schema | [`firebase/content-schema.ts`](../firebase/content-schema.ts) |
-| Admin course tags | [`admin/src/pages/CourseDetailPage.tsx`](../admin/src/pages/CourseDetailPage.tsx) |
+| Operator CMS / course fields | [`Etohcoach-Backend`](../Etohcoach-Backend) (`config/routes.rb`, ActiveAdmin) |
 
 ## Store assets checklist (often outside repo)
 

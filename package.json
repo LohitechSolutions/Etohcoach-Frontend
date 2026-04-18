@@ -27,8 +27,6 @@
     "firebase:deploy:functions": "npm run deploy:functions --prefix firebase",
     "etl:install": "npm install --prefix firebase/etl",
     "etl:migrate": "npm run migrate --prefix firebase/etl",
-    "admin:dev": "npm run dev --prefix admin",
-    "admin:build": "npm run build --prefix admin",
     "postinstall": "patch-package"
   },
   "resolutions": {
