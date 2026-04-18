@@ -24,6 +24,9 @@ export function ConfigMissing({ message }: { message: string }) {
           Restart the dev server (<code>npm run dev</code>) so Vite reloads env.
         </li>
       </ol>
+      <p style={{ marginTop: 24, fontSize: 14, color: '#555' }}>
+        Full walkthrough: <code>docs/FIREBASE_ADMIN_ENV_SETUP.md</code> in the frontend repo.
+      </p>
     </div>
   );
 }
