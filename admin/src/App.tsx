@@ -4,6 +4,7 @@ import { LoginPage } from './pages/LoginPage';
 import { CoursesPage } from './pages/CoursesPage';
 import { CourseDetailPage } from './pages/CourseDetailPage';
 import { LessonEditorPage } from './pages/LessonEditorPage';
+import { BulkImportPage } from './pages/BulkImportPage';
 import './App.css';
 
 function RequireAdmin({ children }: { children: React.ReactNode }) {
@@ -34,6 +35,7 @@ function AdminLayout() {
         </div>
         <nav className="topbar-nav">
           <Link to="/courses">Courses</Link>
+          <Link to="/import">Bulk import</Link>
         </nav>
         <button type="button" className="button ghost" onClick={() => void signOutUser()}>
           Sign out
@@ -62,6 +64,7 @@ export default function App() {
         <Route path="courses" element={<CoursesPage />} />
         <Route path="courses/:courseId" element={<CourseDetailPage />} />
         <Route path="courses/:courseId/lessons/:lessonId" element={<LessonEditorPage />} />
+        <Route path="import" element={<BulkImportPage />} />
       </Route>
       <Route path="*" element={<Navigate to="/courses" replace />} />
     </Routes>

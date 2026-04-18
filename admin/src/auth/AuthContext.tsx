@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import type { User } from 'firebase/auth';
 import { onAuthStateChanged, signInWithEmailAndPassword, signOut } from 'firebase/auth';
-import { auth } from '../firebase';
+import { fb } from '../firebase';
 
 export type AuthContextValue = {
   user: User | null;
@@ -19,7 +19,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    return onAuthStateChanged(auth, async (u) => {
+    return onAuthStateChanged(fb.auth, async (u) => {
       setLoading(true);
       setUser(u);
       try {
@@ -41,13 +41,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       isAdmin,
       loading,
       async signInEmail(email: string, password: string) {
-        const cred = await signInWithEmailAndPassword(auth, email.trim(), password);
+        const cred = await signInWithEmailAndPassword(fb.auth, email.trim(), password);
         await cred.user.getIdToken(true);
         const token = await cred.user.getIdTokenResult();
         setIsAdmin(token.claims['admin'] === true);
       },
       async signOutUser() {
-        await signOut(auth);
+        await signOut(fb.auth);
       },
     }),
     [user, isAdmin, loading],
