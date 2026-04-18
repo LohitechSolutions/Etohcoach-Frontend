@@ -12,7 +12,7 @@ import {
   updateDoc,
 } from 'firebase/firestore';
 import type { CourseDoc } from '@schema';
-import { db } from '../firebase';
+import { fb } from '../firebase';
 import { deleteCourseCascade } from '../lib/cascadeDelete';
 import { moveOrder } from '../lib/reorder';
 
@@ -24,7 +24,7 @@ export function CoursesPage() {
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
-    const q = query(collection(db, 'courses'), orderBy('order'));
+    const q = query(collection(fb.db, 'courses'), orderBy('order'));
     return onSnapshot(
       q,
       (snap) => {
@@ -55,7 +55,7 @@ export function CoursesPage() {
         status: 'draft',
         order: nextOrder,
       };
-      await addDoc(collection(db, 'courses'), draft);
+      await addDoc(collection(fb.db, 'courses'), draft);
     } catch (e) {
       setErr(e instanceof Error ? e.message : 'Could not create course');
     } finally {
@@ -74,7 +74,7 @@ export function CoursesPage() {
     setBusy(true);
     setErr(null);
     try {
-      await deleteCourseCascade(db, courseId);
+      await deleteCourseCascade(fb.db, courseId);
     } catch (e) {
       setErr(e instanceof Error ? e.message : 'Delete failed');
     } finally {
@@ -84,7 +84,7 @@ export function CoursesPage() {
 
   async function reorderCourse(index: number, dir: -1 | 1) {
     const sorted = [...courses].sort((a, b) => a.order - b.order);
-    await moveOrder(db, 'courses', sorted, index, dir);
+    await moveOrder(fb.db, 'courses', sorted, index, dir);
   }
 
   async function handleDuplicateOrderFix() {
@@ -98,12 +98,12 @@ export function CoursesPage() {
     }
     for (const [, list] of byOrder) {
       if (list.length < 2) continue;
-      const maxSnap = await getDocs(query(collection(db, 'courses'), orderBy('order', 'desc'), limit(1)));
+      const maxSnap = await getDocs(query(collection(fb.db, 'courses'), orderBy('order', 'desc'), limit(1)));
       let next = maxSnap.docs[0] ? (maxSnap.docs[0].data() as CourseDoc).order + 1 : 0;
       for (let i = 1; i < list.length; i++) {
         const row = list[i];
         if (!row) continue;
-        await updateDoc(doc(db, 'courses', row.id), { order: next });
+        await updateDoc(doc(fb.db, 'courses', row.id), { order: next });
         next++;
       }
     }

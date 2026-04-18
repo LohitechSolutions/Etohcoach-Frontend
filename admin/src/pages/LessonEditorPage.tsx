@@ -13,7 +13,7 @@ import {
   where,
 } from 'firebase/firestore';
 import type { FlashcardDoc, LessonDoc, QuizQuestionDoc } from '@schema';
-import { db, storage } from '../firebase';
+import { fb } from '../firebase';
 import { deleteLessonCascade } from '../lib/cascadeDelete';
 import { validateLessonForPublish } from '../lib/lessonValidation';
 import { moveOrder } from '../lib/reorder';
@@ -43,7 +43,7 @@ export function LessonEditorPage() {
   useEffect(() => {
     if (!lessonId) return;
     return onSnapshot(
-      doc(db, 'lessons', lessonId),
+      doc(fb.db, 'lessons', lessonId),
       (snap) => {
         if (!snap.exists()) {
           setLesson(null);
@@ -63,7 +63,7 @@ export function LessonEditorPage() {
   useEffect(() => {
     if (!lessonId) return;
     const q = query(
-      collection(db, 'flashcards'),
+      collection(fb.db, 'flashcards'),
       where('lesson_id', '==', lessonId),
       orderBy('order'),
     );
@@ -84,7 +84,7 @@ export function LessonEditorPage() {
   useEffect(() => {
     if (!lessonId) return;
     const q = query(
-      collection(db, 'quiz_questions'),
+      collection(fb.db, 'quiz_questions'),
       where('lesson_id', '==', lessonId),
       orderBy('order'),
     );
@@ -106,7 +106,7 @@ export function LessonEditorPage() {
     e.preventDefault();
     if (!lessonId || !draft) return;
     if (draft.status === 'published') {
-      const v = await validateLessonForPublish(db, lessonId);
+      const v = await validateLessonForPublish(fb.db, lessonId);
       if (v) {
         setErr(v);
         return;
@@ -116,7 +116,7 @@ export function LessonEditorPage() {
     setErr(null);
     setPublishHint(null);
     try {
-      await updateDoc(doc(db, 'lessons', lessonId), {
+      await updateDoc(doc(fb.db, 'lessons', lessonId), {
         title: draft.title,
         short_description: draft.short_description ?? '',
         scenario: draft.scenario ?? '',
@@ -139,7 +139,7 @@ export function LessonEditorPage() {
 
   async function publishLesson() {
     if (!lessonId || !draft) return;
-    const v = await validateLessonForPublish(db, lessonId);
+    const v = await validateLessonForPublish(fb.db, lessonId);
     if (v) {
       setPublishHint(v);
       setErr(v);
@@ -149,7 +149,7 @@ export function LessonEditorPage() {
     setErr(null);
     setPublishHint(null);
     try {
-      await updateDoc(doc(db, 'lessons', lessonId), {
+      await updateDoc(doc(fb.db, 'lessons', lessonId), {
         status: 'published',
         publish_validation_error: deleteField(),
       });
@@ -176,7 +176,7 @@ export function LessonEditorPage() {
         text: '',
         order: nextOrder,
       };
-      await addDoc(collection(db, 'flashcards'), row);
+      await addDoc(collection(fb.db, 'flashcards'), row);
     } catch (e) {
       setErr(e instanceof Error ? e.message : 'Could not add flashcard');
     } finally {
@@ -199,7 +199,7 @@ export function LessonEditorPage() {
         correct_index: 0,
         order: nextOrder,
       };
-      await addDoc(collection(db, 'quiz_questions'), row);
+      await addDoc(collection(fb.db, 'quiz_questions'), row);
     } catch (e) {
       setErr(e instanceof Error ? e.message : 'Could not add question');
     } finally {
@@ -211,7 +211,7 @@ export function LessonEditorPage() {
     setBusy(true);
     setErr(null);
     try {
-      await updateDoc(doc(db, 'flashcards', row.id), {
+      await updateDoc(doc(fb.db, 'flashcards', row.id), {
         text: row.text,
         image_url: row.image_url ?? '',
         order: row.order,
@@ -237,7 +237,7 @@ export function LessonEditorPage() {
     setBusy(true);
     setErr(null);
     try {
-      await updateDoc(doc(db, 'quiz_questions', row.id), {
+      await updateDoc(doc(fb.db, 'quiz_questions', row.id), {
         question: row.question,
         image_url: row.image_url ?? '',
         options,
@@ -257,12 +257,12 @@ export function LessonEditorPage() {
 
   async function deleteFlash(id: string) {
     if (!window.confirm('Delete this flashcard?')) return;
-    await deleteDoc(doc(db, 'flashcards', id));
+    await deleteDoc(doc(fb.db, 'flashcards', id));
   }
 
   async function deleteQuiz(id: string) {
     if (!window.confirm('Delete this question?')) return;
-    await deleteDoc(doc(db, 'quiz_questions', id));
+    await deleteDoc(doc(fb.db, 'quiz_questions', id));
   }
 
   async function uploadLessonMedia(kind: 'video' | 'image', file: File) {
@@ -270,7 +270,7 @@ export function LessonEditorPage() {
     setBusy(true);
     setErr(null);
     try {
-      const url = await uploadCmsFile(storage, `lessons/${lessonId}`, file);
+      const url = await uploadCmsFile(fb.storage, `lessons/${lessonId}`, file);
       if (kind === 'video') {
         setDraft((d) => (d ? { ...d, video_url: url } : d));
       } else {
@@ -289,7 +289,7 @@ export function LessonEditorPage() {
     if (!window.confirm('Delete this lesson and all flashcards and quiz questions?')) return;
     setBusy(true);
     try {
-      await deleteLessonCascade(db, lessonId);
+      await deleteLessonCascade(fb.db, lessonId);
       navigate(`/courses/${courseId}`);
     } catch (e) {
       setErr(e instanceof Error ? e.message : 'Delete failed');
@@ -480,14 +480,14 @@ export function LessonEditorPage() {
                 }}
                 onSave={(r) => saveFlashcard(r)}
                 onDelete={() => deleteFlash(row.id)}
-                onMove={(dir) => moveOrder(db, 'flashcards', sortedFlash, index, dir)}
+                onMove={(dir) => moveOrder(fb.db, 'flashcards', sortedFlash, index, dir)}
                 canUp={index > 0}
                 canDown={index < sortedFlash.length - 1}
                 onUploadImage={async (file) => {
-                  const url = await uploadCmsFile(storage, `lessons/${lessonId}/flashcards/${row.id}`, file);
+                  const url = await uploadCmsFile(fb.storage, `lessons/${lessonId}/flashcards/${row.id}`, file);
                   const next = { ...row, image_url: url };
                   setFlashcards((list) => list.map((x) => (x.id === row.id ? next : x)));
-                  await updateDoc(doc(db, 'flashcards', row.id), { image_url: url });
+                  await updateDoc(doc(fb.db, 'flashcards', row.id), { image_url: url });
                 }}
               />
             </li>
@@ -514,14 +514,14 @@ export function LessonEditorPage() {
                 }}
                 onSave={(r) => saveQuiz(r)}
                 onDelete={() => deleteQuiz(row.id)}
-                onMove={(dir) => moveOrder(db, 'quiz_questions', sortedQuiz, index, dir)}
+                onMove={(dir) => moveOrder(fb.db, 'quiz_questions', sortedQuiz, index, dir)}
                 canUp={index > 0}
                 canDown={index < sortedQuiz.length - 1}
                 onUploadImage={async (file) => {
-                  const url = await uploadCmsFile(storage, `lessons/${lessonId}/quiz/${row.id}`, file);
+                  const url = await uploadCmsFile(fb.storage, `lessons/${lessonId}/quiz/${row.id}`, file);
                   const next = { ...row, image_url: url };
                   setQuizzes((list) => list.map((x) => (x.id === row.id ? next : x)));
-                  await updateDoc(doc(db, 'quiz_questions', row.id), { image_url: url });
+                  await updateDoc(doc(fb.db, 'quiz_questions', row.id), { image_url: url });
                 }}
               />
             </li>

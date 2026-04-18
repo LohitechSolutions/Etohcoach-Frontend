@@ -1,6 +1,6 @@
 import { FormEvent, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { db } from '../firebase';
+import { fb } from '../firebase';
 import {
   parseCsvText,
   parseXlsxArrayBuffer,
@@ -40,7 +40,7 @@ export function BulkImportPage() {
         return;
       }
 
-      const outcome = await runBulkImport(db, numbered);
+      const outcome = await runBulkImport(fb.db, numbered);
       if (!outcome.ok) {
         setErrors(outcome.errors);
         return;

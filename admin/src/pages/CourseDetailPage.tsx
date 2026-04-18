@@ -11,7 +11,7 @@ import {
   where,
 } from 'firebase/firestore';
 import type { CourseCategory, CourseDoc, LessonDoc } from '@schema';
-import { db, storage } from '../firebase';
+import { fb } from '../firebase';
 import { moveOrder } from '../lib/reorder';
 import { uploadCmsFile } from '../lib/upload';
 
@@ -39,7 +39,7 @@ export function CourseDetailPage() {
     if (!courseId) return;
     setErr(null);
     return onSnapshot(
-      doc(db, 'courses', courseId),
+      doc(fb.db, 'courses', courseId),
       (snap) => {
         if (!snap.exists()) {
           setCourse(null);
@@ -60,7 +60,7 @@ export function CourseDetailPage() {
   useEffect(() => {
     if (!courseId) return;
     const q = query(
-      collection(db, 'lessons'),
+      collection(fb.db, 'lessons'),
       where('course_id', '==', courseId),
       orderBy('order'),
     );
@@ -84,7 +84,7 @@ export function CourseDetailPage() {
     setBusy(true);
     setErr(null);
     try {
-      await updateDoc(doc(db, 'courses', courseId), {
+      await updateDoc(doc(fb.db, 'courses', courseId), {
         title: draft.title,
         short_description: draft.short_description ?? '',
         full_description: draft.full_description ?? '',
@@ -122,7 +122,7 @@ export function CourseDetailPage() {
         status: 'draft',
         order: nextOrder,
       };
-      const ref = await addDoc(collection(db, 'lessons'), lesson);
+      const ref = await addDoc(collection(fb.db, 'lessons'), lesson);
       navigate(`/courses/${courseId}/lessons/${ref.id}`);
     } catch (e) {
       setErr(e instanceof Error ? e.message : 'Could not add lesson');
@@ -136,7 +136,7 @@ export function CourseDetailPage() {
     setBusy(true);
     setErr(null);
     try {
-      const url = await uploadCmsFile(storage, `courses/${courseId}`, file);
+      const url = await uploadCmsFile(fb.storage, `courses/${courseId}`, file);
       setDraft((d) => (d ? { ...d, cover_image_url: url } : d));
       markDirty();
     } catch (e) {
@@ -148,7 +148,7 @@ export function CourseDetailPage() {
 
   async function reorderLesson(index: number, dir: -1 | 1) {
     const sorted = [...lessons].sort((a, b) => a.order - b.order);
-    await moveOrder(db, 'lessons', sorted, index, dir);
+    await moveOrder(fb.db, 'lessons', sorted, index, dir);
   }
 
   if (!courseId) {
