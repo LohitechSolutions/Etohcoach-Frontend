@@ -116,9 +116,9 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace 'com.yourcompany.etohcoach'
+    namespace 'com.EtOHCoachFinal'
     defaultConfig {
-        applicationId 'com.yourcompany.etohcoach'
+        applicationId 'com.EtOHCoachFinal'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

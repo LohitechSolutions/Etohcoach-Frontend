@@ -1,4 +1,4 @@
-package com.yourcompany.etohcoach
+package com.EtOHCoachFinal
 
 import android.os.Build
 import android.os.Bundle

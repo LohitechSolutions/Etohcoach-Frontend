@@ -1,6 +1,6 @@
 import i18next from "i18next";
 import React, { useMemo } from "react";
-import { Dimensions, Image, Platform } from "react-native";
+import { Dimensions, Image, Platform, Text, View } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Scale from "../../../packages/components/src/Scale";
 import { FONTS } from "../../../packages/framework/src/Fonts";
@@ -13,6 +13,23 @@ const Tab = createBottomTabNavigator();
 const windowHeight = Dimensions.get("window").height;
 function hp(percentage: number) {
   return (windowHeight * percentage) / 100;
+}
+
+function wrapLegacyTabScreen(blockName: string) {
+  const C = getLegacyBlock(blockName);
+  if (!C) {
+    console.error(`[LegacyTabShell] getLegacyBlock("${blockName}") is undefined — check legacyBlockRegistry / Metro resolution.`);
+    return function MissingLegacyTabScreen() {
+      return (
+        <View style={{ flex: 1, justifyContent: "center", alignItems: "center", padding: 24 }}>
+          <Text style={{ textAlign: "center" }}>
+            Could not load &quot;{blockName}&quot;. See Metro logs and legacyBlockRegistry.
+          </Text>
+        </View>
+      );
+    };
+  }
+  return withLegacyNavigation(C);
 }
 
 /** Tab icons live under `react-native/assets/images/` (copied from `packages/mobile/assets/images/`). */
@@ -51,22 +68,10 @@ function LegacyTabBarIcon({
  * Blocks load lazily via `getLegacyBlock` when this shell mounts (not at app import time).
  */
 export function LegacyTabShell() {
-  const WDashboard = useMemo(
-    () => withLegacyNavigation(getLegacyBlock("Dashboard")!),
-    []
-  );
-  const WCatalogue = useMemo(
-    () => withLegacyNavigation(getLegacyBlock("Catalogue")!),
-    []
-  );
-  const WLeaderboard = useMemo(
-    () => withLegacyNavigation(getLegacyBlock("Leaderboard")!),
-    []
-  );
-  const WProfile = useMemo(
-    () => withLegacyNavigation(getLegacyBlock("UserProfileBasicBlock")!),
-    []
-  );
+  const WDashboard = useMemo(() => wrapLegacyTabScreen("Dashboard"), []);
+  const WCatalogue = useMemo(() => wrapLegacyTabScreen("Catalogue"), []);
+  const WLeaderboard = useMemo(() => wrapLegacyTabScreen("Leaderboard"), []);
+  const WProfile = useMemo(() => wrapLegacyTabScreen("UserProfileBasicBlock"), []);
 
   const tabBarHeight = Platform.OS === "android" ? Scale(75) : Scale(90);
   const tabPaddingBottom = Platform.OS === "android" ? Scale(15) : Scale(20);

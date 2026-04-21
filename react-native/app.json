@@ -15,10 +15,10 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.yourcompany.etohcoach"
+      "bundleIdentifier": "com.EtOHCoachFinal"
     },
     "android": {
-      "package": "com.yourcompany.etohcoach",
+      "package": "com.EtOHCoachFinal",
       "adaptiveIcon": {
         "foregroundImage": "./assets/icon.png",
         "backgroundColor": "#ffffff"
@@ -27,12 +27,15 @@
     "web": {
       "bundler": "metro"
     },
-    "plugins": [],
+    "plugins": [
+      "expo-dev-client"
+    ],
     "extra": {
       "migration": {
         "defaultUi": "AppShell (RN6 + legacy blocks)",
         "legacyV2OptIn": "EXPO_PUBLIC_USE_LEGACY_APP=true for packages/mobile/App.",
-        "apiNote": "Expo API: react-native/src/config/expoFrameworkConfig.js (Railway default). Metro replaces packages/framework/src/config. Optional react-native/.env EXPO_PUBLIC_API_URL for local Rails."
+        "apiNote": "Expo API: react-native/src/config/expoFrameworkConfig.js (Railway default). Metro replaces packages/framework/src/config. Optional react-native/.env EXPO_PUBLIC_API_URL for local Rails.",
+        "revenueCatNote": "react-native-purchases is linked for iOS/Android. Use a dev build (expo-dev-client): `npx expo run:ios` — Expo Go cannot run real IAP. Optional EXPO_PUBLIC_REVENUECAT_IOS_API_KEY in react-native/.env (see .env.example)."
       }
     }
   }

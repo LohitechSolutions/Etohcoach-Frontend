@@ -20,5 +20,10 @@ exports.subscriptionCancelApiMethodType = "GET";
   exports.pricingListUrl = 'subscriptions/list';
   exports.pricingListApiMethodType = "GET";
   exports.pricingListContentType = "application/json";
+
+  /** RevenueCat public SDK keys (dashboard → Project → API keys). Prefer injecting via your build/env in production. */
+  exports.revenueCatIosApiKey = 'appl_IWwyCqEhSUcYlfQymwrvuOZgGVB';
+  /** Set when supporting Android: goog_… */
+  exports.revenueCatAndroidApiKey = '';
   
   // Customizable Area End

@@ -1,3 +1,4 @@
+import "./src/polyfills/patchReactNativeAsyncStorage";
 import "./src/linking-rn2-polyfill";
 import "./src/dimensions-rn-polyfill";
 import React from "react";

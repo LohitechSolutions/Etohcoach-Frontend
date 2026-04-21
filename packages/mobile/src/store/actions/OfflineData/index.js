@@ -1,7 +1,6 @@
 import { ADD_OFFLINE_DATA, DELETE_OFFLINE_DATA,UPDATE_OFFLINE_DATA,ERR_OFFLINE_DATA, LOADING_OFFLINE_DATA, UPDATE_OFFLINE_DATA_STATUS, ADD_OFFLINE_API_CALLS, REMOVE_OFFLINE_DATA,REMOVE_OFFLINE_APIS } from "../../constant";
 import {downloadFiles, readFile} from "../../../utils/downloadingFiles";
 import RNFS from "react-native-fs";
-import  OfflineController  from "./OfflineController";
 import { Platform } from "react-native";
 
 export const addOfflineData = params => (dispatch) => dispatch(addOfflineCase(params));

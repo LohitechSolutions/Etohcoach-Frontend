@@ -34,6 +34,7 @@
     "react-native-fs": "file:../blocks/core/node_modules/react-native-fs",
     "react-native-get-random-values": "file:../blocks/core/node_modules/react-native-get-random-values",
     "react-native-iap": "file:../blocks/core/node_modules/react-native-iap",
+    "react-native-purchases": "file:../blocks/core/node_modules/react-native-purchases",
     
     "react-native-localize": "file:../blocks/core/node_modules/react-native-localize",
     "react-native-modal-activityindicator": "file:../blocks/core/node_modules/react-native-modal-activityindicator",

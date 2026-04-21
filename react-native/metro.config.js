@@ -286,6 +286,101 @@ function resolvePackageEntry(packageRoot) {
  * `react-native-safe-area-context` must resolve to a single copy (Expo's). A second
  * copy from workspace hoisting registers RNCSafeAreaProvider twice → native crash.
  */
+/**
+ * Force AsyncStorage to Expo’s install. A second copy from `packages/blocks/core/node_modules`
+ * (or other hoisted paths) can interact badly with RN 0.74 and trigger the removed-core
+ * AsyncStorage invariant or incomplete module evaluation (`.default` undefined).
+ */
+function resolveReactNativeAsyncStorage(moduleName) {
+  const scope = "@react-native-async-storage";
+  const pkg = `${scope}/async-storage`;
+  const pkgRoot = path.join(expoNodeModules, scope, "async-storage");
+  if (!fs.existsSync(path.join(pkgRoot, "package.json"))) {
+    return null;
+  }
+  const bare = bareModuleName(moduleName);
+  const norm = String(moduleName).replace(/\\/g, "/");
+
+  if (bare === pkg || bare.startsWith(`${pkg}/`)) {
+    const sub = bare === pkg ? "" : bare.slice(pkg.length + 1);
+    if (!sub) {
+      const entry = resolvePackageEntry(pkgRoot);
+      if (entry) {
+        return { filePath: path.normalize(entry), type: "sourceFile" };
+      }
+    } else {
+      const resolved = resolveExistingFile(path.join(pkgRoot, sub));
+      if (resolved) {
+        return { filePath: path.normalize(resolved), type: "sourceFile" };
+      }
+    }
+  }
+
+  const needle = `/node_modules/${pkg}/`;
+  const idx = norm.indexOf(needle);
+  if (idx !== -1) {
+    const rel = norm.slice(idx + needle.length).split("?")[0];
+    const resolved = resolveExistingFile(path.join(pkgRoot, rel));
+    if (resolved) {
+      return { filePath: path.normalize(resolved), type: "sourceFile" };
+    }
+  }
+
+  if (norm.endsWith(`/node_modules/${pkg}`)) {
+    const entry = resolvePackageEntry(pkgRoot);
+    if (entry) {
+      return { filePath: path.normalize(entry), type: "sourceFile" };
+    }
+  }
+
+  return null;
+}
+
+/** RevenueCat must use the Expo app’s native module (RN 0.74), not a hoisted legacy copy. */
+function resolveReactNativePurchases(moduleName) {
+  const pkg = "react-native-purchases";
+  const pkgRoot = path.join(expoNodeModules, pkg);
+  if (!fs.existsSync(path.join(pkgRoot, "package.json"))) {
+    return null;
+  }
+  const bare = bareModuleName(moduleName);
+  const norm = String(moduleName).replace(/\\/g, "/");
+
+  if (bare === pkg || bare.startsWith(`${pkg}/`)) {
+    const sub = bare === pkg ? "" : bare.slice(pkg.length + 1);
+    if (!sub) {
+      const entry = resolvePackageEntry(pkgRoot);
+      if (entry) {
+        return { filePath: path.normalize(entry), type: "sourceFile" };
+      }
+    } else {
+      const resolved = resolveExistingFile(path.join(pkgRoot, sub));
+      if (resolved) {
+        return { filePath: path.normalize(resolved), type: "sourceFile" };
+      }
+    }
+  }
+
+  const needle = `/node_modules/${pkg}/`;
+  const idx = norm.indexOf(needle);
+  if (idx !== -1) {
+    const rel = norm.slice(idx + needle.length).split("?")[0];
+    const resolved = resolveExistingFile(path.join(pkgRoot, rel));
+    if (resolved) {
+      return { filePath: path.normalize(resolved), type: "sourceFile" };
+    }
+  }
+
+  if (norm.endsWith(`/node_modules/${pkg}`)) {
+    const entry = resolvePackageEntry(pkgRoot);
+    if (entry) {
+      return { filePath: path.normalize(entry), type: "sourceFile" };
+    }
+  }
+
+  return null;
+}
+
 function resolveReactNativeSafeAreaContext(moduleName) {
   const pkg = "react-native-safe-area-context";
   const pkgRoot = path.join(expoNodeModules, pkg);
@@ -460,6 +555,14 @@ config.resolver.resolveRequest = (context, moduleName, platform) => {
   const safeAreaRes = resolveReactNativeSafeAreaContext(moduleName);
   if (safeAreaRes) {
     return safeAreaRes;
+  }
+  const purchasesRes = resolveReactNativePurchases(moduleName);
+  if (purchasesRes) {
+    return purchasesRes;
+  }
+  const asyncStorageRes = resolveReactNativeAsyncStorage(moduleName);
+  if (asyncStorageRes) {
+    return asyncStorageRes;
   }
   const vectorIcons = resolveVectorIconsToExpo(moduleName);
   if (vectorIcons) {
@@ -657,6 +760,12 @@ config.resolver.extraNodeModules = {
   "react-native-fs": path.resolve(projectRoot, "src/shims/react-native-fs.js"),
   "react-native-iap": path.resolve(projectRoot, "src/shims/react-native-iap.js"),
   "react-native-safe-area-context": path.join(expoNodeModules, "react-native-safe-area-context"),
+  "react-native-purchases": path.join(expoNodeModules, "react-native-purchases"),
+  "@react-native-async-storage/async-storage": path.join(
+    expoNodeModules,
+    "@react-native-async-storage",
+    "async-storage"
+  ),
 };
 config.resolver.unstable_enableSymlinks = true;
 

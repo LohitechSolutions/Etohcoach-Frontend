@@ -41,11 +41,15 @@ class Subcription extends SubcriptionController {
     // this.justmountedFunction();
     this.sub = this.props.navigation.addListener("didFocus", () => {
       this.iapConnection(false);
+      void this.syncRevenueCatOfferings();
+      void this.getPricingDetails();
     });
     this.mypricingdetail = this.props.navigation.addListener(
       "willFocus",
       () => {
         this.iapConnection(false);
+        void this.syncRevenueCatOfferings();
+        void this.getPricingDetails();
         this.setState({ isloading: true })
       }
     );
@@ -173,7 +177,7 @@ handleBackNavigation = async()=>{
                   <Text style={styles.statusTextContainer}>{t("Active")}</Text>
                 </View>
 
-                <Text style={styles.subscriptionValueContainer}>{Platform.OS=='android'? this.state.subscription?.originalPriceAndroid??0:this.state.subscription?.localizedPrice??0}/{t("Month")}</Text>
+                <Text style={styles.subscriptionValueContainer}>{this.state.revenueCatPriceString || (Platform.OS=='android'? this.state.subscription?.originalPriceAndroid??0:this.state.subscription?.localizedPrice??0)}/{t("Month")}</Text>
                 <View style={{flexDirection:"row",alignItems:"center",marginTop:Scale(10)}}>
                 <Text style={[styles.subscriptionValueContainer, { color: '#777185', fontSize: RFValue(10),includeFontPadding:false }]}>{t("Next renewal")}</Text>
                 <View style={styles.expiryContainer}>
@@ -414,7 +418,7 @@ handleBackNavigation = async()=>{
                       {t("SUBSCRIBENOW")}
                     </Text>
                     <Text style={{ fontSize: hp("1.5%"), color: "#DD96A1" }}>
-                      {`${t("ForA")} ${this.state.isloading?'-': Platform.OS=='android'? this.state.subscription?.subscriptionOfferDetails[0]?.pricingPhases?.pricingPhaseList[0]?.formattedPrice??0:this.state.subscription?.localizedPrice??0}/${t("Month")} `}
+                      {`${t("ForA")} ${this.getSubscribeNowPriceForDisplay()}/${t("Month")} `}
                     </Text>
                 
                 </TouchableOpacity>

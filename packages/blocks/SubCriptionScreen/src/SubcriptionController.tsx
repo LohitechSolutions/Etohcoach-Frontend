@@ -8,6 +8,7 @@ import  {
   getAvailablePurchases, initConnection,
   purchaseUpdatedListener, requestSubscription
 } from 'react-native-iap';
+import Purchases from "react-native-purchases";
 import { BlockComponent } from "../../../framework/src/BlockComponent";
 import { IBlock } from "../../../framework/src/IBlock";
 import { Message } from "../../../framework/src/Message";
@@ -60,6 +61,8 @@ interface S {
   subscriptionInfo: undefined;
   subscription: any;
   checkForSubscription:boolean;
+  /** Localized price string from RevenueCat offerings (preferred for Subscribe UI when set). */
+  revenueCatPriceString: string;
   // Customizable Area Start
   // Customizable Area End
 }
@@ -83,6 +86,42 @@ const itemSubs: any = Platform.select({
 })
 
 export const configJSON = require("./config.js");
+
+let revenueCatSdkConfigured = false;
+/** Dedupe parallel syncs; backoff after configuration errors (empty offerings) to avoid log spam. */
+let revenueCatOfferingsSyncInFlight: Promise<void> | null = null;
+let revenueCatOfferingsLastFailureAt = 0;
+const REVENUECAT_OFFERINGS_RETRY_MS = 60_000;
+
+function revenueCatPublicKeyIos(): string {
+  const fromEnv =
+    typeof process !== "undefined" && process.env?.EXPO_PUBLIC_REVENUECAT_IOS_API_KEY;
+  return (typeof fromEnv === "string" && fromEnv.length > 0
+    ? fromEnv
+    : configJSON.revenueCatIosApiKey) || "";
+}
+
+function revenueCatPublicKeyAndroid(): string {
+  const fromEnv =
+    typeof process !== "undefined" && process.env?.EXPO_PUBLIC_REVENUECAT_ANDROID_API_KEY;
+  return (typeof fromEnv === "string" && fromEnv.length > 0
+    ? fromEnv
+    : configJSON.revenueCatAndroidApiKey) || "";
+}
+
+async function ensureRevenueCatConfigured(): Promise<boolean> {
+  const iosKey = revenueCatPublicKeyIos();
+  const androidKey = revenueCatPublicKeyAndroid();
+  const apiKey = Platform.OS === "ios" ? iosKey : androidKey;
+  if (!apiKey) {
+    return false;
+  }
+  if (!revenueCatSdkConfigured) {
+    await Purchases.configure({ apiKey });
+    revenueCatSdkConfigured = true;
+  }
+  return true;
+}
 
 export default class SubcriptionController extends BlockComponent<
   Props,
@@ -139,7 +178,8 @@ export default class SubcriptionController extends BlockComponent<
       isVisible: false,
       subscriptionInfo: undefined,
       subscription: undefined,
-      checkForSubscription:false
+      checkForSubscription:false,
+      revenueCatPriceString: "",
       // Customizable Area Start
       // Customizable Area End
     };
@@ -187,6 +227,9 @@ export default class SubcriptionController extends BlockComponent<
     }else{
       console.log('new connection')
       this.iapConnection(true);
+      void this.syncRevenueCatOfferings();
+      /** Expo stubs IAP — backend list is the reliable fallback when StoreKit/RevenueCat products are unavailable. */
+      void this.getPricingDetails();
     }
 
     // console.log(await AsyncStorage.getItem(
@@ -196,6 +239,89 @@ export default class SubcriptionController extends BlockComponent<
     // )), "____________________________________kkk")
 
   }
+  /**
+   * Binds RevenueCat `current` offering price after login (uses LOGIN_ID for Purchases.logIn).
+   * Falls back to react-native-iap product prices in the UI when this returns nothing.
+   */
+  syncRevenueCatOfferings = async () => {
+    if (revenueCatOfferingsSyncInFlight) {
+      return revenueCatOfferingsSyncInFlight;
+    }
+    const now = Date.now();
+    if (
+      revenueCatOfferingsLastFailureAt > 0 &&
+      now - revenueCatOfferingsLastFailureAt < REVENUECAT_OFFERINGS_RETRY_MS &&
+      !this.state.revenueCatPriceString
+    ) {
+      return;
+    }
+
+    revenueCatOfferingsSyncInFlight = (async () => {
+      try {
+        const ready = await ensureRevenueCatConfigured();
+        if (!ready) {
+          return;
+        }
+        const loginId = await AsyncStorage.getItem(
+          AsynchStoragekey.AsynchStoragekey.LOGIN_ID
+        );
+        if (loginId) {
+          await Purchases.logIn(loginId);
+        }
+        /**
+         * If this throws "offerings empty" / OfferingsManager error 1, Apple returned no products.
+         * Fix outside the app: bundle ID + product IDs in App Store Connect must match RevenueCat,
+         * agreements signed, and (simulator) a StoreKit Configuration file. See:
+         * https://rev.cat/why-are-offerings-empty
+         */
+        const offerings = await Purchases.getOfferings();
+        const current = offerings?.current;
+        const packages = current?.availablePackages ?? [];
+        const sku = itemSubs[0];
+        const matched =
+          packages.find((p: { product?: { identifier?: string } }) => p?.product?.identifier === sku) ??
+          packages[0];
+        const priceStr = matched?.product?.priceString;
+        if (priceStr) {
+          revenueCatOfferingsLastFailureAt = 0;
+          this.setState({ revenueCatPriceString: priceStr });
+        }
+      } catch (e) {
+        revenueCatOfferingsLastFailureAt = Date.now();
+        console.warn("[RevenueCat] syncRevenueCatOfferings", e);
+      } finally {
+        revenueCatOfferingsSyncInFlight = null;
+      }
+    })();
+
+    return revenueCatOfferingsSyncInFlight;
+  };
+
+  getSubscribeNowPriceForDisplay(): string | number {
+    if (this.state.revenueCatPriceString) {
+      return this.state.revenueCatPriceString;
+    }
+    const apiPrice = this.state.priceingListapi_price;
+    if (
+      apiPrice !== undefined &&
+      apiPrice !== null &&
+      String(apiPrice).trim() !== "" &&
+      String(apiPrice) !== "0"
+    ) {
+      return apiPrice;
+    }
+    if (this.state.isloading) {
+      return "-";
+    }
+    if (Platform.OS === "android") {
+      return (
+        this.state.subscription?.subscriptionOfferDetails?.[0]?.pricingPhases
+          ?.pricingPhaseList?.[0]?.formattedPrice ?? 0
+      );
+    }
+    return this.state.subscription?.localizedPrice ?? 0;
+  }
+
   async getPricingDetails() {
     console.log("PRICING LIST API IS RUNNING")
     const header = {
