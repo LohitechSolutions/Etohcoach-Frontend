@@ -3,6 +3,10 @@
 /**
  * API base URL for the Expo / react-native app only (Metro resolves * packages/framework/src/config imports to this file — see metro.config.js).
  *
+ * Email/social login and all `RestAPIRequestMessage` calls use `exports.baseURL` (e.g. `bx_block_login/logins` → `${baseURL}/bx_block_login/logins`).
+ *
+ * Set `EXPO_PUBLIC_API_URL` in `react-native/.env` (see `.env.example`). Use **direct** `process.env.EXPO_PUBLIC_*` reads below so Expo can inline them at bundle time.
+ *
  * Default below when EXPO_PUBLIC_API_URL is unset. For Render, set in react-native/.env:
  *   EXPO_PUBLIC_API_URL=https://your-service.onrender.com
  */
@@ -11,11 +15,14 @@ const DEFAULT_HOSTED_API = "https://etohcoach-backend-production.up.railway.app"
 
 /** EXPO_PUBLIC_API_URL or alias EXPO_PUBLIC_API_BASE_URL (playbook name). */
 const EXPO_PUBLIC_API_URL_RAW = (() => {
-  const env = typeof process !== 'undefined' && process.env ? process.env : undefined;
-  const a = env && typeof env.EXPO_PUBLIC_API_URL === 'string' ? env.EXPO_PUBLIC_API_URL.trim() : '';
+  if (typeof process === 'undefined' || !process.env) {
+    return '';
+  }
+  const a =
+    typeof process.env.EXPO_PUBLIC_API_URL === 'string' ? process.env.EXPO_PUBLIC_API_URL.trim() : '';
   const b =
-    env && typeof env.EXPO_PUBLIC_API_BASE_URL === 'string'
-      ? env.EXPO_PUBLIC_API_BASE_URL.trim()
+    typeof process.env.EXPO_PUBLIC_API_BASE_URL === 'string'
+      ? process.env.EXPO_PUBLIC_API_BASE_URL.trim()
       : '';
   return a || b;
 })();
@@ -25,12 +32,15 @@ const EXPO_PUBLIC_API_URL_RAW = (() => {
  * Set either `EXPO_PUBLIC_CONTENT_SOURCE` (Expo) or `CONTENT_SOURCE` (generic) to `firestore` for cutover testing.
  */
 const EXPO_PUBLIC_CONTENT_SOURCE_RAW = (() => {
-  const env = typeof process !== 'undefined' && process.env ? process.env : undefined;
+  if (typeof process === 'undefined' || !process.env) {
+    return 'rest';
+  }
   const a =
-    env && typeof env.EXPO_PUBLIC_CONTENT_SOURCE === 'string'
-      ? env.EXPO_PUBLIC_CONTENT_SOURCE.trim().toLowerCase()
+    typeof process.env.EXPO_PUBLIC_CONTENT_SOURCE === 'string'
+      ? process.env.EXPO_PUBLIC_CONTENT_SOURCE.trim().toLowerCase()
       : '';
-  const b = env && typeof env.CONTENT_SOURCE === 'string' ? env.CONTENT_SOURCE.trim().toLowerCase() : '';
+  const b =
+    typeof process.env.CONTENT_SOURCE === 'string' ? process.env.CONTENT_SOURCE.trim().toLowerCase() : '';
   const v = a || b;
   return v === 'firestore' ? 'firestore' : 'rest';
 })();
