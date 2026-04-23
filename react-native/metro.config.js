@@ -75,6 +75,13 @@ const googleSigninShim = path.resolve(
   "src/shims/@react-native-community-google-signin.js"
 );
 
+/** Stub package (folder + package.json) so Metro resolves from `packages/blocks/*` reliably. */
+const fbsdkPackageRoot = path.resolve(
+  projectRoot,
+  "src/shims/npm/react-native-fbsdk"
+);
+const fbsdkEntry = path.join(fbsdkPackageRoot, "index.js");
+
 const firebaseMessagingShim = path.resolve(
   projectRoot,
   "src/shims/react-native-firebase-messaging.js"
@@ -112,6 +119,8 @@ const originalResolveRequest = config.resolver.resolveRequest;
 const expoNodeModules = path.resolve(projectRoot, "node_modules");
 const expoReactNativeRoot = path.join(expoNodeModules, "react-native");
 const expoReactRoot = path.join(expoNodeModules, "react");
+/** Fallback: legacy `require("uuid/v4")` if any dependency still uses it (prefer `require("uuid").v4`). */
+const uuidV4File = path.join(expoNodeModules, "uuid", "dist", "v4.js");
 
 function bareModuleName(name) {
   const s = String(name);
@@ -543,6 +552,9 @@ function shouldUseGoogleSigninShim(moduleName) {
 
 config.resolver.resolveRequest = (context, moduleName, platform) => {
   const normMod = String(moduleName).replace(/\\/g, "/");
+  if (bareModuleName(moduleName) === "uuid/v4" && fs.existsSync(uuidV4File)) {
+    return { filePath: uuidV4File, type: "sourceFile" };
+  }
   if (
     normMod.includes("framework/src/config") &&
     !normMod.includes("expoFrameworkConfig")
@@ -551,6 +563,10 @@ config.resolver.resolveRequest = (context, moduleName, platform) => {
   }
   if (shouldUseGoogleSigninShim(moduleName)) {
     return { filePath: googleSigninShim, type: "sourceFile" };
+  }
+  const fbsdkRes = resolveStubPackage(moduleName, "react-native-fbsdk", fbsdkEntry);
+  if (fbsdkRes) {
+    return fbsdkRes;
   }
   const safeAreaRes = resolveReactNativeSafeAreaContext(moduleName);
   if (safeAreaRes) {
@@ -747,6 +763,7 @@ config.resolver.extraNodeModules = {
     projectRoot,
     "src/shims/@react-native-community-google-signin.js"
   ),
+  "react-native-fbsdk": fbsdkPackageRoot,
   "@react-native-firebase/messaging": path.resolve(
     projectRoot,
     "src/shims/react-native-firebase-messaging.js"

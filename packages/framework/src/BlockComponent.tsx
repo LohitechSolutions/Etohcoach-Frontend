@@ -23,7 +23,7 @@ export class BlockComponent<Props, S, SS> extends Component<Props, S, SS>
 
   constructor(props: Props) {
     super(props);
-    const uuidv4 = require("uuid/v4");
+    const { v4: uuidv4 } = require("uuid");
     this.blockId = uuidv4();
     this.send = message => runEngine.sendMessage(this.blockId, message);
     this.subScribedMessages = [''];

@@ -9,7 +9,7 @@ import NavigationMessage from '../../../framework/src/Messages/NavigationMessage
 export default class OtpToNewPasswordAdapter  {
     send: (message: Message) => void;
     constructor() {
-        const uuidv4 = require('uuid/v4');
+        const { v4: uuidv4 } = require("uuid");
         var blockId = uuidv4();
         this.send = message => runEngine.sendMessage(blockId, message);
         runEngine.attachBuildingBlock(this as IBlock, [getName(MessageEnum.NavigationNewPasswordMessage)]);

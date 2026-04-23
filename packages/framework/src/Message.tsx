@@ -8,7 +8,7 @@ export class Message {
   constructor(id: string) {
     this.id = id;
     this.properties = {};
-    const uuidv4 = require('uuid/v4');
+    const { v4: uuidv4 } = require("uuid");
     this.messageId = uuidv4();
   }
 

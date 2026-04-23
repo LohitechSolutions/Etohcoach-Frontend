@@ -1,3 +1,4 @@
+2026-04-23 16:15:56.614 xcodebuild[46836:207974] [MT] IDERunDestination: Supported platforms for the buildables in the current scheme is empty.
 --- xcodebuild: WARNING: Using the first of multiple matching destinations:
 { platform:iOS Simulator, arch:arm64, id:C2272E61-19DB-4560-885D-9F41E34CACE4, OS:18.2, name:iPhone 16 Pro }
 { platform:iOS Simulator, arch:x86_64, id:C2272E61-19DB-4560-885D-9F41E34CACE4, OS:18.2, name:iPhone 16 Pro }

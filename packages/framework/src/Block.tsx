@@ -11,7 +11,7 @@ export class Block implements IBlock {
   blockId: string;
 
   constructor() {
-    const uuidv4 = require("uuid/v4");
+    const { v4: uuidv4 } = require("uuid");
     this.blockId = uuidv4();
     this.send = message => runEngine.sendMessage(this.blockId, message);
   }

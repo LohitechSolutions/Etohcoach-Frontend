@@ -8,7 +8,7 @@ import MessageEnum, { getName } from '../../../../framework/src/Messages/Message
 import { IBlock } from '../../../../framework/src/IBlock';
 
 const useRunEngine = () => {
-  const blockId = require('uuid/v4')();
+  const blockId = require("uuid").v4();
 
   const communicationBus: IBlock = {
     //@ts-ignore
