@@ -6,9 +6,9 @@ import  {
   ProductPurchase,
   flushFailedPurchasesCachedAsPendingAndroid,
   getAvailablePurchases, initConnection,
-  purchaseUpdatedListener, requestSubscription
+  purchaseUpdatedListener
 } from 'react-native-iap';
-import Purchases from "react-native-purchases";
+import Purchases, { PURCHASES_ERROR_CODE, type CustomerInfo } from "react-native-purchases";
 import { BlockComponent } from "../../../framework/src/BlockComponent";
 import { IBlock } from "../../../framework/src/IBlock";
 import { Message } from "../../../framework/src/Message";
@@ -117,10 +117,28 @@ async function ensureRevenueCatConfigured(): Promise<boolean> {
     return false;
   }
   if (!revenueCatSdkConfigured) {
-    await Purchases.configure({ apiKey });
+    Purchases.configure({ apiKey });
     revenueCatSdkConfigured = true;
   }
   return true;
+}
+
+/**
+ * Map RevenueCat result to the shape `sendSubscriptionSuccess` expects (legacy RNIap receipt fields).
+ * `react-native-iap` is stubbed in the Expo app; real purchases go through RevenueCat + StoreKit.
+ */
+function mapCustomerInfoToSubscriptionReceipt(
+  customerInfo: CustomerInfo,
+  productIdentifier: string
+) {
+  const sku = productIdentifier || itemSubs[0];
+  const sub = customerInfo.subscriptionsByProductIdentifier?.[sku];
+  const ent = Object.values(customerInfo.entitlements?.active || {})[0];
+  const transactionId = sub?.storeTransactionId || sku;
+  const purchaseDateIso =
+    sub?.purchaseDate || sub?.originalPurchaseDate || ent?.latestPurchaseDate || new Date().toISOString();
+  const transactionDate = new Date(purchaseDateIso).getTime();
+  return { transactionId, orderId: transactionId, transactionDate };
 }
 
 export default class SubcriptionController extends BlockComponent<
@@ -708,41 +726,65 @@ export default class SubcriptionController extends BlockComponent<
      
   }
 
+  /**
+   * In-app purchase via RevenueCat (StoreKit on iOS). `react-native-iap` is stubbed in Metro and never shows a sheet.
+   */
+  purchaseSubscriptionThroughRevenueCat = async () => {
+    const loginId = await AsyncStorage.getItem(
+      AsynchStoragekey.AsynchStoragekey.LOGIN_ID
+    );
+    if (loginId) {
+      await Purchases.logIn(loginId);
+    }
+    const offerings = await Purchases.getOfferings();
+    const current = offerings?.current;
+    const packages = current?.availablePackages ?? [];
+    const sku = itemSubs[0];
+    const matched =
+      packages.find((p) => p?.product?.identifier === sku) ?? packages[0];
+    if (!matched) {
+      this.setState({ isloading: false });
+      Alert.alert(
+        "Subscription unavailable",
+        "No subscription products were returned. In RevenueCat, link product ID \"" +
+          sku +
+          "\" to the current offering. For simulator testing, set the scheme’s StoreKit Configuration to Storekit.storekit."
+      );
+      return;
+    }
+    const { customerInfo, productIdentifier } = await Purchases.purchasePackage(matched);
+    const legacy = mapCustomerInfoToSubscriptionReceipt(customerInfo, productIdentifier);
+    await this.updateSubscription(legacy);
+  };
+
   subscribe = async () => {
     try {
-      await this.iapConnection(false);
-      this.setState({isloading:true})
-      // await this.consumeAllSkus();
-      // console.log('subscription loading------',this.state?.subscription?.subscriptionOfferDetails[0].offerToken)
-    
-    let subscriptionOffers:any=[]
-
-if(Platform.OS=='ios')
-{
-  console.log("00checking thisssi---",this.state)
-   subscriptionOffers = {sku:this.state.subscription_id}
-
-}
-else{
-  console.log("00checking thisssi---",this.state)
-  subscriptionOffers = {subscriptionOffers:[{sku:this.state.subscription_id,offerToken:this.state?.subscription?.subscriptionOfferDetails[0].offerToken ?? ""}]}
-}
-console.log("subscriptionOffers checking")
-      await requestSubscription(subscriptionOffers).then(async(purchase:any)=>{
-      //  console.log('subscription purchased',this.state?.subscription?.subscriptionOfferDetails[0])
-        await this.updateSubscription(purchase)
-      
-      }).catch((err)=>{
-        this.setState({isloading:false})
-        Alert.alert('Subscription could not be purchased')
-        console.log('error on subscription purchase',err,this.state)
-      })
-
-     
+      this.setState({ isloading: true });
+      if (!(await ensureRevenueCatConfigured())) {
+        this.setState({ isloading: false });
+        Alert.alert(
+          "Subscription unavailable",
+          "Add the RevenueCat public API key (e.g. EXPO_PUBLIC_REVENUECAT_IOS_API_KEY or configJSON.revenueCatIosApiKey)."
+        );
+        return;
+      }
+      try {
+        await this.purchaseSubscriptionThroughRevenueCat();
+      } catch (e: unknown) {
+        const pe = e as { code?: string; userCancelled?: boolean | null; message?: string };
+        this.setState({ isloading: false });
+        if (pe?.userCancelled || pe?.code === PURCHASES_ERROR_CODE.PURCHASE_CANCELLED_ERROR) {
+          return;
+        }
+        console.warn("[RevenueCat] purchase failed", e);
+        Alert.alert(
+          "Subscription could not be purchased",
+          pe?.message && String(pe.message).length > 0 ? String(pe.message) : "Please try again later."
+        );
+      }
     } catch (err) {
-      this.setState({isloading:false})
-      console.warn("subscription request error gggg----", err, this.state);
-      // this.iapConnection();
+      this.setState({ isloading: false });
+      console.warn("subscribe", err, this.state);
     }
   };
   updateSubscription = async (subDetail: any) => {
@@ -879,43 +921,55 @@ else{
 
   // Restoring Subscription
   restoreSubscription = async () => {
-    this.setState({isloading:true})
+    this.setState({ isloading: true });
     try {
-      // const activeSubscription = await AsyncStorage.getItem(AsynchStoragekey.AsynchStoragekey.USER_SUBSCRIPTION);
-      const activeSubscription = this.props.subscriptionState?.subscriptionInfo?.userSubscription;
-      const purchases = await RNIap.getAvailablePurchases();
-      const newState = { premium: false, ads: true }
-      let restoredTitles: list = [];
-      // console.log('purchases', purchases)
-      if(purchases.length>0 && activeSubscription =='subscribed'){
-      purchases.forEach(async (purchase) => {
-        this.setState({
-          subscriptionInfo: purchase
-        })
-      
-        // this.sendSubscriptionSuccess(purchase)
-        // console.log('purchase detail', purchase)
-        switch (purchase.productId) {
-          case itemSubs.toString()
-            :
-            newState.premium = true
-            restoredTitles.push('Premium Version');
-            break
-
+      if (await ensureRevenueCatConfigured()) {
+        const loginId = await AsyncStorage.getItem(
+          AsynchStoragekey.AsynchStoragekey.LOGIN_ID
+        );
+        if (loginId) {
+          await Purchases.logIn(loginId);
         }
-      })
-      this.setState({isloading:false})
-      Alert.alert('Restore Successful', 'You successfully restored the EtOH Coach Subscription');
-    }else{
-      this.setState({isloading:false})
-      Alert.alert('', "You don't have any active subscription currently");
-    }
+        const info = await Purchases.restorePurchases();
+        const activeEnts = Object.keys(info.entitlements?.active ?? {});
+        const hasSku = info.activeSubscriptions?.includes?.(itemSubs[0]) ?? false;
+        this.setState({ isloading: false });
+        if (activeEnts.length > 0 || hasSku) {
+          Alert.alert("Restore successful", "Your EtOH Coach subscription was restored on this device.");
+        } else {
+          Alert.alert("", "You do not have an active subscription to restore.");
+        }
+        return;
+      }
+      const activeSubscription =
+        this.props.subscriptionState?.subscriptionInfo?.userSubscription;
+      const purchases = await RNIap.getAvailablePurchases();
+      const newState = { premium: false, ads: true };
+      const restoredTitles: string[] = [];
+      if (purchases.length > 0 && activeSubscription === "subscribed") {
+        purchases.forEach(async (purchase) => {
+          this.setState({ subscriptionInfo: purchase });
+          switch (purchase.productId) {
+            case itemSubs[0]:
+              newState.premium = true;
+              restoredTitles.push("Premium Version");
+              break;
+            default:
+              break;
+          }
+        });
+        this.setState({ isloading: false });
+        Alert.alert("Restore successful", "You successfully restored the EtOH Coach subscription");
+      } else {
+        this.setState({ isloading: false });
+        Alert.alert("", "You do not have any active subscription currently");
+      }
     } catch (err) {
-      this.setState({isloading:false})
-      console.warn(err); // standardized err.code and err.message available
-      Alert.alert('', "You don't have any active subscription currently");
+      this.setState({ isloading: false });
+      console.warn(err);
+      Alert.alert("", "You do not have any active subscription currently");
     }
-  }
+  };
 
   //Cancel Subscription Linking
   cancelSubs = () => {
