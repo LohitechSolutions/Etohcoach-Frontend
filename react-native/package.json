@@ -4,7 +4,7 @@
   "private": true,
   "main": "node_modules/expo/AppEntry.js",
   "scripts": {
-    "postinstall": "node ./scripts/ensure-apple-shim-link.js && node ./scripts/patch-expo-dev-menu-simulator.js",
+    "postinstall": "node ./scripts/ensure-apple-shim-link.js && node ./scripts/patch-expo-dev-menu-simulator.js && node ./scripts/patch-rn-with-environment-spaces.js && node ./scripts/patch-expo-constants-app-config-script.js && node ./scripts/patch-ios-bundle-react-native-phase.js",
     "start": "node ./scripts/run-expo.cjs start",
     "start:clear": "node ./scripts/run-expo.cjs start --clear",
     "android": "node ./scripts/run-expo.cjs run:android",

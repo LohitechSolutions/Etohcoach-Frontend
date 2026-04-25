@@ -57,6 +57,16 @@ target 'EtOHCoach' do
       :ccache_enabled => podfile_properties['apple.ccacheEnabled'] == 'true',
     )
 
+    # Xcode 16+ warns when a pod still sets IPHONEOS_DEPLOYMENT_TARGET below 12.0
+    installer.pods_project.targets.each do |target|
+      target.build_configurations.each do |c|
+        v = c.build_settings['IPHONEOS_DEPLOYMENT_TARGET']
+        if v && v.to_f < 12.0
+          c.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '12.0'
+        end
+      end
+    end
+
     # This is necessary for Xcode 14, because it signs resource bundles by default
     # when building for devices.
     installer.target_installation_results.pod_target_installation_results
@@ -74,6 +84,21 @@ target 'EtOHCoach' do
       expo_patch_react_imports!(installer)
     rescue => e
       Pod::UI.warn e
+    end
+
+    # After integration, the Pods pbxproj is final. React Native 0.74 uses:
+    #   /bin/sh -c "$WITH_ENVIRONMENT $SCRIPT_PHASES_SCRIPT"
+    # The -c command is re-tokenized, so paths with spaces (e.g. "Audrey Chaillet")
+    # break. Invoke the two scripts directly instead.
+    pods_pbxproj = File.join(__dir__, 'Pods', 'Pods.xcodeproj', 'project.pbxproj')
+    if File.exist?(pods_pbxproj)
+      original = File.read(pods_pbxproj)
+      broken = '/bin/sh -c \\"$WITH_ENVIRONMENT $SCRIPT_PHASES_SCRIPT\\"'
+      fixed = '\\"$WITH_ENVIRONMENT\\" \\"$SCRIPT_PHASES_SCRIPT\\"'
+      if original.include?(broken)
+        File.write(pods_pbxproj, original.gsub(broken, fixed))
+        Pod::UI.puts 'Patched React-Codegen "[CP-User] Generate Specs" for paths with spaces'.green
+      end
     end
   end
 end
