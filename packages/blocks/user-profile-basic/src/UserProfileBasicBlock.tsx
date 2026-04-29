@@ -122,7 +122,7 @@ class UserProfileBasicBlock extends UserProfileBasicController {
                   />
                     
                   <ProfileButttonComponent
-                    buttonName={t("TermsandConditions")}
+                    buttonName={t("TermsAndConditions")}
                     btnIcon={tAndcIcon}
                     borderwidth={hp(0.1)}
                     tintcolor={COLORS.grey}

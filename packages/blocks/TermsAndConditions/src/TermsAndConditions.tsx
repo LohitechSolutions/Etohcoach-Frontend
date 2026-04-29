@@ -78,7 +78,7 @@ class TermsAndConditions extends TermsAndConditionsController {
     return (
       <View style={{ flex: 1, backgroundColor: 'white' }}>
         <View style={{width:'100%',marginTop:hp(7),marginLeft:Scale(10)}}>
-        {this.props.navigation?.state?.params?.TermsAndConditions? <Text style={styles.header}>{t("TermsandConditions")}</Text>:<Text style={[styles.header, { marginTop: hp(2) }]}>
+        {this.props.navigation?.state?.params?.TermsAndConditions? <Text style={styles.header}>{t("TermsAndConditions")}</Text>:<Text style={[styles.header, { marginTop: hp(2) }]}>
               {t("PrivacyPolicy")}
             </Text>}
             <View style={styles.seprateline} />

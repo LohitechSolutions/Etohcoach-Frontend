@@ -248,6 +248,7 @@ class EmailAccountRegistration extends EmailAccountRegistrationController {
                     style={styles.readAndAgreeText}
                   >
                     {t("IReadAndAgreeToThe")}
+                    {" "}
                     <Text
                       testID={"terms & condtions"}
                       style={styles.highlightText}
@@ -257,7 +258,7 @@ class EmailAccountRegistration extends EmailAccountRegistrationController {
                         });
                       }}
                     >
-                      {t("Terms&&Conditions")}
+                      {t("Terms&Conditions")}
                     </Text>
                     {t("AndThe")}
                     <Text
@@ -269,7 +270,7 @@ class EmailAccountRegistration extends EmailAccountRegistrationController {
                         });
                       }}
                     >
-                      {t("PrivacyPolicySpace")}
+                      {t("PrivacyPolicySpace").trim()}
                     </Text>
                   </Text>
                 </View>

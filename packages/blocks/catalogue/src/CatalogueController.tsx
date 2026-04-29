@@ -21,8 +21,14 @@ import {
   loadProfileCoursesShape,
   type CatalogueFilterBucket,
 } from "./content/firestoreRepository";
+import {
+  catalogueRowsFromApiJson,
+  fetchCatalogueCourseRowsWithFallback,
+} from "./catalogueApiCourseList";
 
 export const configJSON = require("./config");
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const frameworkConfig = require("../../../framework/src/config") as { baseURL: string };
 
 export interface Props {
   navigation: any;
@@ -88,7 +94,9 @@ export default class CatalogueController extends BlockComponent<Props, S, SS> {
   userInfoApiCallId: any
   apiDashboardItemCallId:any
   getCertificatesapiId:any
-    
+  /** REST catalogue: avoid duplicate parallel fetches */
+  catalogueRestLoadSeq = 0;
+
   constructor(props: Props) {
      
     super(props);
@@ -286,7 +294,9 @@ this.focusListener.remove()
     if (CONTENT_SOURCE === 'firestore') {
       this.setState({ user_token: token }, () => this.loadCatalogueFromFirestore());
     } else {
-      this.setState({ user_token: token }, () => this.getListRequest());
+      this.setState({ user_token: token }, () => {
+        void this.loadCatalogueFromRestWithFallback();
+      });
     }
 
     console.log('checking the state in did mount', this)
@@ -304,41 +314,37 @@ this.focusListener.remove()
   
 
 
-  getListRequest = async () => {
-    // this.setState({ isLoading: true })
-    console.log(this, "inside not mine request")
-    console.log('api calll', this.state.filter_key)
-    const header = {
-      "Content-Type": configJSON.productApiContentType,
-      token: await AsyncStorage.getItem(AsynchStoragekey.AsynchStoragekey.LOGIN_TOKEN)
-    };
-    const Body = {
-      // filter: item,
-      // keyword: ""
+  /**
+   * REST: POST profile/courses, then GET catalogue/catalogues if the list is empty
+   * (admin publishes to catalogue; profile endpoint may filter or return a different shape).
+   */
+  loadCatalogueFromRestWithFallback = async () => {
+    const seq = ++this.catalogueRestLoadSeq;
+    this.setState({ isLoading: true });
+    try {
+      const tok = await AsyncStorage.getItem(AsynchStoragekey.AsynchStoragekey.LOGIN_TOKEN);
+      const { rows, source } = await fetchCatalogueCourseRowsWithFallback(
+        frameworkConfig.baseURL || "",
+        tok,
+      );
+      if (seq !== this.catalogueRestLoadSeq) return;
+      if (__DEV__ && rows.length > 0) {
+        console.log("[Catalogue] course list source:", source, "count:", rows.length);
+      }
+      this.setState({ catlogue_data: rows, isLoading: false });
+    } catch (e) {
+      if (seq !== this.catalogueRestLoadSeq) return;
+      console.warn("[Catalogue] REST catalogue load failed", e);
+      this.setState({ catlogue_data: [], isLoading: false });
     }
-    const requestMessage = new Message(
-      getName(MessageEnum.RestAPIRequestMessage)
-    );
-    this.getProductApiCallId = requestMessage.messageId;
-    requestMessage.addData(
-      getName(MessageEnum.RestAPIResponceEndPointMessage),
-      configJSON.corseListApiEndPoint
-    );
-    requestMessage.addData(
-      getName(MessageEnum.RestAPIRequestHeaderMessage),
-      JSON.stringify(header)
-    );
-    requestMessage.addData(
-      getName(MessageEnum.RestAPIRequestBodyMessage),
-      JSON.stringify(Body)
-    );
-    requestMessage.addData(
-      getName(MessageEnum.RestAPIRequestMethodMessage),
-      configJSON.apiPostMethod
-    );
+  };
 
-    console.log("request mesage @@@@ ",requestMessage )
-    runEngine.sendMessage(requestMessage.id, requestMessage);
+  getListRequest = async () => {
+    if (CONTENT_SOURCE === "firestore") {
+      await this.loadCatalogueFromFirestore();
+      return;
+    }
+    await this.loadCatalogueFromRestWithFallback();
   };
 
   GetFilterList = async () => {
@@ -503,9 +509,7 @@ console.log(this.getSearchDetails,"+++++556565656", apiRequestCallId, responseJs
           console.log("+++++556565656 +++22")
           console.log('===++++======', responseJson);
           if (responseJson?.data) {
-              
-              this.setState({ catlogue_data: responseJson?.data })        
-              
+              this.setState({ catlogue_data: catalogueRowsFromApiJson(responseJson) });
           }
           else {
             console.log("")
@@ -525,61 +529,32 @@ console.log(this.getSearchDetails,"+++++556565656", apiRequestCallId, responseJs
 
 
     if (this.getProductApiCallId == message?.properties?.RestAPIResponceDataMessage) {
-  
       var responseJson = message.getData(
         getName(MessageEnum.RestAPIResponceSuccessMessage)
       );
-      console.log('Responce data09876 ====== catalogue', responseJson)
-      if(responseJson?.meta?.message=="Record not found." )
-{
-console.log("i ma heree")
-  this.setState({ catlogue_data: [], totalReward: responseJson },()=>{
-    setTimeout(()=>{
-                this.setState({ isLoading: false })
+      console.log('Responce data09876 ====== catalogue', responseJson);
+      const metaMsg = responseJson?.meta?.message;
+      const rows = catalogueRowsFromApiJson(responseJson);
 
-    },1000)
-  })
-}
-      if (responseJson?.data) {
-       
-if(responseJson?.meta?.message=="Record not found." )
-{
-console.log("i ma heree")
-  this.setState({ catlogue_data: responseJson?.data, totalReward: responseJson },()=>{
-    setTimeout(()=>{
-                this.setState({ isLoading: false })
-
-    },1000)
-  })
-}
-else{
-
-  this.setState({ catlogue_data: responseJson?.data, totalReward: responseJson },()=>{
-    setTimeout(()=>{
-                this.setState({ isLoading: false })
-
-    },1000)
-  })
-}
-
-
-   
-      }
-      else if (responseJson?.meta?.status!==200) {
-       console.log("here i debugg")
-        // this.setState({ catlogue_data: [], totalReward: responseJson })
-      }
-      else {
-        if (responseJson?.errors[0]?.token) {
-          console.log('Token Error', responseJson?.errors[0]?.token)
-          this.props.navigation.navigate('EmailAccountLoginBlock')
+      if (metaMsg === 'Record not found.' || rows.length === 0) {
+        this.setState({ catlogue_data: [], totalReward: responseJson }, () => {
+          setTimeout(() => this.setState({ isLoading: false }), 1000);
+        });
+        if (CONTENT_SOURCE !== 'firestore') {
+          void this.loadCatalogueFromRestWithFallback();
         }
-
-        else {
-          console.log('show Error ',)
-        }
+      } else if (responseJson?.data) {
+        this.setState({ catlogue_data: rows, totalReward: responseJson }, () => {
+          setTimeout(() => this.setState({ isLoading: false }), 1000);
+        });
+      } else if (responseJson?.meta?.status !== 200) {
+        console.log('here i debugg');
+      } else if (responseJson?.errors?.[0]?.token) {
+        console.log('Token Error', responseJson?.errors[0]?.token);
+        this.props.navigation.navigate('EmailAccountLoginBlock');
+      } else {
+        console.log('show Error ');
       }
-     
     }
 
     if (this.getCourseDetailsCallApiId == message?.properties?.RestAPIResponceDataMessage) {
@@ -665,14 +640,11 @@ this.setState({dynamicCertificate:responseJson?.certificate,dynamicDrinktype:res
         console.log('Course Details data walson ', responseJson?.data)
         console.log(this.CatalogueControllerthis, "my final this")
        
-        this.setState({ catlogue_data: responseJson?.data },()=>{
-          
-          setTimeout(()=>{
-            this.setState({ isLoading: false },()=>{
-            })
-            
-          },4000)
-        })
+        this.setState({ catlogue_data: catalogueRowsFromApiJson(responseJson) }, () => {
+          setTimeout(() => {
+            this.setState({ isLoading: false }, () => {});
+          }, 4000);
+        });
         console.log(this.state, 'yo i am')
        
 
@@ -701,15 +673,14 @@ this.setState({dynamicCertificate:responseJson?.certificate,dynamicDrinktype:res
         console.log('Course Details data walson ', responseJson?.data)
         console.log(this.CatalogueControllerthis, "my final this")
         if (responseJson?.data) {
-          
-          this.setState({ catlogue_data: responseJson?.data })
-          console.log(this.state, 'yo i am')
-          this.setState({isLoading:false})
-        }
-        else {
-          console.log('Course Details data walson elseeee')
-          
-          this.setState({ catlogue_data: [],isLoading:false })
+          this.setState({
+            catlogue_data: catalogueRowsFromApiJson(responseJson),
+            isLoading: false,
+          });
+          console.log(this.state, 'yo i am');
+        } else {
+          console.log('Course Details data walson elseeee');
+          this.setState({ catlogue_data: [], isLoading: false });
         }
       }
 

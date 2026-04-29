@@ -27,7 +27,7 @@ exports.forgotPassward = "Forgot password?"
 
 exports.imgPasswordInVisiblePath = "assets/ic_password_invisible.png";
 exports.imgPasswordVisiblePath = "assets/ic_password_visible.png";
-exports.appIcon = require('../assets/appicon.png');
+exports.appIcon = require('../assets/LoginImage.jpeg');
 
 exports.passward = require('../assets/password.png')
 // Customizable Area End

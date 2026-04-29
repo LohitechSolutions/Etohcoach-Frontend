@@ -3,17 +3,39 @@
  * Shapes mirror Rails JSON responses enough for existing catalogue blocks.
  */
 
-import type { DocumentData } from 'firebase/firestore';
-import {
-  collection,
-  doc,
-  getDoc,
-  getDocs,
-  query,
-  where,
-  orderBy,
-} from 'firebase/firestore';
+import type { DocumentData, QueryDocumentSnapshot } from 'firebase/firestore';
+import { collection, doc, getDoc, getDocs, query, where } from 'firebase/firestore';
 import { getClientFirestore } from './firebaseClient';
+
+/** Normalize locale codes so `en` / `enus` / `EN` match when filtering catalogue. */
+function normalizeContentLanguage(code: string | undefined): string {
+  const c = String(code ?? '')
+    .trim()
+    .toLowerCase()
+    .replace(/-/g, '_');
+  if (c === 'enus' || c === 'en_us' || c === 'english') return 'en';
+  if (c === 'fr_fr' || c === 'french') return 'fr';
+  if (c === 'es_es' || c === 'spanish') return 'es';
+  if (c === 'pt_br' || c === 'portuguese') return 'pt';
+  if (c === 'it_it' || c === 'italian') return 'it';
+  return c;
+}
+
+/**
+ * Firestore `orderBy('order')` omits documents that do not have an `order` field.
+ * Back-office / manual writes often omit it — sort in memory instead.
+ */
+function sortDocSnapshotsByNumericField(
+  docs: QueryDocumentSnapshot<DocumentData>[],
+  key: string,
+): QueryDocumentSnapshot<DocumentData>[] {
+  return [...docs].sort((a, b) => {
+    const oa = Number(a.data()[key] ?? Number.MAX_SAFE_INTEGER);
+    const ob = Number(b.data()[key] ?? Number.MAX_SAFE_INTEGER);
+    if (oa !== ob) return oa - ob;
+    return a.id.localeCompare(b.id);
+  });
+}
 
 function mapCategoryToDrinkType(category: unknown): string {
   const c = String(category || '').toLowerCase();
@@ -28,25 +50,25 @@ async function listPublishedLessonsForCourse(courseId: string) {
     collection(db, 'lessons'),
     where('course_id', '==', courseId),
     where('status', '==', 'published'),
-    orderBy('order'),
   );
-  return getDocs(q);
+  const snap = await getDocs(q);
+  const docs = sortDocSnapshotsByNumericField(snap.docs, 'order');
+  return { docs, size: docs.length };
 }
 
 export async function loadProfileCoursesShape(): Promise<Record<string, unknown>[]> {
   const db = getClientFirestore();
-  const lang = process.env.EXPO_PUBLIC_CONTENT_LANGUAGE;
-  const q =
-    lang && lang.length > 0
-      ? query(
-          collection(db, 'courses'),
-          where('status', '==', 'published'),
-          where('language', '==', lang),
-          orderBy('order'),
-        )
-      : query(collection(db, 'courses'), where('status', '==', 'published'), orderBy('order'));
+  const langFilterRaw =
+    typeof process.env.EXPO_PUBLIC_CONTENT_LANGUAGE === 'string'
+      ? process.env.EXPO_PUBLIC_CONTENT_LANGUAGE
+      : '';
+  const langFilter = langFilterRaw.trim() ? normalizeContentLanguage(langFilterRaw) : '';
+
+  const q = query(collection(db, 'courses'), where('status', '==', 'published'));
   const snap = await getDocs(q);
-  return snap.docs.map((d) => {
+  const sortedDocs = sortDocSnapshotsByNumericField(snap.docs, 'order');
+
+  const rows: Record<string, unknown>[] = sortedDocs.map((d) => {
     const x = d.data();
     return {
       id: d.id,
@@ -69,6 +91,13 @@ export async function loadProfileCoursesShape(): Promise<Record<string, unknown>
       course_total_point: 0,
       user_course_percentage: 0,
     };
+  });
+
+  if (!langFilter) return rows;
+
+  return rows.filter((row) => {
+    const rowLang = normalizeContentLanguage(String(row['language_type'] || 'en'));
+    return rowLang === langFilter;
   });
 }
 
@@ -95,6 +124,14 @@ function matchesDrinkSelection(selected: string[], rowDrink: string): boolean {
   return selected.some((raw) => {
     const s = String(raw || '').toLowerCase();
     if (!s) return false;
+    if (s === 'wine' && (r === 'wine' || r === 'attract' || r === 'retain')) return true;
+    if (s === 'beer' && (r === 'beer' || r === 'convince')) return true;
+    if (
+      (s === 'spirits' || s === 'spirit') &&
+      (r === 'spirits' || r === 'spirit' || r === 'convert' || r === 'grow')
+    ) {
+      return true;
+    }
     if (s === 'wine' && r === 'wine') return true;
     if (s === 'beer' && r === 'beer') return true;
     if ((s === 'spirits' || s === 'spirit') && r === 'spirits') return true;
@@ -280,10 +317,9 @@ export async function loadLessonsListBundle(courseId: string, courseNameFromNav:
         collection(db, 'flashcards'),
         where('lesson_id', '==', l.id),
         where('lesson_status', '==', 'published'),
-        orderBy('order'),
       ),
     );
-    fs.forEach((fd) => {
+    sortDocSnapshotsByNumericField(fs.docs, 'order').forEach((fd) => {
       flashRails.push(flashToRailsListItem(fd.id, fd.data(), courseId, themeLabel));
     });
   }
@@ -372,10 +408,9 @@ export async function loadFlashcardsRevealList(courseId: string): Promise<{ data
         collection(db, 'flashcards'),
         where('lesson_id', '==', l.id),
         where('lesson_status', '==', 'published'),
-        orderBy('order'),
       ),
     );
-    fs.forEach((docSnap) => {
+    sortDocSnapshotsByNumericField(fs.docs, 'order').forEach((docSnap) => {
       const data = docSnap.data();
       rows.push({
         id: docSnap.id,
@@ -404,10 +439,9 @@ export async function loadQuizExamRailsData(courseId: string): Promise<unknown[]
         collection(db, 'quiz_questions'),
         where('lesson_id', '==', l.id),
         where('lesson_status', '==', 'published'),
-        orderBy('order'),
       ),
     );
-    qs.forEach((docSnap) => {
+    sortDocSnapshotsByNumericField(qs.docs, 'order').forEach((docSnap) => {
       const data = docSnap.data();
       const options = (data['options'] as string[]) || [];
       const correctIndex = Number(data['correct_index'] ?? 0);
