@@ -1,3 +1,61 @@
+/* Maps RN fontFamily names (FONTS.*) to Google Fonts files on web */
+@font-face {
+  font-family: 'Roboto-Light';
+  font-style: normal;
+  font-weight: normal;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/roboto/v51/KFOMCnqEu92Fr1ME7kSn66aGLdTylUAMQXC89YmC2DPNWuaabWmT.ttf)
+    format('truetype');
+}
+@font-face {
+  font-family: 'Roboto-Regular';
+  font-style: normal;
+  font-weight: normal;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/roboto/v51/KFOMCnqEu92Fr1ME7kSn66aGLdTylUAMQXC89YmC2DPNWubEbWmT.ttf)
+    format('truetype');
+}
+@font-face {
+  font-family: 'Roboto-Medium';
+  font-style: normal;
+  font-weight: normal;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/roboto/v51/KFOMCnqEu92Fr1ME7kSn66aGLdTylUAMQXC89YmC2DPNWub2bWmT.ttf)
+    format('truetype');
+}
+@font-face {
+  font-family: 'Roboto-Bold';
+  font-style: normal;
+  font-weight: normal;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/roboto/v51/KFOMCnqEu92Fr1ME7kSn66aGLdTylUAMQXC89YmC2DPNWuYjammT.ttf)
+    format('truetype');
+}
+@font-face {
+  font-family: 'Roboto-Black';
+  font-style: normal;
+  font-weight: normal;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/roboto/v51/KFOMCnqEu92Fr1ME7kSn66aGLdTylUAMQXC89YmC2DPNWuZtammT.ttf)
+    format('truetype');
+}
+@font-face {
+  font-family: 'ExpletusSans-SemiBold';
+  font-style: normal;
+  font-weight: normal;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/expletussans/v31/RLpqK5v5_bqufTYdnhFzDj2dX_IwS3my73zcDaRG3c1o.ttf)
+    format('truetype');
+}
+@font-face {
+  font-family: 'ExpletusSans-Bold';
+  font-style: normal;
+  font-weight: normal;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/expletussans/v31/RLpqK5v5_bqufTYdnhFzDj2dX_IwS3my73zcDaR_3c1o.ttf)
+    format('truetype');
+}
+
 html,
 body,
 #root,
@@ -7,6 +65,16 @@ body,
 }
 
 body {
+  font-family: 'Roboto', system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: 'Expletus Sans', serif;
 }

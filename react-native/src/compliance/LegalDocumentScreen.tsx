@@ -13,8 +13,9 @@ type Props = NativeStackScreenProps<RootStackParamList, "LegalDocument">;
 
 function wrapHtmlFragment(body: string): string {
   const safe = body.trim() || "<p>No content has been published yet.</p>";
-  return `<!DOCTYPE html><html><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><style>
-body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; padding: 16px; font-size: 16px; line-height: 1.5; color: #222; }
+  return `<!DOCTYPE html><html><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/><link href="https://fonts.googleapis.com/css2?family=Expletus+Sans:wght@400;600;700&family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet"/><style>
+body { font-family: 'Roboto', system-ui, sans-serif; padding: 16px; font-size: 16px; line-height: 1.5; color: #222; }
+h1, h2, h3, h4, h5, h6 { font-family: 'Expletus Sans', serif; font-weight: 600; }
 img { max-width: 100%; height: auto; }
 </style></head><body>${safe}</body></html>`;
 }
