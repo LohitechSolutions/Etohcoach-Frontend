@@ -11,8 +11,10 @@ import { LegacyCourseTabShell } from "./LegacyCourseTabShell";
 import { LegacyTabShell } from "./LegacyTabShell";
 import { nonAuthStackRoutes } from "./nonAuthStackRoutes";
 import { ComplianceOnboardingScreen } from "../compliance/ComplianceOnboardingScreen";
+import { LegalDocumentScreen } from "../compliance/LegalDocumentScreen";
+import type { RootStackParamList } from "./rootStackParamList";
 
-const RootStack = createNativeStackNavigator();
+const RootStack = createNativeStackNavigator<RootStackParamList>();
 const AuthStack = createNativeStackNavigator();
 const NonAuthStack = createNativeStackNavigator();
 
@@ -96,6 +98,11 @@ export function AppNavigator() {
         <RootStack.Screen name="SPLASH" getComponent={getSplashScreen} />
         <RootStack.Screen name="Splashscreen" getComponent={getSplashScreen} />
         <RootStack.Screen name="ComplianceOnboarding" component={ComplianceOnboardingScreen} />
+        <RootStack.Screen
+          name="LegalDocument"
+          component={LegalDocumentScreen}
+          options={{ headerShown: true }}
+        />
         <RootStack.Screen name="Authenticated" component={AuthenticatedNavigator} />
         <RootStack.Screen name="NonAuthenticated" component={NonAuthenticatedNavigator} />
       </RootStack.Navigator>

@@ -1,5 +1,5 @@
 import type { CompliancePersisted } from "./consentStorage";
-import { isPostAuthComplianceComplete, loadComplianceState } from "./consentStorage";
+import { isPostAuthComplianceCompleteAsync, loadComplianceState } from "./consentStorage";
 
 export type SplashResetKind =
   | "authenticated"
@@ -16,6 +16,6 @@ export async function getSplashResetKind(token: string | null): Promise<SplashRe
   if (!token) {
     return "non_auth";
   }
-  if (!isPostAuthComplianceComplete(state)) return "compliance_post_auth";
+  if (!(await isPostAuthComplianceCompleteAsync(state))) return "compliance_post_auth";
   return "authenticated";
 }

@@ -1,4 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { fetchLegalVersionsForCompliance } from "./legalDocumentsApi";
 
 /** Single JSON blob — M5 CLIENT_SPEC §4.3 */
 const COMPLIANCE_STATE_KEY = "ETOHC_COMPLIANCE_STATE_V1";
@@ -64,19 +65,39 @@ export async function saveComplianceState(state: CompliancePersisted): Promise<v
 }
 
 /** Legal + analytics prompt complete (marketing optional). */
-export function isPostAuthComplianceComplete(state: CompliancePersisted): boolean {
+export function isPostAuthComplianceCompleteWithVersions(
+  state: CompliancePersisted,
+  expectedTosVersion: string,
+  expectedPrivacyVersion: string
+): boolean {
   if (!state.age_verified) return false;
-  const tv = getExpectedTosVersion();
-  const pv = getExpectedPrivacyVersion();
+  const tv = expectedTosVersion.trim();
+  const pv = expectedPrivacyVersion.trim();
   if (!state.tos_accepted || state.tos_version_accepted !== tv) return false;
   if (!state.privacy_accepted || state.privacy_version_accepted !== pv) return false;
   if (state.analytics_consent !== true && state.analytics_consent !== false) return false;
   return true;
 }
 
+/** Uses env-based version strings only (no API). Prefer `isPostAuthComplianceCompleteAsync` for production. */
+export function isPostAuthComplianceComplete(state: CompliancePersisted): boolean {
+  return isPostAuthComplianceCompleteWithVersions(
+    state,
+    getExpectedTosVersion(),
+    getExpectedPrivacyVersion()
+  );
+}
+
+export async function isPostAuthComplianceCompleteAsync(
+  state: CompliancePersisted
+): Promise<boolean> {
+  const { tos, privacy } = await fetchLegalVersionsForCompliance();
+  return isPostAuthComplianceCompleteWithVersions(state, tos, privacy);
+}
+
 export async function needsPostAuthComplianceAsync(): Promise<boolean> {
   const s = await loadComplianceState();
-  return !isPostAuthComplianceComplete(s);
+  return !(await isPostAuthComplianceCompleteAsync(s));
 }
 
 /** For analytics shim — only explicit opt-in sends events */

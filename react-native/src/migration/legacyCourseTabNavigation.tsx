@@ -22,25 +22,26 @@ export function buildLegacyCourseTabNavigation<P extends ParamListBase, R extend
   route: RouteProp<P, R>
 ) {
   const base = buildLegacyNavigation(navigation, route);
-  const navLoose = navigation as unknown as LooseNavigate;
+  /** Sibling tab + nested stack targets must use the real `navigate` method, not the object. */
+  const navigateTab = navigation.navigate.bind(navigation) as LooseNavigate;
 
   return {
     ...base,
     navigate: (name: string, params?: object) => {
       if (name === "Themes" || name === "Themess") {
-        navLoose(LEGACY_COURSE_TAB_THEMES_STACK, { screen: "ThemesScreen", params });
+        navigateTab(LEGACY_COURSE_TAB_THEMES_STACK, { screen: "ThemesScreen", params });
         return;
       }
       if (name === "ProductCategory") {
-        navLoose(LEGACY_COURSE_TAB_THEMES_STACK, { screen: "ProductCategory", params });
+        navigateTab(LEGACY_COURSE_TAB_THEMES_STACK, { screen: "ProductCategory", params });
         return;
       }
       if (name === "Notes") {
-        navLoose(LEGACY_COURSE_TAB_NOTES, params);
+        navigateTab(LEGACY_COURSE_TAB_NOTES, params);
         return;
       }
       if (name === "OverView") {
-        navLoose(LEGACY_COURSE_TAB_OVERVIEW, params);
+        navigateTab(LEGACY_COURSE_TAB_OVERVIEW, params);
         return;
       }
       if (name === "Catalogue") {

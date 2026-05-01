@@ -4,42 +4,34 @@ import {
   Text,
   ScrollView,
   Pressable,
-  Linking,
   StyleSheet,
   ActivityIndicator,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useNavigation } from "@react-navigation/native";
+import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import type { RootStackParamList } from "../navigation/rootStackParamList";
 import {
   consumePendingAuthenticatedDestination,
   getExpectedPrivacyVersion,
   getExpectedTosVersion,
-  getLegalPrivacyUrl,
-  getLegalTosUrl,
-  isPostAuthComplianceComplete,
+  isPostAuthComplianceCompleteAsync,
   loadComplianceState,
   saveComplianceState,
   type CompliancePersisted,
 } from "./consentStorage";
+import { fetchLegalVersionsForCompliance } from "./legalDocumentsApi";
 import {
   resetNavigationToAuthenticated,
   resetNavigationToEmailLogin,
 } from "../navigation/rootNavigationRef";
 
-export type RootStackParamList = {
-  SPLASH: undefined;
-  Splashscreen: undefined;
-  Authenticated: undefined;
-  NonAuthenticated: undefined;
-  ComplianceOnboarding: { step?: "age" | "legal" } | undefined;
-};
-
 type Props = NativeStackScreenProps<RootStackParamList, "ComplianceOnboarding">;
 
 export function ComplianceOnboardingScreen({ route }: Props) {
-  const navigation = useNavigation();
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const step = route.params?.step ?? "legal";
   const [loading, setLoading] = useState(true);
   const [resolvedStep, setResolvedStep] = useState<"age" | "legal">("age");
@@ -47,19 +39,23 @@ export function ComplianceOnboardingScreen({ route }: Props) {
   const [privacy, setPrivacy] = useState(false);
   const [analytics, setAnalytics] = useState(false);
   const [marketing, setMarketing] = useState(false);
+  const [legalVersions, setLegalVersions] = useState<{ tos: string; privacy: string } | null>(null);
 
   useEffect(() => {
     let cancelled = false;
     void (async () => {
       const s = await loadComplianceState();
       if (cancelled) return;
-      const st = step === "age" || step === "legal" ? step : !s.age_verified ? "age" : "legal";
+      const st =
+        step === "age" || step === "legal" ? step : !s.age_verified ? "age" : "legal";
       setResolvedStep(st);
+
       if (st === "legal") {
-        setTos(s.tos_accepted && s.tos_version_accepted === getExpectedTosVersion());
-        setPrivacy(
-          s.privacy_accepted && s.privacy_version_accepted === getExpectedPrivacyVersion()
-        );
+        const versions = await fetchLegalVersionsForCompliance();
+        if (cancelled) return;
+        setLegalVersions(versions);
+        setTos(s.tos_accepted && s.tos_version_accepted === versions.tos);
+        setPrivacy(s.privacy_accepted && s.privacy_version_accepted === versions.privacy);
         setAnalytics(s.analytics_consent === true);
         setMarketing(s.marketing_consent === true);
       }
@@ -69,6 +65,15 @@ export function ComplianceOnboardingScreen({ route }: Props) {
       cancelled = true;
     };
   }, [step]);
+
+  const applyLegalStateFromStorage = useCallback(async (s: CompliancePersisted) => {
+    const versions = await fetchLegalVersionsForCompliance();
+    setLegalVersions(versions);
+    setTos(s.tos_accepted && s.tos_version_accepted === versions.tos);
+    setPrivacy(s.privacy_accepted && s.privacy_version_accepted === versions.privacy);
+    setAnalytics(s.analytics_consent === true);
+    setMarketing(s.marketing_consent === true);
+  }, []);
 
   const onAgeConfirm = useCallback(async () => {
     const prev = await loadComplianceState();
@@ -80,33 +85,30 @@ export function ComplianceOnboardingScreen({ route }: Props) {
     const token = await AsyncStorage.getItem("LOGIN_TOKEN");
     if (token) {
       const fresh = await loadComplianceState();
-      if (!isPostAuthComplianceComplete(fresh)) {
-        setTos(fresh.tos_accepted && fresh.tos_version_accepted === getExpectedTosVersion());
-        setPrivacy(
-          fresh.privacy_accepted && fresh.privacy_version_accepted === getExpectedPrivacyVersion()
-        );
-        setAnalytics(fresh.analytics_consent === true);
-        setMarketing(fresh.marketing_consent === true);
+      if (!(await isPostAuthComplianceCompleteAsync(fresh))) {
+        await applyLegalStateFromStorage(fresh);
         setResolvedStep("legal");
-        navigation.setParams({ step: "legal" } as never);
+        navigation.setParams({ step: "legal" });
         return;
       }
       resetNavigationToAuthenticated("Dashboard");
       return;
     }
     resetNavigationToEmailLogin();
-  }, [navigation]);
+  }, [navigation, applyLegalStateFromStorage]);
 
   const onLegalContinue = useCallback(async () => {
     if (!tos || !privacy) return;
     const prev = await loadComplianceState();
     const now = new Date().toISOString();
+    const tv = legalVersions?.tos ?? getExpectedTosVersion();
+    const pv = legalVersions?.privacy ?? getExpectedPrivacyVersion();
     const next: CompliancePersisted = {
       ...prev,
       tos_accepted: true,
       privacy_accepted: true,
-      tos_version_accepted: getExpectedTosVersion(),
-      privacy_version_accepted: getExpectedPrivacyVersion(),
+      tos_version_accepted: tv,
+      privacy_version_accepted: pv,
       consent_timestamp: now,
       analytics_consent: analytics,
       marketing_consent: marketing,
@@ -126,7 +128,7 @@ export function ComplianceOnboardingScreen({ route }: Props) {
     } else {
       resetNavigationToAuthenticated("Dashboard");
     }
-  }, [tos, privacy, analytics, marketing]);
+  }, [tos, privacy, analytics, marketing, legalVersions]);
 
   if (loading) {
     return (
@@ -152,25 +154,29 @@ export function ComplianceOnboardingScreen({ route }: Props) {
     );
   }
 
-  const tosUrl = getLegalTosUrl();
-  const privacyUrl = getLegalPrivacyUrl();
+  const tosV = legalVersions?.tos ?? getExpectedTosVersion();
+  const privacyV = legalVersions?.privacy ?? getExpectedPrivacyVersion();
 
   return (
     <SafeAreaView style={styles.safe} edges={["top", "bottom"]}>
       <ScrollView contentContainerStyle={styles.scroll}>
         <Text style={styles.title}>Terms & privacy</Text>
         <Text style={styles.body}>
-          Please review and accept our policies. You can open each document in your browser.
+          Please review and accept our policies. Content is managed in the EtOH Coach admin panel and
+          opens here in the app.
         </Text>
 
         <Pressable style={styles.row} onPress={() => setTos((v) => !v)} accessibilityRole="checkbox">
           <View style={[styles.box, tos && styles.boxOn]} />
           <Text style={styles.rowText}>
             I accept the{" "}
-            <Text style={styles.link} onPress={() => void Linking.openURL(tosUrl)}>
+            <Text
+              style={styles.link}
+              onPress={() => navigation.navigate("LegalDocument", { kind: "terms" })}
+            >
               Terms of Service
             </Text>{" "}
-            (v{getExpectedTosVersion()})
+            (v{tosV})
           </Text>
         </Pressable>
 
@@ -182,10 +188,13 @@ export function ComplianceOnboardingScreen({ route }: Props) {
           <View style={[styles.box, privacy && styles.boxOn]} />
           <Text style={styles.rowText}>
             I accept the{" "}
-            <Text style={styles.link} onPress={() => void Linking.openURL(privacyUrl)}>
+            <Text
+              style={styles.link}
+              onPress={() => navigation.navigate("LegalDocument", { kind: "privacy" })}
+            >
               Privacy Policy
             </Text>{" "}
-            (v{getExpectedPrivacyVersion()})
+            (v{privacyV})
           </Text>
         </Pressable>
 

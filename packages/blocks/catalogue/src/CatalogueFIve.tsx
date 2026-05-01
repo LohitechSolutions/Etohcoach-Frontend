@@ -1,6 +1,6 @@
  // Customizable Area Start
  import React from "react";
- import { FlatList, SafeAreaView, View, Text, Image, TouchableOpacity, ScrollView, Platform, Modal, TouchableWithoutFeedback, Button } from "react-native";
+ import { SafeAreaView, View, Text, Image, TouchableOpacity, ScrollView, Platform, Modal, TouchableWithoutFeedback, Button } from "react-native";
  import CatalogueFiveController, { Props } from './CatelogueFiveController';
  import styles from "./CatalogueFIveStyle"
  import Scale from "../../../components/src/Scale";
@@ -146,32 +146,34 @@
  
  
  
-     renderCourseItemFlatlist = () => {
-         return (
-             <FlatList
-                 data={this.state.courseLesson}
-                 renderItem={({ item, index }) => this.renderItemFlatlistCell(item, index)}
-             />
-         )
-     }
+    renderCourseItemFlatlist = () => {
+        return (
+            <View>
+                {(this.state.courseLesson ?? []).map((item: any, index: number) => (
+                    <React.Fragment key={String(item?.id ?? item?.lesson_id ?? `lesson-${index}`)}>
+                        {this.renderItemFlatlistCell(item, index)}
+                    </React.Fragment>
+                ))}
+            </View>
+        )
+    }
  
-     renderFlashCardsItemFlatlist = () => {
-         if (this.state.isItOffline) {
-             return (
-                 <FlatList
-                     data={this.state.flash_cards[0] ? [this.state.flash_cards[0]] : []}
-                     renderItem={({ item, index }) => this.renderFlashCardsItemFlatlistCell(item, index)}
-                 />
-             )
-         } else {
-             return (
-                 <FlatList
-                     data={this.state.flash_cards}
-                     renderItem={({ item, index }) => this.renderFlashCardsItemFlatlistCell(item, index)}
-                 />
-             )
-         }
-     }
+    renderFlashCardsItemFlatlist = () => {
+        const data = this.state.isItOffline
+            ? this.state.flash_cards[0]
+                ? [this.state.flash_cards[0]]
+                : []
+            : this.state.flash_cards;
+        return (
+            <View>
+                {(data ?? []).map((item: any, index: number) => (
+                    <React.Fragment key={String(item?.theme_id ?? item?.id ?? `flash-${index}`)}>
+                        {this.renderFlashCardsItemFlatlistCell(item, index)}
+                    </React.Fragment>
+                ))}
+            </View>
+        )
+    }
  
      renderFlashCardsItemFlatlistCell = (item: any, index: any) => {
          const { t }: any = this.props;
@@ -261,14 +263,17 @@
          )
      }
  
-     renderQuizExamsItemFlatlist = () => {
-         return (
-             <FlatList
-                 data={this.state.quiz_exams}
-                 renderItem={({ item, index }) => this.renderQuizExamsItemFlatlistCell(item, index)}
-             />
-         )
-     }
+    renderQuizExamsItemFlatlist = () => {
+        return (
+            <View>
+                {(this.state.quiz_exams ?? []).map((item: any, index: number) => (
+                    <React.Fragment key={String(item?.theme_id ?? item?.id ?? `quiz-${index}`)}>
+                        {this.renderQuizExamsItemFlatlistCell(item, index)}
+                    </React.Fragment>
+                ))}
+            </View>
+        )
+    }
  
      renderQuizExamsItemFlatlistCell = (item: any, index: any) => {
          let progressData = this.functionCircularpogresscalculation(item?.total_count, item?.grade_count)

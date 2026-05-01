@@ -1,6 +1,6 @@
 // Customizable Area Start
 import React from 'react';
-import { ActivityIndicator, FlatList, Image, ImageBackground, SafeAreaView, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, Image, ImageBackground, SafeAreaView, ScrollView, Text, TouchableOpacity, View } from "react-native";
 
 import { withTranslation } from "react-i18next";
 import { heightPercentageToDP as hp, widthPercentageToDP as wp } from "react-native-responsive-screen";
@@ -262,11 +262,13 @@ else{
           </View>
           </TouchableOpacity>}
         </View>
-        <FlatList style={{ marginTop: 10 }}
-          data={this.seeAllCompletedCourses()}
-          showsHorizontalScrollIndicator={false}
-          renderItem={({ item }) => this.renderCompleteCourseFLatlistCell(item)}
-        />
+        <View style={{ marginTop: 10, width: "100%", alignSelf: "stretch" }}>
+          {this.seeAllCompletedCourses()?.map((item: any, idx: number) => (
+            <React.Fragment key={String(item?.id ?? idx)}>
+              {this.renderCompleteCourseFLatlistCell(item)}
+            </React.Fragment>
+          ))}
+        </View>
       </View>
     )
   }

@@ -434,11 +434,15 @@ export default class CatalogueStudyController extends BlockComponent<Props, S, S
     let notes_arr = this.state.annotionsData === undefined ? responseJson?.lesson_notes?.note_array : responseJson?.attributes?.note_array;
 
     let new_note_arr: any = []
-    notes_arr && notes_arr.map(i => {
-      let str = ''
-      str = i.split('=>').join(':');
-      new_note_arr.push(JSON.parse(str))
-    })
+    notes_arr &&
+      notes_arr.forEach((i: string) => {
+        try {
+          const str = String(i).split('=>').join(':');
+          new_note_arr.push(JSON.parse(str));
+        } catch {
+          /* note entries may be HTML or legacy plain text — skip invalid JSON */
+        }
+      });
     console.log('============data7898=========', responseJson);
     await this.setState({ DefaultColorArray: new_note_arr })
 
@@ -724,8 +728,18 @@ export default class CatalogueStudyController extends BlockComponent<Props, S, S
 
   functionTohandleComgo = async (respose: any) => {
 
-    let stringifiedCongo = await AsyncStorage.getItem("CONGRATULATIONS")
-    let congo = JSON.parse(stringifiedCongo)
+    const stringifiedCongo = await AsyncStorage.getItem('CONGRATULATIONS');
+    let congo: Record<string, unknown> = {};
+    if (stringifiedCongo) {
+      try {
+        const parsed = JSON.parse(stringifiedCongo);
+        if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
+          congo = parsed as Record<string, unknown>;
+        }
+      } catch {
+        congo = {};
+      }
+    }
 
     let courseID = this.props?.navigation?.state?.params?.course_id
 
@@ -733,7 +747,7 @@ export default class CatalogueStudyController extends BlockComponent<Props, S, S
     console.log(courseID, congo, respose.course_status, "00000011111122222")
 
 
-    if (congo[courseID]) {
+    if (courseID && congo[courseID]) {
       console.log(courseID, respose.course_status, "00000011111122222")
       // delete congo[courseID]
       if (respose.course_status == "complete") {
@@ -854,9 +868,30 @@ return offlineData
 }
 
  deltaToHtml = (delta:string): string => {
+  const trimmed = typeof delta === 'string' ? delta.trim() : '';
+  if (!trimmed) {
+    return '';
+  }
+  // HTML often contains the substring "ops" (e.g. /options); only parse Quill deltas that are JSON objects with an ops array.
+  let formattedData: Delta | null = null;
+  if (trimmed.startsWith('{')) {
+    try {
+      const parsed = JSON.parse(trimmed) as unknown;
+      if (
+        parsed &&
+        typeof parsed === 'object' &&
+        Array.isArray((parsed as Delta).ops)
+      ) {
+        formattedData = parsed as Delta;
+      }
+    } catch {
+      formattedData = null;
+    }
+  }
+  if (!formattedData) {
+    return delta;
+  }
   let html = '';
-  if(delta.indexOf("ops") !== -1){
-    let formattedData = JSON.parse(delta)
     formattedData.ops.forEach((op: DeltaOperation) => {
     if (op.insert) {
       let text = op.insert;
@@ -904,10 +939,7 @@ return offlineData
       }
     }
   })
-  return html;}
-  else{
-    return delta
-  }
+  return html;
 };
 
   functionReturningValidHtml() {
