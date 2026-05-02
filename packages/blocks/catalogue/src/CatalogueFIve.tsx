@@ -435,8 +435,14 @@
                              {this.renderQuizExamsItemFlatlist()}
                          </ScrollView>
                          {this.state.continueButtonStatus ? this.renderStudyContinueButton() : <></>}
-                         <CustomNavbarComponentt deviceModel={this.state.deviceModel}tintpage={"themes"} backfunction={() => {                    
-                     this.props.navigation.navigate("Themes", { course_id: this.props?.navigation?.state?.params?.course_id || this.state?.course_id })}} overviewfunction={async() => this.props.navigation.navigate('OverViews', { course_id: this.state?.course_id,course_name:await AsyncStorage.getItem(AsynchStoragekey.AsynchStoragekey.COURCE_NAME) })} themesfunction={()=>this.props.navigation.navigate("Themes", { course_id: this.props?.navigation?.state?.params?.course_id || this.state?.course_id })} notesfunction={async() => this.props.navigation.navigate("Notes",{ course_id: this.props.navigation.state.params.course_id,course_name:await AsyncStorage.getItem(AsynchStoragekey.AsynchStoragekey.COURCE_NAME) })} />
+                         <CustomNavbarComponentt deviceModel={this.state.deviceModel}tintpage={"themes"} backfunction={() => {
+                     const cid = this.props?.navigation?.state?.params?.course_id ?? this.state?.course_id;
+                     if (this.props.navigation.canGoBack?.()) {
+                       this.props.navigation.goBack();
+                     } else {
+                       this.props.navigation.navigate("Themes", { course_id: cid });
+                     }
+                   }} overviewfunction={async() => this.props.navigation.navigate('OverViews', { course_id: this.state?.course_id,course_name:await AsyncStorage.getItem(AsynchStoragekey.AsynchStoragekey.COURCE_NAME) })} themesfunction={()=>this.props.navigation.navigate("Themes", { course_id: this.props?.navigation?.state?.params?.course_id || this.state?.course_id })} notesfunction={async() => this.props.navigation.navigate("Notes",{ course_id: this.props?.navigation?.state?.params?.course_id ?? this.state?.course_id,course_name:await AsyncStorage.getItem(AsynchStoragekey.AsynchStoragekey.COURCE_NAME) })} />
                      <ModalComponent
                      visible={this?.state?.subscriptionModal}
                      closeModal={() => this.setState({ subscriptionModal: false })}

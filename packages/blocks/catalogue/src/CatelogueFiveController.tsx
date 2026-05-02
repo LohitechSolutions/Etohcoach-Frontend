@@ -143,10 +143,6 @@ console.log("checkthe theme",this.state.themeId,this.props.navigation?.state?.pa
     // this.setState({ continueButtonStatus: true, isLoading: false });
     this.setState({ user_token: token, themeId: this.props.navigation?.state?.params?.theme_id, themeIndex: this.props.navigation?.state?.params?.themeIndex, isLoading: false }, () => { this.getLessonCourseData() })
     console.log("@@@@@@@@@theme_id=======", this.props.navigation?.state?.params?.themeIndex)
-    this.props.navigation.addListener('beforeRemove', (e) => {
-      e.preventDefault()
-      //clear setInterval here and go back
-  })
     //this.send(msg);
   };
 

@@ -538,8 +538,8 @@ class OverView extends OverViewController {
                                 <TouchableOpacity style={styles.flashButton} onPress={()=>{this.navigatefromOverviewtothemesForquiz()}}>
                                     <Text style={styles.backTxt}>{t("BACK")}</Text>
                                 </TouchableOpacity>
-                                <TouchableOpacity style={{...styles.flashStartButton,backgroundColor:this.state.quizeAndMoc_id=="" && !this.props?.navigation?.state?.params?.MockexamDetailsFromThemesScreen || this.state?.course_Details?.course?.course_quiz_exams==0?COLORS.grey:COLORS.lightRed}}
-                               disabled={this.state.quizeAndMoc_id=="" &&!this.props?.navigation?.state?.params?.MockexamDetailsFromThemesScreen  || this.state.course_Details?.course?.course_quiz_exams==0}
+                                <TouchableOpacity style={{...styles.flashStartButton,backgroundColor:((this.state.quizeAndMoc_id=="" && !this.props?.navigation?.state?.params?.MockexamDetailsFromThemesScreen) || Number(this.state?.course_Details?.course?.course_quiz_exams ?? this.state?.course_Details?.course_quiz_exams ?? 0)===0)?COLORS.grey:COLORS.lightRed}}
+                               disabled={(this.state.quizeAndMoc_id=="" && !this.props?.navigation?.state?.params?.MockexamDetailsFromThemesScreen) || Number(this.state?.course_Details?.course?.course_quiz_exams ?? this.state?.course_Details?.course_quiz_exams ?? 0)===0}
                                     onPress={()=>{this.gotoQuizfromquizzesmodal()}}>
                                     {/* onPress={() => { this.setState({ quzziesModal: false }, () => { this.state?.quizzesExamCardSelectedItem?.type && this.props.navigation.navigate("QuizzesExamInit", { quizeAndMoc_id: 1, quizeType: this.state.quizeType }) }) }}> */}
                                     {/* onPress={() => { this.setState({ quzziesModal: false }, () => { this.props.navigation.navigate("ReArrangeOrder", { quizeAndMoc_id: 1, quizeType: this.state.quizeType }) }) }}> */}

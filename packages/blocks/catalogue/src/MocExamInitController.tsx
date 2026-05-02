@@ -535,7 +535,10 @@ export default class MocExamInitController extends BlockComponent<
 
   getQuizzeAndMocExamData = async () => {
     if (CONTENT_SOURCE === 'firestore') {
-      const tid = String(this.state.quizThemeId || this.props?.navigation?.state?.params?.quizThemeId || '');
+      let tid = String(this.state.quizThemeId || this.props?.navigation?.state?.params?.quizThemeId || '');
+      if (tid.startsWith('fs-quiz-')) {
+        tid = tid.slice('fs-quiz-'.length);
+      }
       try {
         const data = await loadQuizExamRailsData(tid);
         this.setState({ mockexamdata: data });

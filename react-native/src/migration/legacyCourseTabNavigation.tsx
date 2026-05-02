@@ -17,6 +17,24 @@ export const LEGACY_COURSE_TAB_NOTES = "UserProfileBasicBlock";
  */
 type LooseNavigate = (name: string, params?: object) => void;
 
+/** Walk up so `OverViews` / `QuizzesExamInit` resolve on the auth root stack (not the themes sub-stack). */
+function tryNavigateOnAncestor(
+  start: NavigationProp<ParamListBase>,
+  routeName: string,
+  params?: object
+): boolean {
+  let nav: NavigationProp<ParamListBase> | undefined = start;
+  while (nav) {
+    const st = nav.getState?.() as { routeNames?: string[] } | undefined;
+    if (st?.routeNames?.includes(routeName)) {
+      ((nav.navigate as unknown) as LooseNavigate)(routeName, params);
+      return true;
+    }
+    nav = nav.getParent?.() as NavigationProp<ParamListBase> | undefined;
+  }
+  return false;
+}
+
 export function buildLegacyCourseTabNavigation<P extends ParamListBase, R extends keyof P>(
   navigation: NavigationProp<P>,
   route: RouteProp<P, R>
@@ -28,6 +46,11 @@ export function buildLegacyCourseTabNavigation<P extends ParamListBase, R extend
   return {
     ...base,
     navigate: (name: string, params?: object) => {
+      if (name === "OverViews" || name === "QuizzesExamInit") {
+        if (tryNavigateOnAncestor(navigation as NavigationProp<ParamListBase>, name, params)) {
+          return;
+        }
+      }
       if (name === "Themes" || name === "Themess") {
         navigateTab(LEGACY_COURSE_TAB_THEMES_STACK, { screen: "ThemesScreen", params });
         return;

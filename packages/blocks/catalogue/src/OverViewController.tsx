@@ -1004,9 +1004,13 @@ quizzesmodalhide=() => {
 
 
 gotoQuizfromquizzesmodal=() => {
-  if(this.state.quizeAndMoc_id=="" || this.state.course_Details.course.course_quiz_exams==0)
-  {
-      return
+  const quizExamCount = Number(
+    this.state.course_Details?.course?.course_quiz_exams ??
+      this.state.course_Details?.course_quiz_exams ??
+      0
+  );
+  if (this.state.quizeAndMoc_id === "" || quizExamCount === 0) {
+    return;
   }
   if(this.state?.quizzesExamCardSelectedItem?.value=="Payable" && this.props.subscriptionState?.subscriptionInfo?.userSubscription=="unsubscribed")
   {
@@ -1017,17 +1021,26 @@ gotoQuizfromquizzesmodal=() => {
     return
   }
 
+  const item = this.state?.quizzesExamCardSelectedItem;
+  const quizThemeIdForLoad =
+    item?.theme_id ??
+    this.state?.quizThemeId ??
+    (typeof item?.id === "string" && item.id.startsWith("fs-quiz-")
+      ? item.id.slice("fs-quiz-".length)
+      : item?.id);
 
-  this.setState({ quzziesModal: false }, () => {    this.state.quizeTitle && this.props.navigation.navigate("QuizzesExamInit", {
-  quizeAndMoc_id: this.state.quizeAndMoc_id,
-  quizeType: this.state.quizeType ,
-  quizThemeId:this.state?.quizzesExamCardSelectedItem.id !== undefined ? this.state?.quizzesExamCardSelectedItem.id : this.state?.quizThemeId,
-  isItFromQuizExamMOdal:true,
-  isItFromMockExamMOdal:false,
-  courseName: this.state?.course_Details?.course?.course_name,
-  quizExamDatafromOverviewQuizexamModal: [this.state?.quizzesExamCardSelectedItem],
-  course_id:this.props?.navigation?.state?.params?.course_id
-}) })
+  this.setState({ quzziesModal: false }, () => {
+    this.props.navigation.navigate("QuizzesExamInit", {
+      quizeAndMoc_id: this.state.quizeAndMoc_id,
+      quizeType: this.state.quizeType,
+      quizThemeId: quizThemeIdForLoad,
+      isItFromQuizExamMOdal: true,
+      isItFromMockExamMOdal: false,
+      courseName: this.state?.course_Details?.course?.course_name,
+      quizExamDatafromOverviewQuizexamModal: [item],
+      course_id: this.props?.navigation?.state?.params?.course_id,
+    });
+  })
 if (this.props?.navigation?.state?.params?.quizexamDetailsFromThemesScreen) {
   setTimeout(() => {
       this.setState({ quzziesModal: false, quizeTitle: "",quizzesExamCardSelectedItem:'', isLoading: false });
