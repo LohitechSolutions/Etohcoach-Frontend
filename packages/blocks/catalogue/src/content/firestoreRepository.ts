@@ -37,6 +37,19 @@ function sortDocSnapshotsByNumericField(
   });
 }
 
+/** `options` may be an array or a plain map from imports; always yield non-empty trimmed strings. */
+function normalizeQuizOptionsFromFirestore(raw: unknown): string[] {
+  if (Array.isArray(raw)) {
+    return raw.map((x) => String(x ?? '').trim()).filter((s) => s.length > 0);
+  }
+  if (raw && typeof raw === 'object') {
+    return Object.values(raw as Record<string, unknown>)
+      .map((x) => String(x ?? '').trim())
+      .filter((s) => s.length > 0);
+  }
+  return [];
+}
+
 function mapCategoryToDrinkType(category: unknown): string {
   const c = String(category || '').toLowerCase();
   if (c === 'convince') return 'Beer';
@@ -443,13 +456,14 @@ export async function loadQuizExamRailsData(courseId: string): Promise<unknown[]
     );
     sortDocSnapshotsByNumericField(qs.docs, 'order').forEach((docSnap) => {
       const data = docSnap.data();
-      const options = (data['options'] as string[]) || [];
+      const options = normalizeQuizOptionsFromFirestore(data['options']);
       const correctIndex = Number(data['correct_index'] ?? 0);
+      const safeIndex = Math.min(Math.max(correctIndex, 0), Math.max(options.length - 1, 0));
       const attr: Record<string, unknown> = {
         question: data['question'],
         name: data['question'],
         question_type: 'radio_button',
-        is_correct: [options[correctIndex] ?? options[0] ?? ''],
+        is_correct: [options[safeIndex] ?? options[0] ?? ''],
       };
       options.forEach((o, i) => {
         attr[`option_${i + 1}`] = o;

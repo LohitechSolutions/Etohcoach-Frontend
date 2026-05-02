@@ -1,6 +1,7 @@
 // Customizable Area Start 
 import React from "react";
-import { SafeAreaView, TouchableOpacity, View, Image, Text, ScrollView, StyleSheet, KeyboardAvoidingView, Platform } from "react-native";
+import { SafeAreaView, TouchableOpacity, View, Image, Text, StyleSheet, Platform } from "react-native";
+import { GestureHandlerRootView, ScrollView } from "react-native-gesture-handler";
 import MocExamInitController from "./MocExamInitController";
 import styles from "./MocExamInitStyle";
 import Scale from "../../../components/src/Scale";
@@ -20,6 +21,32 @@ import {connect} from "react-redux"
 
 class QuizzesExamInit extends MocExamInitController {
     static contextType = Context;
+
+    /** Stable numeric order for `option_1`…`option_N` (object key iteration is not reliably ordered). */
+    extractSortedRadioOptions = (attrs: Record<string, unknown> | undefined): string[] => {
+        if (!attrs || typeof attrs !== "object") return [];
+        const pairs: [number, string][] = [];
+        for (const key of Object.keys(attrs)) {
+            const m = /^option_(\d+)$/.exec(key);
+            if (m) pairs.push([parseInt(m[1], 10), String(attrs[key] ?? "").trim()]);
+        }
+        pairs.sort((a, b) => a[0] - b[0]);
+        return pairs.map(([, v]) => v).filter((v) => v.length > 0);
+    };
+
+    componentDidUpdate(prevProps: Readonly<any>, prevState: Readonly<any>): void {
+        if (prevState.quiz_page_index !== this.state.quiz_page_index) {
+            requestAnimationFrame(() => {
+                try {
+                    const sv = this.scrollViewRef as { scrollTo?: (o: { x: number; y: number; animated?: boolean }) => void } | null;
+                    sv?.scrollTo?.({ x: 0, y: 0, animated: false });
+                } catch {
+                    /* ignore */
+                }
+            });
+        }
+    }
+
     renderHeadercondition = () => {
 const {t}:any = this.props;
         return (
@@ -272,23 +299,8 @@ const {t}:any = this.props;
     };
 
     customRadioButtonComponent = (data: any, questionIndex: any) => {
-     
-        function extractOptions() {
-          let obj = data.attributes;
-          let optionsarray = [];
-          for (let key in obj) {
-            if (key.includes("option_")) {
-              optionsarray.push(obj[key]);
-            }
-          }
-          optionsarray = optionsarray.filter((ele) => {
-            return ele !== ""
-          })
-   
-          return optionsarray;
-        }
-   
-        console.log("i am checking optionsloop", extractOptions());
+        const optionsarray = this.extractSortedRadioOptions(data?.attributes as Record<string, unknown>);
+        console.log("i am checking optionsloop", optionsarray);
    
         const { t }: any = this.props;
         return (
@@ -326,9 +338,10 @@ const {t}:any = this.props;
               {t("Review your answer")} 
             </Text>}
             <View style={{ marginTop: Scale(10) }}>
-              {extractOptions().map((ele: any, index: any) =>
+              {optionsarray.map((ele: any, index: any) =>
                 !this.state.isConfirmButtonPressed ? (
                   <View
+                    key={`rb-row-${questionIndex}-${index}-${String(ele).slice(0, 24)}`}
                     style={{
                       flexDirection: "row",
                       alignItems: "center",
@@ -338,7 +351,7 @@ const {t}:any = this.props;
                     }}
                   >
                     <RadioButton.Android
-                      value="first"
+                      value={`q${questionIndex}-opt${index}`}
                       status={
                         this.state?.radio_button_answer?.[questionIndex]?.answer ===
                           ele
@@ -367,6 +380,7 @@ const {t}:any = this.props;
                   </View>
                 ) : (
                   <View
+                    key={`rb-result-${questionIndex}-${index}`}
                     style={{
                       flexDirection: "row",
                       alignItems: "center",
@@ -775,6 +789,15 @@ const {t}:any = this.props;
    
 
     questionQuizzesData = (quizzesData: any) => {
+        if (!quizzesData?.attributes) {
+            return (
+                <View style={{ paddingHorizontal: Scale(15), paddingTop: Scale(20) }}>
+                    <Text style={{ color: "#777185", fontSize: Scale(14) }}>
+                        This question could not be loaded.
+                    </Text>
+                </View>
+            );
+        }
 
         console.log("quizzesData @@", quizzesData)
         console.log("quizexam renderer", this.state,"===",{"equilibriumcount":this.state.equilibriumcount},
@@ -787,7 +810,7 @@ const {t}:any = this.props;
         if (quizzesData?.attributes?.question_type == "short_text_and_schema") {
             return <MoxExamQuestionOne
                 data={quizzesData}
-                key={this.state.componentRerenderkey}
+                key={`short-text-${this.state.quiz_page_index}-${String(quizzesData?.id ?? "")}`}
                 isItOffline={this.state.isoFFline}
                 questionIndex={this.state?.quiz_page_index}
                 isconfirmpressed={this.state.isConfirmButtonPressed}
@@ -827,25 +850,46 @@ const {t}:any = this.props;
         } else if (quizzesData?.attributes?.question_type == "radio_button") {
             return this.customRadioButtonComponent(quizzesData, this.state?.quiz_page_index)
         }
+        /* Rails / CMS may send legacy labels (e.g. "Radio Button"); Firestore-only quizzes are radio_button.
+           Fallback keeps later questions visible instead of a blank screen. */
+        return this.customRadioButtonComponent(quizzesData, this.state?.quiz_page_index)
     }
 
     render() {
 
         return (
+            <GestureHandlerRootView style={{ flex: 1 }}>
             <SafeAreaView style={styles.mainContainer}>
-                <KeyboardAvoidingView behavior={Platform.OS == "ios" ? "padding" : undefined} style={styles.mainContainer}>
-                    <ScrollView style={{ flex: 1 }} ref={(ref) => { this.scrollViewRef = ref; }}>
+                <View style={styles.mainContainer}>
+                    <ScrollView
+                        style={{ flex: 1 }}
+                        contentContainerStyle={{ paddingBottom: Scale(160) }}
+                        keyboardShouldPersistTaps="always"
+                        keyboardDismissMode="on-drag"
+                        nestedScrollEnabled
+                        automaticallyAdjustKeyboardInsets={Platform.OS === "ios"}
+                        automaticallyAdjustContentInsets={Platform.OS === "ios"}
+                        contentInsetAdjustmentBehavior="always"
+                        ref={(ref) => {
+                            this.scrollViewRef = ref;
+                        }}
+                    >
 
                         {this.renderHeadercondition()}
 
-                        {this.state.mockexamdata ? this.questionQuizzesData(this.state.mockexamdata[this.state.quiz_page_index]) : null}
+                        <View key={`quiz-body-${this.state.quiz_page_index}`} pointerEvents="box-none">
+                            {this.state.mockexamdata?.length
+                                ? this.questionQuizzesData(this.state.mockexamdata[this.state.quiz_page_index])
+                                : null}
+                        </View>
 
                     </ScrollView>
-                </KeyboardAvoidingView>
+                </View>
 
                 {this.renderCLoseCheckButton()}
  <ResultModal myState={this.state} CloseModal={this.functionForClosingResultModal} reviewmockFunction={this.functionWhenclickedonReviewMockexam} letsGoback={this.functionForgoingBack} />
             </SafeAreaView>
+            </GestureHandlerRootView>
         )
     }
 }

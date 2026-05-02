@@ -791,29 +791,36 @@ export default class MocExamInitController extends BlockComponent<
     value: any,
     questionindex: any
   ) => {
-    let myarr = this.state.short_text_and_schema_answer[questionindex];
-    console.log(index, value, "insodeee");
-    myarr[index] = value;
-    this.setState({
-      short_text_and_schema_answer: {
-        ...this.state.short_text_and_schema_answer,
-        [questionindex]: myarr,
+    const qi = Number(questionindex);
+    const ii = Number(index);
+    let row = this.state.short_text_and_schema_answer[qi];
+    if (!Array.isArray(row)) {
+      row = [];
+    } else {
+      row = [...row];
+    }
+    while (row.length <= ii) {
+      row.push("");
+    }
+    row[ii] = value != null ? String(value) : "";
+    console.log(ii, value, "schema field update");
+
+    this.setState(
+      {
+        short_text_and_schema_answer: {
+          ...this.state.short_text_and_schema_answer,
+          [qi]: row,
+        },
       },
-    });
-    console.log(
-      this.state.short_text_and_schema_answer[questionindex],
-      "--------AO"
-    );
-
-
-    setTimeout(() => {
-      this.conditionforConfirmingFunction()
-      if (this.props?.navigation?.state?.params.isItFromQuizExamMOdal == true) {
-        this.myFieldConfirmBtn(myarr)
+      () => {
+        setTimeout(() => {
+          this.conditionforConfirmingFunction();
+          if (this.props?.navigation?.state?.params.isItFromQuizExamMOdal == true) {
+            this.myFieldConfirmBtn(row);
+          }
+        }, 0);
       }
-
-    })
-
+    );
   };
 
   getQuizzeExamStatus = async () => {
@@ -846,22 +853,19 @@ export default class MocExamInitController extends BlockComponent<
 
   SchemaBasedMountFunction = async (index: any, length: any) => {
     if (this.props?.navigation?.state?.params.isItFromQuizExamMOdal == true && this.state.isitinthehorizontalresultopage) {
-      return
+      return;
     }
-    setTimeout(() => {
-      this.setState({
-        short_text_and_schema_answer: {
-          ...this.state.short_text_and_schema_answer,
-          [index]: Array(length).fill("")
-        },
-      }, () => {
-        // console.log('i am running here and here', this.state.short_text_and_schema_answer, index, length)
-
-      })
-
+    const parsed = Number(length);
+    const n = Number.isFinite(parsed) ? Math.max(0, Math.floor(parsed)) : 0;
+    const initial = Array(n).fill("");
+    /* Sync init so TextInputs are controlled immediately (async init left rows undefined → taps no-op / crashes). */
+    this.setState({
+      short_text_and_schema_answer: {
+        ...this.state.short_text_and_schema_answer,
+        [index]: initial,
+      },
     });
-
-  }
+  };
 
   optionsArrrayForreArrange = (data: any, questionIndex: any) => {
     if (this.props?.navigation?.state?.params.isItFromQuizExamMOdal == true && this.state.equilibriumcount !== 0) {

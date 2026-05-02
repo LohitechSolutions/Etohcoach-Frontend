@@ -2,12 +2,13 @@ import React from 'react';
 import { withTranslation } from "react-i18next";
 import {
   Image,
-  SafeAreaView,
+  Platform,
+  StyleSheet,
   Text,
+  TextInput as RNTextInput,
   TouchableOpacity,
-  View
+  View,
 } from "react-native";
-import { TextInput } from "react-native-paper";
 import Scale from "../../../components/src/Scale";
 import Context from "../../../components/src/context/context";
 import { COLORS } from "../../../framework/src/Globals";
@@ -21,18 +22,48 @@ let answerArray = ["leaf", "grape", "flower", "Hoof", "Bud"];
 
 class MoxExamQuestionOne extends MocExamInitController {
   static contextType = Context;
+
+  mountSchemaSlots = () => {
+    const index = this.props.questionIndex;
+    const rawCorrect = this.props?.data?.attributes?.is_correct;
+    let myLength = Array.isArray(rawCorrect)
+      ? rawCorrect.length
+      : rawCorrect !== undefined && rawCorrect !== null && rawCorrect !== ""
+        ? 1
+        : 0;
+    if (!Number.isFinite(myLength) || myLength < 0) myLength = 0;
+    this.props.SchemaBasedMountFunction(index, myLength);
+  };
+
   async componentDidMount() {
-    let index = this?.props?.questionIndex
-    let myLength = this.props?.data?.attributes?.is_correct?.length
+    this.mountSchemaSlots();
+  }
 
-    
-    this.props.SchemaBasedMountFunction(index, myLength)
-
+  componentDidUpdate(prevProps: Readonly<any>) {
+    if (
+      prevProps.questionIndex !== this.props.questionIndex ||
+      prevProps.data?.id !== this.props.data?.id
+    ) {
+      this.mountSchemaSlots();
+    }
   }
 
 
+  renderQuestionImageIfPresent = () => {
+    const offline = this.state.isoFFline === "true" || this.state.isoFFline === true;
+    const uri = offline
+      ? this.props.data?.attributes?.downloadedPath
+      : this.props.data?.attributes?.image;
+    if (uri == null || typeof uri !== "string" || uri.trim() === "") {
+      return null;
+    }
+    return (
+      <Image source={{ uri: uri.trim() }} style={styles.qeustionImage} resizeMode="cover" />
+    );
+  };
+
   renderHeader = () => {
-    const {t}:any = this.props;
+    const { t }: any = this.props;
     return (
       <View style={{ marginTop: 0 }}>
         <Text
@@ -47,18 +78,11 @@ class MoxExamQuestionOne extends MocExamInitController {
           }}
         >
           {this.props?.data?.attributes?.question}
-
         </Text>
-        {this.state.isoFFline =='true'? <Image
-          source={{uri : this.props.data?.attributes?.downloadedPath} }
-          style={styles.qeustionImage}
-        />: <Image
-        source={{ uri: this.props.data?.attributes?.image }}
-        style={styles.qeustionImage}
-      />}
-        {!this.props.isconfirmpressed ? <Text style={styles.answerInputTxt}>
-          {t("TypeAnswersInTheAppropriateInput")}
-        </Text> : <></>}
+        {this.renderQuestionImageIfPresent()}
+        {!this.props.isconfirmpressed ? (
+          <Text style={styles.answerInputTxt}>{t("TypeAnswersInTheAppropriateInput")}</Text>
+        ) : null}
       </View>
     );
   };
@@ -70,28 +94,42 @@ class MoxExamQuestionOne extends MocExamInitController {
     return (
       <View style={styles.questionListView}>
         {!this.props.isconfirmpressed ? (
-          <View style={styles.questionView}>
-            <View>
-              <TextInput
+          <View style={[styles.questionView, { alignItems: "stretch", width: "100%", maxWidth: "100%", alignSelf: "stretch" }]}>
+            <View style={{ width: "100%", paddingVertical: Scale(8) }}>
+              <Text style={{ fontSize: Scale(12), color: "#777185", marginHorizontal: Scale(20), marginBottom: Scale(6) }}>
+                {`№${index + 1}`}
+              </Text>
+              <RNTextInput
                 onChangeText={(text) =>
                   this.props.functionResposibleforschema(index, text, indexOfquestion)
                 }
-                defaultValue={item}
-                value={item}
-                label={`№${index + 1}`}
-                activeUnderlineColor="none"
-                underlineColor="none"
-                mode={"flat"}
+                value={item != null ? String(item) : ""}
+                editable={!this.props.isconfirmpressed}
+                placeholder=""
+                placeholderTextColor="#999"
+                multiline={false}
+                scrollEnabled={false}
+                underlineColorAndroid="transparent"
+                autoCorrect={false}
+                autoCapitalize="none"
+                keyboardType="default"
+                textAlignVertical={Platform.OS === "android" ? "center" : "auto"}
                 style={{
-                  marginHorizontal: 20,
-
-                  backgroundColor: 'none',
-                  width: Scale(250),
-
+                  marginHorizontal: Scale(20),
+                  paddingHorizontal: Scale(12),
+                  paddingVertical: Platform.OS === "ios" ? Scale(12) : Scale(10),
+                  backgroundColor: "#FFFFFF",
+                  borderRadius: Scale(8),
+                  borderWidth: StyleSheet.hairlineWidth,
+                  borderColor: "#CFCFD6",
+                  width: "92%",
+                  alignSelf: "center",
+                  minHeight: Scale(44),
+                  fontSize: Scale(15),
+                  color: "#373434",
                 }}
               />
             </View>
-
           </View>
         ) : (
           <View
@@ -107,26 +145,29 @@ class MoxExamQuestionOne extends MocExamInitController {
               ),
             }}
           >
-            <View >
-              {/* <Text style={styles.countUser}>{item?.quetionNo}</Text> */}
-              <TextInput
-                onChangeText={(text) =>
-                  this.props.functionResposibleforschema(index, text, indexOfquestion)
-                }
-                key={this.state.componentRerenderkey}
-                defaultValue={item}
-                label={`№${index + 1}`}
-                activeUnderlineColor="none"
-                underlineColor="none"
-                mode={"flat"}
+            <View style={{ flex: 1 }}>
+              <Text style={{ fontSize: Scale(12), color: "#777185", marginHorizontal: Scale(20), marginBottom: Scale(6) }}>
+                {`№${index + 1}`}
+              </Text>
+              <RNTextInput
+                value={item != null ? String(item) : ""}
+                editable={false}
+                multiline
+                underlineColorAndroid="transparent"
                 style={{
-                  marginHorizontal: 20,
-                  backgroundColor: "none",
+                  marginHorizontal: Scale(20),
+                  paddingHorizontal: Scale(12),
+                  paddingVertical: Scale(10),
+                  backgroundColor: "#F2F2F7",
+                  borderRadius: Scale(8),
+                  borderWidth: StyleSheet.hairlineWidth,
+                  borderColor: "#CFCFD6",
                   width: "100%",
+                  minHeight: Scale(44),
+                  fontSize: Scale(15),
+                  color: "#373434",
                 }}
-                disabled={true}
               />
-
             </View>
             {/* <Image style={styles.closeButton} source={require("../assets/close.png")} /> */}
             {/* <Image style={styles.nextButton} source={require("../assets/RightIcon.png")} /> */}
@@ -155,9 +196,11 @@ class MoxExamQuestionOne extends MocExamInitController {
   renderQuestionFlatlist = () => {
     return (
       <>
-        {this.props?.short_text_and_schema_answer[this?.props?.questionIndex]?.map((ele: any, index: any) => <View >
-          {this.renderQuestionListCell(ele, index)}
-        </View>)}
+        {this.props?.short_text_and_schema_answer[this?.props?.questionIndex]?.map((ele: any, index: any) => (
+          <View key={`schema-slot-${this.props.questionIndex}-${index}`}>
+            {this.renderQuestionListCell(ele, index)}
+          </View>
+        ))}
       </>
     );
   };
@@ -201,13 +244,10 @@ class MoxExamQuestionOne extends MocExamInitController {
     // console.log(this.state, "checkingggg inmmm");
     console.log(this.state.isoFFline, "checkingggg offline state data");
     return (
-      <SafeAreaView style={styles.mainContainer}>
-     
+      <View style={{ backgroundColor: "#fff", width: "100%" }}>
         {this.renderHeader()}
         {this.renderQuestionFlatlist()}
-        {/* {this.renderCLoseCheckButton()} */}
-  
-      </SafeAreaView>
+      </View>
     );
   }
 }
