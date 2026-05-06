@@ -1,5 +1,6 @@
 import moment from "moment";
 import React from "react";
+import { LinearGradient } from "expo-linear-gradient";
 import { withTranslation } from "react-i18next";
 import {Image, ImageBackground, Modal, Platform,
   StyleSheet, Text,
@@ -130,8 +131,20 @@ handleBackNavigation = async()=>{
           justifyContent: "space-between",
           backgroundColor: COLORS.white
         }}
-        source={this.state.subscribed? require("../assets/redwine.png"):require('../assets/redwine1.jpg')}
+        source={require("../../../../react-native/assets/splash.jpg")}
       >
+        <LinearGradient
+          pointerEvents="none"
+          colors={[
+            "transparent",
+            "transparent",
+            "transparent",
+            "#FFFFFF",
+            "white",
+            "white",
+          ]}
+          style={{ height: "80%", width: "100%", position: "absolute" }}
+        />
        {this.state.subscribed?null: 
        <View
           style={{

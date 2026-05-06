@@ -20,10 +20,12 @@ if (!fs.existsSync(pbx)) {
 }
 
 let s = fs.readFileSync(pbx, "utf8");
-const before = s;
 
-const bad = String.raw`\n\n\`\"$NODE_BINARY\" --print \"require('path').dirname(require.resolve('react-native/package.json')) + '/scripts/react-native-xcode.sh'\"\`\n\n`;
-const good = String.raw`\n\nbash \"$(\"$NODE_BINARY\" --print \"require('path').dirname(require.resolve('react-native/package.json')) + '/scripts/react-native-xcode.sh'\")\"\n\n`;
+// project.pbxproj stores newlines in shellScript as the two-char sequence \ + n, not ASCII LF.
+const bad =
+  "\\n\\n`\\\"$NODE_BINARY\\\" --print \\\"require('path').dirname(require.resolve('react-native/package.json')) + '/scripts/react-native-xcode.sh'\\\"`\\n\\n";
+const good =
+  "\\n\\nbash \\\"$(\\\"$NODE_BINARY\\\" --print \\\"require('path').dirname(require.resolve('react-native/package.json')) + '/scripts/react-native-xcode.sh'\\\")\\\"\\n\\n";
 
 if (s.includes(bad)) {
   s = s.replace(bad, good);

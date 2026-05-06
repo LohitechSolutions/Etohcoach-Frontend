@@ -73,7 +73,8 @@ export default class SplashscreenController extends BlockComponent<
     ]
 
     this.state = {
-      timeout: 3000,
+      /** Delay before navigating home after splash logic (was 3000ms; keeps Expo splash up unnecessarily). */
+      timeout: 0,
       isVisible: false,
        ModalVisible:false,
        link:"",
@@ -91,7 +92,6 @@ export default class SplashscreenController extends BlockComponent<
   // Customizable Area Start
   async componentDidMount() {
     console.log("Splashscreen - componentDidMount started");
-    SplashScreen.hide(); // Re-add missing hide call
     const {initLanguage} = this.context;
     this.send(new Message(getName(MessageEnum.RequestUserCredentials)));
     super.componentDidMount();

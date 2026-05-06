@@ -1,7 +1,21 @@
-/** Stub for native splash APIs in Expo / dev builds. */
+/**
+ * Legacy blocks call `react-native-splash-screen`. Under Expo, map hide to expo-splash-screen
+ * so the configured splash image stays up until JS explicitly hides it.
+ */
+let expoSplash = null;
+try {
+  expoSplash = require("expo-splash-screen");
+} catch {
+  expoSplash = null;
+}
+
 const SplashScreen = {
   show: () => {},
-  hide: () => {},
+  hide: () => {
+    if (expoSplash?.hideAsync) {
+      void expoSplash.hideAsync();
+    }
+  },
 };
 
 module.exports = SplashScreen;

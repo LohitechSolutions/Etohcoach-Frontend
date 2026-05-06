@@ -3,7 +3,11 @@ import "./src/polyfills/patchReactNativeAsyncStorage";
 import "./src/linking-rn2-polyfill";
 import "./src/dimensions-rn-polyfill";
 import React from "react";
+import * as ExpoSplashScreen from "expo-splash-screen";
 import { AppShell } from "./src/bootstrap/AppShell";
+
+/** Keeps the native splash visible until legacy Splashscreen calls `SplashScreen.hide()` → shim → hideAsync. */
+void ExpoSplashScreen.preventAutoHideAsync().catch(() => {});
 
 /**
  * Default: migrated legacy blocks inside RN6 (`AppShell`).

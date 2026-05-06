@@ -40,13 +40,6 @@ react {
     cliFile = new File(["node", "--print", "require.resolve('@expo/cli', { paths: [require.resolve('expo/package.json')] })"].execute(null, rootDir).text.trim())
     bundleCommand = "export:embed"
 
-    /**
-     * Default RN/Expo: "debug" is debuggable and skips the JS bundle → device shows
-     * "Unable to load script" without Metro. Empty list = bundle JS for debug too.
-     * For offline testing use `app-release.apk` (`assembleRelease`) or this debug APK.
-     */
-    debuggableVariants = []
-
     /* Folders */
     //   The root of your project, i.e. where "package.json" lives. Default is '..'
     // root = file("../")
