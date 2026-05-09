@@ -458,7 +458,7 @@ console.log("checkthe theme",this.state.themeId,this.props.navigation?.state?.pa
           {
             
             let item=flashCardData[0]
-            this.props.navigation.navigate('OverView', { theme_id: item?.theme_id, isItfromThemesLessonList: true, course_id: this.state.course_id, fromCatalogueFiveToOverview: true, flashCardTitle: this.state.theme_name, totalCardCountFromThemes: item?.total_count, totalUserCardCountFromThemes: item?.user_count })
+            this.props.navigation.navigate('OverViews', { course_id: this.state.course_id, course_name: this.state.course_name, theme_id: item?.theme_id, isItfromThemesLessonList: true, fromCatalogueFiveToOverview: true, flashCardTitle: this.state.theme_name, totalCardCountFromThemes: item?.total_count, totalUserCardCountFromThemes: item?.user_count })
             return
           }
 
@@ -481,12 +481,13 @@ console.log("checkthe theme",this.state.themeId,this.props.navigation?.state?.pa
           {
             let item=quizExams[0]
 
-            this.props.navigation.navigate('OverView', {
+            this.props.navigation.navigate('OverViews', {
+              course_id: this.props.navigation.state.params.course_id,
+              course_name: this.state.course_name,
               theme_id: item?.theme_id,
               theme_type: item?.type,
               quizexamDetailsFromThemesScreen: item,
               MockexamDetailsFromThemesScreen: '',
-              course_id: this.props.navigation.state.params.course_id,
               theme_name: this.state.theme_name,
               itemData: item,
           })
