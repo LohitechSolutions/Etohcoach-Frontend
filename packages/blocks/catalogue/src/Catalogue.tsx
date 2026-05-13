@@ -59,69 +59,51 @@ class Catalogue extends CatalogueController {
 
   renderItem(item: any) {
     const { t } = this.props;
-   console.log('show item dataaaa item', item)
+    const courseImage = item?.course_attachment
+      ? { uri: item.course_attachment.startsWith('http') ? item.course_attachment : apiUrl(item.course_attachment) }
+      : NatureImage;
+
     return (
       <View style={styles.mainList}>
-        <TouchableOpacity onPress={() => this.CourceNavigate(item)
-          // this.props.navigation.navigate('OverView', { course_id: item?.id, courseImage: item?.course_attachment })
-        }>
-          <Image source={{ uri: item?.course_attachment ?? apiUrl(CATALOGUE_PLACEHOLDER_IMAGE) }} style={styles.flatListImg} />
-          {item?.value === 'Unpaid' && this.state.subscription === 'unsubscribed' ? <View style={{ flexDirection: 'row', position: 'absolute', alignSelf: 'flex-end', top: hp(15.5) }}>
-            <View style={{ backgroundColor: COLORS.filterBackground, paddingHorizontal: hp(1), borderRadius: hp(1), height: hp(2.9), justifyContent: 'center', marginRight: hp(1) }}>
-              <Text style={{ color: COLORS.white, fontFamily: FONTS.Roboto_Medium, fontSize: rf(1.7) }}>{t("FreeLessons")}</Text>
+        <TouchableOpacity onPress={() => this.CourceNavigate(item)}>
+          <Image source={courseImage} style={styles.flatListImg} />
+          {item?.value === 'Unpaid' && this.state.subscription === 'unsubscribed' ? (
+            <View style={{ flexDirection: 'row', position: 'absolute', alignSelf: 'flex-end', top: hp(15.5) }}>
+              <View style={{ backgroundColor: COLORS.filterBackground, paddingHorizontal: hp(1), borderRadius: hp(1), height: hp(2.9), justifyContent: 'center', marginRight: hp(1) }}>
+                <Text style={{ color: COLORS.white, fontFamily: FONTS.Roboto_Medium, fontSize: rf(1.7) }}>{t("FreeLessons")}</Text>
+              </View>
+              <View style={{ backgroundColor: COLORS.filterBackground, paddingHorizontal: hp(0.7), borderRadius: hp(1), height: hp(2.9), justifyContent: 'center', marginRight: wp(2) }}>
+                <Image source={downArrow} style={{ height: hp(1.6), width: hp(1.5), tintColor: COLORS.white, resizeMode: 'contain' }} />
+              </View>
             </View>
-            <View style={{ backgroundColor: COLORS.filterBackground, paddingHorizontal: hp(0.7), borderRadius: hp(1), height: hp(2.9), justifyContent: 'center', marginRight: wp(2) }}>
-              <Image source={downArrow} style={{ height: hp(1.6), width: hp(1.5), tintColor: COLORS.white, resizeMode: 'contain' }} />
-            </View>
-          </View>
-            : null}
+          ) : null}
           <View style={styles.blackLine}>
-            {/* <Icon name={'play'}
-              size={12}
-              color={COLORS.orange}
-              style={{ marginLeft: wp(5) }} /> */}
-       <Image style={{...styles.courseItemIcon,marginLeft: wp(5)}} source={ item.course_status=="complete"?require("../assets/image_check.png"): require("../assets/play.png") } />
-
+            <Image style={{ ...styles.courseItemIcon, marginLeft: wp(5) }} source={item.course_status == "complete" ? require("../assets/image_check.png") : require("../assets/play.png")} />
             <Text style={styles.txtNumber}>{item?.user_course_percentage}%</Text>
-            <Icon name={'square'}
-              size={4}
-              color={COLORS.grey}
-              style={styles.blackTxt} />
+            <Icon name={'square'} size={4} color={COLORS.grey} style={styles.blackTxt} />
             <Image style={styles.courseItemIcon} source={Imagereward} />
             <Text style={styles.blackTxtNumber}>{item?.user_completed_point}/{item?.course_total_point}</Text>
-            <Icon name={'square'}
-              size={4}
-              color={COLORS.grey}
-              style={styles.blackTxt} />
+            <Icon name={'square'} size={4} color={COLORS.grey} style={styles.blackTxt} />
             <Image style={styles.courseItemIcon} source={require("../assets/themePoints.png")} />
             <Text style={styles.blackTxtNumber}>{item?.user_theme_count}/{item?.themes_count}</Text>
           </View>
           <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: hp(1), marginLeft: wp(2) }}>
             <Text style={styles.itemNav}>{t(item?.drink_type)}</Text>
-            <Icon name={'square'}
-              size={5}
-              color={COLORS.grey}
-              style={styles.circleImg} />
+            <Icon name={'square'} size={5} color={COLORS.grey} style={styles.circleImg} />
             <Text style={styles.itemNav}>{item?.certificate}</Text>
-            <Icon name={'square'}
-              size={5}
-              color={COLORS.grey}
-              style={styles.circleImg} />
+            <Icon name={'square'} size={5} color={COLORS.grey} style={styles.circleImg} />
             <Text style={styles.itemNav}>{item.language_type}</Text>
             <Image source={UK_Flag} style={styles.ukFlag} />
-
           </View>
           <Text style={{ ...styles.wineDoneTxt, fontFamily: FONTS.Roboto_Bold }}>{item?.course_name}</Text>
           <Text numberOfLines={2} style={styles.complateTxt}>{item?.description}</Text>
           <View style={{ flexDirection: 'row', marginTop: hp(2), marginLeft: wp(3) }}>
             <View style={styles.awardView}>
-              <Image source={Imagereward} style={{ height: hp(1.9), width: hp(1.6),marginRight:Scale(4) }} />
-
+              <Image source={Imagereward} style={{ height: hp(1.9), width: hp(1.6), marginRight: Scale(4) }} />
               <Text style={styles.awardTxt}>{item?.course_total_point}</Text>
             </View>
             <View style={styles.theameView}>
-              <Image source={graduationHat} style={{ tintColor: 'black', height: hp(1.4), width: hp(1.4), marginTop: hp(0.9), }} />
-
+              <Image source={graduationHat} style={{ tintColor: 'black', height: hp(1.4), width: hp(1.4), marginTop: hp(0.9) }} />
               <Text style={styles.themeTxt}>{item?.themes_count} {t("Themes")}</Text>
             </View>
             <View style={styles.theameView}>
@@ -131,7 +113,7 @@ class Catalogue extends CatalogueController {
           </View>
         </TouchableOpacity>
       </View>
-    )
+    );
   }
 
   render() {
@@ -499,14 +481,52 @@ const styles = StyleSheet.create({
     paddingBottom: 6,
     borderTopRightRadius: hp(1.3),
     borderTopLeftRadius: hp(1.3),
-    overflow: 'hidden', // Ensures child elements like images stay within the container
+    overflow: 'hidden',
   },
   flatListImg: {
-    width: '100%', // Ensure the image takes up the full width of the container
-    height: hp(24), // Set a height for the image
-    resizeMode: 'cover', // Ensures the image covers the container without stretching
+    width: '100%',
+    height: hp(24),
+    resizeMode: 'cover',
   },
-   blackLine: {
+  dataView: {
+    marginLeft: Scale(15),
+    justifyContent: "space-around",
+    height: Scale(130),
+    flex: 1,
+  },
+  perMainView: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: Scale(5)
+  },
+  percentageView: {
+    width: Scale(100),
+    borderRadius: Scale(2),
+    height: Scale(4),
+    backgroundColor: "lightgrey",
+    justifyContent: "center",
+  },
+  percentageTxt: {
+    fontSize: Scale(12),
+    fontWeight: "bold",
+    color: "grey",
+    marginLeft: Scale(8),
+  },
+  dotRewardView: {
+    width: Scale(4),
+    height: Scale(4),
+    backgroundColor: "lightgrey",
+    borderRadius: Scale(2),
+    marginLeft: Scale(8),
+    marginRight: Scale(8),
+  },
+  blackTxtNumberSmall: {
+    fontSize: Scale(12),
+    color: COLORS.black,
+    fontWeight: '600',
+    marginLeft: Scale(5)
+  },
+  blackLine: {
     height: hp(2.8),
     width: '100%',
     backgroundColor: 'black',
