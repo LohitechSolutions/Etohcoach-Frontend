@@ -53,7 +53,8 @@
     "ts-jest": "^25.2.0"
   },
   "dependencies": {
-    "react-native-video": "^5.2.1"
+    "react-native-video": "^5.2.1",
+    "react-native-svg": "^15.1.1"
   },
   "jestSonar": {
     "reportPath": "reports",

@@ -10,7 +10,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { runEngine } from "../../../framework/src/RunEngine";
 import { isConnected } from "../../../mobile/src/utils/internetConnection";
 import { AsynchStoragekey } from "../../../mobile/src/utils";
-import { image_spirits, image_beer, image_wine, image_filter, noData } from "./assets";
+import { image_spirits, image_beer, image_wine, image_filter, noData, attractIcon, convinceIcon, convertIcon, retainIcon, growIcon } from "./assets";
 import { COLORS } from "../../../framework/src/Globals";
 import { Alert } from "react-native";
 import i18n from "../../LanguageOptions/src/component/i18n/i18n.config";
@@ -246,9 +246,11 @@ this.focusListener.remove()
     return {
       dynamicDrinktype: [
         { id: 1, type: 'drinks_type', title: '', mytitle: '' },
-        { id: 2, type: 'drinks_type', title: t('Wine'), mytitle: 'wine' },
-        { id: 3, type: 'drinks_type', title: t('Beer'), mytitle: 'beer' },
-        { id: 4, type: 'drinks_type', title: t('Spirits'), mytitle: 'Spirits' },
+        { id: 2, type: 'drinks_type', title: t('Attract'), mytitle: 'Attract' },
+        { id: 3, type: 'drinks_type', title: t('Convince'), mytitle: 'Convince' },
+        { id: 4, type: 'drinks_type', title: t('Convert'), mytitle: 'Convert' },
+        { id: 5, type: 'drinks_type', title: t('Retain'), mytitle: 'Retain' },
+        { id: 6, type: 'drinks_type', title: t('Grow'), mytitle: 'Grow' },
       ],
       dynamicCertificate: [
         { id: 1, type: 'certificate', title: '', mytitle: '' },
@@ -256,9 +258,11 @@ this.focusListener.remove()
       ],
       headerIconList: [
         { id: 0, name: image_filter, iconName: t('Filters'), value: 'Filters' },
-        { id: 1, name: image_wine, iconName: t('Wine'), value: 'wine' },
-        { id: 2, name: image_beer, iconName: t('Beer'), value: 'Beer' },
-        { id: 3, name: image_spirits, iconName: t('Spirits'), value: 'Spirits' },
+        { id: 1, name: attractIcon, iconName: t('Attract'), value: 'Attract' },
+        { id: 2, name: convinceIcon, iconName: t('Convince'), value: 'Convince' },
+        { id: 3, name: convertIcon, iconName: t('Convert'), value: 'Convert' },
+        { id: 4, name: retainIcon, iconName: t('Retain'), value: 'Retain' },
+        { id: 5, name: growIcon, iconName: t('Grow'), value: 'Grow' },
       ],
     };
   };
@@ -616,6 +620,26 @@ for(let i=0;i<drinks.length;i++)
   else if(drinks[i].title=="Spirits")
   {
     headerIconList.push(  { id:  drinks[i].id, name: image_spirits, iconName:  t("Spirits"), value: 'Spirits' })
+  }
+  else if(drinks[i].title=="Attract")
+  {
+    headerIconList.push( { id: drinks[i].id , name: attractIcon, iconName:  t("Attract"), value: 'Attract' },)
+  }
+  else if(drinks[i].title=="Convince")
+  {
+    headerIconList.push(  { id:  drinks[i].id, name: convinceIcon, iconName:  t("Convince"), value: 'Convince' })
+  }
+  else if(drinks[i].title=="Convert")
+  {
+    headerIconList.push(  { id:  drinks[i].id, name: convertIcon, iconName:  t("Convert"), value: 'Convert' })
+  }
+  else if(drinks[i].title=="Retain")
+  {
+    headerIconList.push(  { id:  drinks[i].id, name: retainIcon, iconName:  t("Retain"), value: 'Retain' })
+  }
+  else if(drinks[i].title=="Grow")
+  {
+    headerIconList.push(  { id:  drinks[i].id, name: growIcon, iconName:  t("Grow"), value: 'Grow' })
   }
   else{
     headerIconList.push( { id: drinks[i].id, name: image_spirits, iconName: drinks[i] .title , value: drinks[i] .title})

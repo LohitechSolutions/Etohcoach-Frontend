@@ -14,6 +14,7 @@ import {
   Keyboard,
   TouchableWithoutFeedback
 } from "react-native";
+import { SvgXml } from "react-native-svg";
 import { heightPercentageToDP as hp, widthPercentageToDP as wp } from "react-native-responsive-screen";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { COLORS } from "../../../framework/src/Globals";;
@@ -199,7 +200,15 @@ class Catalogue extends CatalogueController {
                              }
                           }}
                           style={{ height: 40, width: 40, marginLeft: 10, borderRadius: 10, borderWidth: 1, borderColor: COLORS.lightBlueGrey, alignItems: 'center', justifyContent: 'center', backgroundColor: this.functionToreturnBackgroundcolor(item) }}>
-                          <Image source={item.name} style={{ height: 25, width: 25, tintColor: this.functionToreturnTintcolor(item)}} />
+                          {typeof item.name === 'string' && item.name.includes('<svg') ? (
+                            <SvgXml 
+                              xml={item.name.replace(/currentColor/g, this.functionToreturnTintcolor(item) === 'none' ? '#777185' : this.functionToreturnTintcolor(item))} 
+                              width={25} 
+                              height={25} 
+                            />
+                          ) : (
+                            <Image source={item.name} style={{ height: 25, width: 25, tintColor: this.functionToreturnTintcolor(item) === 'none' ? undefined : this.functionToreturnTintcolor(item)}} />
+                          )}
                         </TouchableOpacity>
                         <Text style={styles.listName}>{item.iconName}</Text>
                       </View>)}
