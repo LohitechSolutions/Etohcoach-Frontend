@@ -1,6 +1,7 @@
 // Customizable Area Start
 import React from 'react';
 import { ActivityIndicator, Image, ImageBackground, SafeAreaView, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { SvgXml } from "react-native-svg";
 
 import { withTranslation } from "react-i18next";
 import { heightPercentageToDP as hp, widthPercentageToDP as wp } from "react-native-responsive-screen";
@@ -18,7 +19,7 @@ import { addUserProfile,removeUserProfile } from "../../../mobile/src/store/acti
 import OverlayView from "../../Leaderboard/Components/OverlayView";
 import DashboardController, { Props } from "./DashboardController";
 import styles from "./DashboardStyle";
-import { rightArrow, trial } from "./assets";
+import { rightArrow, trial, attractIcon, convinceIcon, convertIcon, retainIcon, growIcon } from "./assets";
 import LottieView from 'lottie-react-native';
 
 class Dashboard extends DashboardController {
@@ -41,57 +42,53 @@ class Dashboard extends DashboardController {
 
 
 
-  renderDrinkstatus=(drinktype:any,total_courses:any,user_courses:any)=>{
+  renderDrinkstatus = (drinktype: any, total_courses: any, user_courses: any) => {
     const { t }: any = this.props;
-    console.log(  this.state?.dashboardData?.drinks_types,"this.state?.dashboardData?.drinks_types")
 
-
-  if(drinktype=="Wine")
-  {
-return( <View style={styles.progresListItem}>
-    <Image style={styles.itemImage} source={require("../assets/image_wine.png")} />
-    <View style={styles.pointView}>
-      <Text numberOfLines={1} style={styles.pointOut}>{this.state.dashboardData?.user_wine_course}</Text>
-      <Text numberOfLines={1} style={styles.poinrtOutIn}>/{this.state.dashboardData?.total_wine_course}</Text>
-    </View>
-    <Text numberOfLines={1} style={styles.wineTxt}>{t("Wine")}</Text>
-  </View>)
-
-  }
-  else if(drinktype=="Spirits")
-  {
-    return(<View style={styles.progresListItem}>
-          <Image style={styles.itemImage} source={require("../assets/image_spirits.png")} />
-          <View style={styles.pointView}>
-            <Text numberOfLines={1} style={styles.pointOut}>{this.state.dashboardData?.user_spritis_course}</Text>
-            <Text numberOfLines={1} style={styles.poinrtOutIn}>/{this.state.dashboardData?.total_spritis_course}</Text>
+    const renderIcon = (icon: any, title: string, userCourses: any, totalCourses: any) => (
+      <View style={styles.progresListItem}>
+        {typeof icon === 'string' && icon.includes('<svg') ? (
+          <View style={styles.itemImage}>
+            <SvgXml xml={icon.replace(/currentColor/g, COLORS.black)} width={Scale(24)} height={Scale(24)} />
           </View>
-          <Text numberOfLines={1} style={styles.wineTxt}>{t("Spirits")}</Text>
-        </View>)
-  }
-  else if(drinktype=="Beer")
-  {
-    return(  <View style={styles.progresListItem}>
+        ) : (
+          <Image style={styles.itemImage} source={icon} />
+        )}
+        <View style={styles.pointView}>
+          <Text numberOfLines={1} style={styles.pointOut}>{userCourses}</Text>
+          <Text numberOfLines={1} style={styles.poinrtOutIn}>/{totalCourses}</Text>
+        </View>
+        <Text numberOfLines={1} style={styles.wineTxt}>{t(title)}</Text>
+      </View>
+    );
 
-<Image style={styles.itemImage} source={require("../assets/image_beer.png")} />
-
-<View style={styles.pointView}>
- <Text numberOfLines={1} style={styles.pointOut}>{this.state.dashboardData?.user_beer_course}</Text>
- <Text numberOfLines={1} style={styles.poinrtOutIn}>/{this.state.dashboardData?.total_beer_course}</Text>
-</View>
-<Text numberOfLines={1} style={styles.wineTxt}>{t("Beer")}</Text>
-</View>)
-  }
-else{
-  return(<View style={styles.progresListItem}>
-<Image style={styles.itemImage} source={require("../assets/image_spirits.png")} />
-<View style={styles.pointView}>
- <Text numberOfLines={1} style={styles.pointOut}>{user_courses}</Text>
- <Text numberOfLines={1} style={styles.poinrtOutIn}>/{total_courses}</Text>
-</View>
-<Text numberOfLines={1} style={styles.wineTxt}>{drinktype}</Text>
-</View>)
-}
+    if (drinktype == "Wine") {
+      return renderIcon(require("../assets/image_wine.png"), "Wine", this.state.dashboardData?.user_wine_course, this.state.dashboardData?.total_wine_course);
+    }
+    else if (drinktype == "Spirits") {
+      return renderIcon(require("../assets/image_spirits.png"), "Spirits", this.state.dashboardData?.user_spritis_course, this.state.dashboardData?.total_spritis_course);
+    }
+    else if (drinktype == "Beer") {
+      return renderIcon(require("../assets/image_beer.png"), "Beer", this.state.dashboardData?.user_beer_course, this.state.dashboardData?.total_beer_course);
+    }
+    else if (drinktype == "Attract") {
+      return renderIcon(attractIcon, "Attract", user_courses, total_courses);
+    }
+    else if (drinktype == "Convince") {
+      return renderIcon(convinceIcon, "Convince", user_courses, total_courses);
+    }
+    else if (drinktype == "Convert") {
+      return renderIcon(convertIcon, "Convert", user_courses, total_courses);
+    }
+    else if (drinktype == "Retain") {
+      return renderIcon(retainIcon, "Retain", user_courses, total_courses);
+    }
+    else if (drinktype == "Grow") {
+      return renderIcon(growIcon, "Grow", user_courses, total_courses);
+    }
+    else {
+      return renderIcon(require("../assets/image_spirits.png"), drinktype, user_courses, total_courses);
+    }
   }
 
 

@@ -51,7 +51,9 @@
     "raf": "^3.4.1",
     "ts-jest": "^25.2.0"
   },
-  "dependencies": {},
+  "dependencies": {
+    "react-native-svg": "^15.1.1"
+  },
   "jestSonar": {
     "reportPath": "reports",
     "reportFile": "test-reporter.xml",
