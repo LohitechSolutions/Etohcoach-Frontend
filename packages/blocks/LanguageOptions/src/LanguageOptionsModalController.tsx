@@ -85,6 +85,14 @@ export default class LanguageOptionsModalController extends BlockComponent<
           language: "Français",
           flag: apiUrl(LANG_FLAG_FR),
         },
+        {
+          language: "Português",
+          flag: "https://flagcdn.com/w80/pt.png",
+        },
+        {
+          language: "Italiano",
+          flag: "https://flagcdn.com/w80/it.png",
+        },
       ],
       token: "",
       langaugeDatafromapi: "",
@@ -103,13 +111,10 @@ export default class LanguageOptionsModalController extends BlockComponent<
     this.getLanguagesModal();
     const langue = await AsyncStorage.getItem("appLanguage");
     console.log(langue, "appLanguage from controller");
-    if (langue == "English") {
-      this.setState({ languageSelect: 0 });
-    } else if (langue == "Français") {
-      this.setState({ languageSelect: 1 });
-    } else {
-      this.setState({ languageSelect: 0 });
-    }
+    const index = this.state.totalLanguages.findIndex(
+      (item: any) => (item.language || item.name) === langue
+    );
+    this.setState({ languageSelect: index !== -1 ? index : 0 });
   }
 
   async receive(from: string, message: Message) {
@@ -130,7 +135,35 @@ export default class LanguageOptionsModalController extends BlockComponent<
 
       if (responseJson && !responseJson.errors) {
         if (apiRequestCallId === this.getLanguageAPICall) {
-          this.setState({ totalLanguages: responseJson?.languages });
+          const apiLangs = responseJson?.languages || [];
+          const formattedApiLangs = apiLangs.map((item: any) => ({
+            language: item.language || item.name,
+            flag: item.flag,
+            id: item.id
+          }));
+          
+          const defaultLangs = [
+            { language: "English", flag: "https://flagcdn.com/w80/gb.png" },
+            { language: "Français", flag: "https://flagcdn.com/w80/fr.png" },
+            { language: "Português", flag: "https://flagcdn.com/w80/pt.png" },
+            { language: "Italiano", flag: "https://flagcdn.com/w80/it.png" },
+          ];
+          
+          const mergedList = [...defaultLangs];
+          formattedApiLangs.forEach((apiItem: any) => {
+            const index = mergedList.findIndex(
+              (mItem) => mItem.language.toLowerCase() === apiItem.language.toLowerCase()
+            );
+            if (index !== -1) {
+              if (apiItem.flag) {
+                mergedList[index].flag = apiItem.flag;
+              }
+            } else {
+              mergedList.push(apiItem);
+            }
+          });
+          
+          this.setState({ totalLanguages: mergedList });
           this.setState({ showLoader: false });
         }
       }
@@ -176,14 +209,10 @@ export default class LanguageOptionsModalController extends BlockComponent<
   loadDisplayLanguage = async () => {
     const langues = await AsyncStorage.getItem("appLanguage");
     console.log(langues, "appLanguage from controller");
-    if (langues == "English") {
-      this.setState({ languageSelect: 0 });
-    } else if (langues == "Français") {
-      this.setState({ languageSelect: 1 });
-      console.log("Francais");
-    } else {
-      this.setState({ languageSelect: 0 });
-    }
+    const index = this.state.totalLanguages.findIndex(
+      (item: any) => (item.language || item.name) === langues
+    );
+    this.setState({ languageSelect: index !== -1 ? index : 0 });
   };
 
   setLanguageModal = async () => {
@@ -198,6 +227,12 @@ export default class LanguageOptionsModalController extends BlockComponent<
     } else if (language == "Français") {
       console.log("Français Language");
       i18n.changeLanguage("fr");
+    } else if (language == "Português" || language == "Portuguese") {
+      console.log("Português Language");
+      i18n.changeLanguage("pt");
+    } else if (language == "Italiano" || language == "Italian") {
+      console.log("Italiano Language");
+      i18n.changeLanguage("it");
     }
   };
 

@@ -76,9 +76,30 @@ class EmailAccountRegistration extends EmailAccountRegistrationController {
                          <View style={{flexDirection:'row',alignItems:'center'}}>
             <Image source={dropdownIcon} style={styles.dropdownIcon} />
             <Text style={styles.languageText}>
-{ this.state.language=="English 🇬🇧"?"English":"Français"}
-</Text>
-<Image  style={{height:18,width:18,marginLeft:4}} source={this.state.language=="English 🇬🇧"?englishicon:frenchicon}  />
+              {this.state.language?.includes("English")
+                ? "English"
+                : this.state.language?.includes("Français")
+                ? "Français"
+                : this.state.language?.includes("Português")
+                ? "Português"
+                : this.state.language?.includes("Italiano")
+                ? "Italiano"
+                : "English"}
+            </Text>
+            <Image
+              style={{ height: 18, width: 18, marginLeft: 4 }}
+              source={
+                this.state.language?.includes("English")
+                  ? englishicon
+                  : this.state.language?.includes("Français")
+                  ? frenchicon
+                  : this.state.language?.includes("Português")
+                  ? { uri: "https://flagcdn.com/w80/pt.png" }
+                  : this.state.language?.includes("Italiano")
+                  ? { uri: "https://flagcdn.com/w80/it.png" }
+                  : englishicon
+              }
+            />
             </View>
             </TouchableOpacity>
             <LanguageOptionsModal

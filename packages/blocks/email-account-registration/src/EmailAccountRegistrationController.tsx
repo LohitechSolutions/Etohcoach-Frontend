@@ -201,8 +201,14 @@ export default class EmailAccountRegistrationController extends BlockComponent<
     console.log(langue, "appLanguage from controller");
     if(langue == "English"){
       this.setState({language : "English 🇬🇧"})
-    }else if(langue == "Français"){
+    }else if(langue == "Frçais" || langue == "Franais" || langue == "Franais" || langue == "Français" || langue == "French"){
       this.setState({language : "Français 🇫🇷"})
+      await AsyncStorage.setItem("LangaugeDisplay",langue);
+    }else if(langue == "Português" || langue == "Portuguese"){
+      this.setState({language : "Português 🇵🇹"})
+      await AsyncStorage.setItem("LangaugeDisplay",langue);
+    }else if(langue == "Italiano" || langue == "Italian"){
+      this.setState({language : "Italiano 🇮🇹"})
       await AsyncStorage.setItem("LangaugeDisplay",langue);
     }
     
@@ -305,8 +311,12 @@ export default class EmailAccountRegistrationController extends BlockComponent<
     console.log(langue, "appLanguage from controller");
     if (langue == "English") {
       this.setState({ language: "English 🇬🇧" });
-    } else if (langue == "Français") {
+    } else if (langue == "Frçais" || langue == "Franais" || langue == "Franais" || langue == "Français" || langue == "French") {
       this.setState({ language: "Français 🇫🇷" });
+    } else if (langue == "Português" || langue == "Portuguese") {
+      this.setState({ language: "Português 🇵🇹" });
+    } else if (langue == "Italiano" || langue == "Italian") {
+      this.setState({ language: "Italiano 🇮🇹" });
     }
   }
 

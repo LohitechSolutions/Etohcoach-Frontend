@@ -41,7 +41,10 @@ export const langaugeFunction = async () => {
     Italian: { translation: it },
     Italiano: { translation: it },
   };
-  if (languename) {
+  if (languename && 
+      languename !== "pt" && languename !== "it" && languename !== "Portuguese" && languename !== "Português" && languename !== "Italian" && languename !== "Italiano" &&
+      languename !== "fr" && languename !== "French" && languename !== "Français"
+  ) {
     resources[languename] = { translation: parseData };
   }
 

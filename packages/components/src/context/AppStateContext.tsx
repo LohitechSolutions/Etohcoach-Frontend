@@ -24,10 +24,14 @@ class StateProvider extends Component {
     console.log("setLanguageToAsyncStorage");
     console.log(currentLanguage, "LanguageToSet");
     await AsyncStorage.setItem(APP_LANGUAGE, currentLanguage);
-    if(currentLanguage == "English"){
+    if(currentLanguage == "English" || currentLanguage == "en"){
       await AsyncStorage.setItem("languename", "en");
-    }else if(currentLanguage == "Français"){
+    }else if(currentLanguage == "Français" || currentLanguage == "fr"){
       await AsyncStorage.setItem("languename", "fr"); 
+    }else if(currentLanguage == "Português" || currentLanguage == "pt" || currentLanguage == "Portuguese"){
+      await AsyncStorage.setItem("languename", "pt"); 
+    }else if(currentLanguage == "Italiano" || currentLanguage == "it" || currentLanguage == "Italian"){
+      await AsyncStorage.setItem("languename", "it"); 
     }
   }
 
@@ -51,10 +55,14 @@ class StateProvider extends Component {
   displayLanguage = async () => {
     const langues = await AsyncStorage.getItem("appLanguage");
     console.log(langues, "appLanguage from controller");
-    if (langues == "English") {
+    if (langues == "English" || langues == "en") {
       this.setState({ languageDisplay: "English 🇬🇧" });
-    } else if (langues == "Français") {
+    } else if (langues == "Français" || langues == "fr") {
       this.setState({ languageDisplay: "Français 🇫🇷" });
+    } else if (langues == "Português" || langues == "pt" || langues == "Portuguese") {
+      this.setState({ languageDisplay: "Português 🇵🇹" });
+    } else if (langues == "Italiano" || langues == "it" || langues == "Italian") {
+      this.setState({ languageDisplay: "Italiano 🇮🇹" });
     }
   }
 

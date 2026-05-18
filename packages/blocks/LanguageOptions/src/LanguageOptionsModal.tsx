@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   Text,
   Modal,
+  ScrollView,
 } from "react-native";
 import {
   widthPercentageToDP as wp,
@@ -61,54 +62,53 @@ class LanguageOptionModal extends LanguageOptionsModalController {
             }}
           />
           <View style={styles.innerModalConatin}>
-          <Image
+            <Image
               source={Rectangle}
               style={styles.rectangleIcon}
-        /> 
-            <View style={styles.imgView}>
-              <Image source={LanguageIcon} style={styles.mainImg} />
-              <Text style={styles.imgName}>{t("Language")}</Text>
-              <Text style={styles.desc}>{t("SelectLanguage")}</Text>
-            </View>
-            <View style={{ marginTop: hp(2) }}>
-              {this.state.totalLanguages?.map((item: any, index: number) => {
-                return (
-                  <View style={styles.languageBtn}>
-                    <TouchableOpacity
-                      style={styles.buttonlanguage}
-                      onPress={() => {
-                        setLanguage(item.language);
-                        this.setLanguageSelect(index);
-                      }}
-                    >
-                      <Image
-                        source={
-                          this.state.languageSelect === index
-                            ? RadioBtn_on
-                            : RadioBtn_off
-                        }
-                        style={[
-                          styles.btnSelectImg,
-                          {
-                            tintColor:
-                              this.state.languageSelect === index
-                                ? COLORS.success
-                                : COLORS.grey,
-                          },
-                        ]}
-                      />
-                    <Text style={styles.languageName}>{item?.language}</Text>
-                    <View style={styles.imagecontainer}>
-                      <Image
-                        source={{ uri: item.flag }}
-                        style={styles.flagImg}
-                      />
+            /> 
+            <ScrollView
+              showsVerticalScrollIndicator={false}
+              contentContainerStyle={{ paddingBottom: hp(12) }}
+            >
+              <View style={styles.imgView}>
+                <Image source={LanguageIcon} style={styles.mainImg} />
+                <Text style={styles.imgName}>{t("Language")}</Text>
+                <Text style={styles.desc}>{t("SelectLanguage")}</Text>
+              </View>
+              <View style={{ marginTop: hp(2) }}>
+                {this.state.totalLanguages?.map((item: any, index: number) => {
+                  return (
+                    <View style={styles.languageBtn} key={index}>
+                      <TouchableOpacity
+                        style={styles.buttonlanguage}
+                        onPress={() => {
+                          setLanguage(item.language);
+                          this.setLanguageSelect(index);
+                        }}
+                      >
+                        <Image
+                          source={
+                            this.state.languageSelect === index
+                              ? RadioBtn_on
+                              : RadioBtn_off
+                          }
+                          style={[
+                            styles.btnSelectImg,
+                            {
+                              tintColor:
+                                this.state.languageSelect === index
+                                  ? COLORS.success
+                                  : COLORS.grey,
+                            },
+                          ]}
+                        />
+                        <Text style={styles.languageName}>{item?.language || item?.name}</Text>
+                      </TouchableOpacity>
                     </View>
-                    </TouchableOpacity>
-                  </View>
-                );
-              })}
-            </View>
+                  );
+                })}
+              </View>
+            </ScrollView>
             <View style={styles.bottemView}>
               <ButttonComponent
                 BtnText={t("CONTINUE")}
@@ -119,12 +119,20 @@ class LanguageOptionModal extends LanguageOptionsModalController {
                   console.log(language, "languagefromModal");
                   if (language == "English") {
                     console.log("English Language");
-                    this.props.languageState("English ");
+                    this.props.languageState("English 🇬🇧");
                     i18n.changeLanguage("en");
                   } else if (language == "Français") {
                     console.log("Français Language");
-                    this.props.languageState("Français ");
+                    this.props.languageState("Français 🇫🇷");
                     i18n.changeLanguage("fr");
+                  } else if (language == "Português" || language == "Portuguese") {
+                    console.log("Português Language");
+                    this.props.languageState("Português 🇵🇹");
+                    i18n.changeLanguage("pt");
+                  } else if (language == "Italiano" || language == "Italian") {
+                    console.log("Italiano Language");
+                    this.props.languageState("Italiano 🇮🇹");
+                    i18n.changeLanguage("it");
                   }
                   
                   displayLanguage();

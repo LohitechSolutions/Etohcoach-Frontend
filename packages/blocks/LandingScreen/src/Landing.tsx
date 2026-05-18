@@ -55,9 +55,30 @@ class Landing extends LandingController {
               style={styles.dropdownIcon}
             /> 
             <Text style={styles.languageText}>
-{ this.state.language=="English 🇬🇧"?"English":"Français"}
-</Text>
-<Image  style={{height:18,width:18,marginLeft:4}} source={this.state.language=="English 🇬🇧"?require("../assets/English.png"):require("../assets/French.png")}  />
+              {this.state.language?.includes("English")
+                ? "English"
+                : this.state.language?.includes("Français")
+                ? "Français"
+                : this.state.language?.includes("Português")
+                ? "Português"
+                : this.state.language?.includes("Italiano")
+                ? "Italiano"
+                : "English"}
+            </Text>
+            <Image
+              style={{ height: 18, width: 18, marginLeft: 4 }}
+              source={
+                this.state.language?.includes("English")
+                  ? require("../assets/English.png")
+                  : this.state.language?.includes("Français")
+                  ? require("../assets/French.png")
+                  : this.state.language?.includes("Português")
+                  ? { uri: "https://flagcdn.com/w80/pt.png" }
+                  : this.state.language?.includes("Italiano")
+                  ? { uri: "https://flagcdn.com/w80/it.png" }
+                  : require("../assets/English.png")
+              }
+            />
             </View>
           </TouchableOpacity>
           <LanguageOptionsModal
@@ -83,7 +104,11 @@ class Landing extends LandingController {
         </View>
         <View style={styles.seprateImgView}>
           <Image
-            source = {this.state.language == "English 🇬🇧"? require("../assets/seprate.png") : require("../assets/seperateFrench.png")}
+            source={
+              this.state.language?.includes("Français")
+                ? require("../assets/seperateFrench.png")
+                : require("../assets/seprate.png")
+            }
             style={styles.seprateLine}
           />
         </View>
