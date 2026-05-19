@@ -65,7 +65,7 @@ body,
 }
 
 body {
-  font-family: 'Roboto', system-ui, sans-serif;
+  font-family: 'Roboto-Regular', 'Roboto', system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -76,5 +76,6 @@ h3,
 h4,
 h5,
 h6 {
-  font-family: 'Expletus Sans', serif;
+  font-family: 'ExpletusSans-Bold', 'Expletus Sans', serif;
+  font-weight: 700;
 }

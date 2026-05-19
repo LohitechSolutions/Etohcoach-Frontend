@@ -84,8 +84,8 @@ class ModalComponent extends React.Component {
         <Image  source={require('../../../blocks/user-profile-basic/assets/walletIcon.png')} style={{height:Scale(24),width:Scale(24), resizeMode:"contain"}}/>
                   </View>
                   <View style={{width:"85%"}}>
-                    <Text style={{fontFamily:"Expletus Sans",fontWeight:"700"}}>{t("YOUR SUBSCRIPTION IS STILL ACTIVE")}</Text>
-                    <Text style={{color:"rgba(119, 113, 133, 1)",fontFamily:"Roboto",fontWeight:"400",fontSize:Scale(12),lineHeight:16}}>{t("You still have an active subscription until ")} {this.props.subscriptionDate}. {t("Your subscription will not cancel automatically. You need to go to the App Store to cancel it.")}</Text>
+                    <Text style={{fontFamily:FONTS.Explet_Bold}}>{t("YOUR SUBSCRIPTION IS STILL ACTIVE")}</Text>
+                    <Text style={{color:"rgba(119, 113, 133, 1)",fontFamily:FONTS.Roboto_Regular,fontSize:Scale(12),lineHeight:16}}>{t("You still have an active subscription until ")} {this.props.subscriptionDate}. {t("Your subscription will not cancel automatically. You need to go to the App Store to cancel it.")}</Text>
                   </View>
                 </View>
               </View>:null}
