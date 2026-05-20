@@ -1,3 +1,4 @@
+import "react-native-gesture-handler";
 import "react-native-get-random-values";
 import "./src/polyfills/patchReactNativeAsyncStorage";
 import "./src/linking-rn2-polyfill";
