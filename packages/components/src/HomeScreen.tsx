@@ -20,6 +20,7 @@ import InfoPageAdapter from "../../blocks/adapters/src/InfoPageAdapter";
 import AlertPageWebAdapter from "../../blocks/adapters/src/AlertPageWebAdapter";
 
 // Customizable Area Start
+import { FONTS } from "../../framework/src/Fonts";
 import PrivacyPolicyAdapter from "../../blocks/adapters/src/PrivacyPolicyAdapter";
 import TermsAndConditionAdapter from "../../blocks/adapters/src/TermsAndConditionAdapter";
 import SplashScreenAdapter from "../../blocks/adapters/src/SplashScreenAdapter";
@@ -312,6 +313,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontWeight: "bold",
     color: "white",
+    fontFamily: FONTS.Explet_Bold,
   },
   instructions: {
     textAlign: "center",

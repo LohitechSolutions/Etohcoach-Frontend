@@ -1,5 +1,6 @@
 import React from 'react'
 import { StyleSheet, Text, View } from 'react-native'
+import { FONTS } from '../../framework/src/Fonts'
 
 export function AppHeader() {
   return <View style={styles.container}>
@@ -18,5 +19,6 @@ const styles = StyleSheet.create({
   text: {
    fontSize: 36,
    fontWeight: '600',
+   fontFamily: FONTS.Explet_Bold,
   }
 })

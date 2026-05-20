@@ -207,7 +207,7 @@ const styles = StyleSheet.create({
   loginText: {
     color: COLORS.lightRed,
     fontSize: rf(14),
-    fontFamily: FONTS.Roboto_Bold,
+    fontFamily: FONTS.Explet_Bold,
   },
   alredyLogin: {
     fontFamily: FONTS.Roboto_Regular,

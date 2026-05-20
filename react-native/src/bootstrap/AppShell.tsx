@@ -1,6 +1,7 @@
 import React, { useEffect, type ComponentType, type ReactNode } from "react";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { Provider } from "react-redux";
+import { useFonts } from "expo-font";
 import { langaugeFunction } from "../../../packages/blocks/LanguageOptions/src/component/i18n/i18n.config";
 import { StateProvider } from "../../../packages/components/src/context/AppStateContext";
 import { AppNavigator } from "../navigation/AppNavigator";
@@ -26,11 +27,23 @@ const AppStateProvider = StateProvider as ComponentType<{ children?: ReactNode }
 
 /** Legacy block screens + Redux + RN6 (same modules as packages/mobile). */
 export function AppShell() {
+  const [fontsLoaded] = useFonts({
+    "ExpletusSans-Bold": require("../../../packages/mobile/assets/fonts/ExpletusSans-Bold.ttf"),
+    "ExpletusSans-SemiBold": require("../../../packages/mobile/assets/fonts/ExpletusSans-SemiBold.ttf"),
+    "Roboto-Bold": require("../../../packages/mobile/assets/fonts/Roboto-Bold.ttf"),
+    "Roboto-Medium": require("../../../packages/mobile/assets/fonts/Roboto-Medium.ttf"),
+    "Roboto-Regular": require("../../../packages/mobile/assets/fonts/Roboto-Regular.ttf"),
+  });
+
   useEffect(() => {
     void langaugeFunction();
     /** Without this, no screen imports HomeScreen → RestApiClient never attaches → all API calls (signup, splash, …) are no-ops. */
     SingletonFactory.getRestBlockInstance();
   }, []);
+
+  if (!fontsLoaded) {
+    return null;
+  }
 
   return (
     <Provider store={store}>
@@ -44,3 +57,4 @@ export function AppShell() {
     </Provider>
   );
 }
+

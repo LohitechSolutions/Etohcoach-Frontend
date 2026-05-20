@@ -862,6 +862,7 @@ class App extends React.Component {
     this.state = {
       isConnected: false,
       unsubcribe: '',
+      fontsLoaded: false,
     };
   }
 
@@ -876,8 +877,24 @@ class App extends React.Component {
       this.CheckConnection();
     });
     await langaugeFunction();
-      // await offlineDataCall()
-      // offlineDataWatcher().next()
+    // await offlineDataCall()
+    // offlineDataWatcher().next()
+
+    // Safely load fonts dynamically in Expo environments
+    try {
+      const Font = require('expo-font');
+      await Font.loadAsync({
+        "ExpletusSans-Bold": require("./assets/fonts/ExpletusSans-Bold.ttf"),
+        "ExpletusSans-SemiBold": require("./assets/fonts/ExpletusSans-SemiBold.ttf"),
+        "Roboto-Bold": require("./assets/fonts/Roboto-Bold.ttf"),
+        "Roboto-Medium": require("./assets/fonts/Roboto-Medium.ttf"),
+        "Roboto-Regular": require("./assets/fonts/Roboto-Regular.ttf"),
+      });
+      this.setState({ fontsLoaded: true });
+    } catch (e) {
+      console.log('expo-font not available or failed to load fonts dynamically:', e);
+      this.setState({ fontsLoaded: true });
+    }
   }
 
   requestUserPermission = async () => {
@@ -940,6 +957,10 @@ class App extends React.Component {
   }
 
   render() {
+    if (!this.state.fontsLoaded) {
+      return null;
+    }
+
     return (
       <>
         <Provider store={store}>

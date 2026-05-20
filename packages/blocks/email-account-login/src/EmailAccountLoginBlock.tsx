@@ -255,7 +255,7 @@ const styles = StyleSheet.create({
   signUpText: {
     color: COLORS.lightRed,
     paddingTop: hp(0.2),
-    fontFamily: FONTS.Roboto_Bold,
+    fontFamily: FONTS.Explet_Bold,
     fontSize: rf(14),
   },
   accountText: {
@@ -345,6 +345,7 @@ const styles = StyleSheet.create({
     textAlign: "left",
     marginVertical: 8,
     color: "#6200EE",
+    fontFamily: FONTS.Explet_Bold,
   },
   imgPasswordShowhide: Platform.OS === "web" ? { height: 30, width: 30 } : {},
 

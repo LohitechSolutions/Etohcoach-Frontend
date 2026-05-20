@@ -417,7 +417,7 @@ const styles = StyleSheet.create({
   loginText: {
     color: "#c72944",
     fontSize: rf(14),
-    fontFamily: FONTS.Roboto_Bold,
+    fontFamily: FONTS.Explet_Bold,
   },
   alredyLogin: {
     fontSize: rf(14),
@@ -500,6 +500,7 @@ const styles = StyleSheet.create({
     fontSize: 32,
     color: "#6200EE",
     fontWeight: "bold",
+    fontFamily: FONTS.Explet_Bold,
   },
   errorLabel: {
     alignSelf: "flex-end",

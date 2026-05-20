@@ -47,8 +47,7 @@ const styles = StyleSheet.create({
     btnText: {
         color: 'white',
         fontSize: rf(15),
-        fontFamily:FONTS.Roboto_Medium,
-      
+        fontFamily: FONTS.Explet_Bold,
     },
 })
 
