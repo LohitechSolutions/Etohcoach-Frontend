@@ -24,15 +24,18 @@ class StateProvider extends Component {
     console.log("setLanguageToAsyncStorage");
     console.log(currentLanguage, "LanguageToSet");
     await AsyncStorage.setItem(APP_LANGUAGE, currentLanguage);
+    let langCode = "en";
     if(currentLanguage == "English" || currentLanguage == "en"){
-      await AsyncStorage.setItem("languename", "en");
+      langCode = "en";
     }else if(currentLanguage == "Français" || currentLanguage == "fr"){
-      await AsyncStorage.setItem("languename", "fr"); 
+      langCode = "fr"; 
     }else if(currentLanguage == "Português" || currentLanguage == "pt" || currentLanguage == "Portuguese"){
-      await AsyncStorage.setItem("languename", "pt"); 
+      langCode = "pt"; 
     }else if(currentLanguage == "Italiano" || currentLanguage == "it" || currentLanguage == "Italian"){
-      await AsyncStorage.setItem("languename", "it"); 
+      langCode = "it"; 
     }
+    await AsyncStorage.setItem("languename", langCode);
+    this.setState({ language: currentLanguage });
   }
 
   initLanguage = async () => {
@@ -40,10 +43,10 @@ class StateProvider extends Component {
     const currentLanguage = await AsyncStorage.getItem(APP_LANGUAGE);
     console.log(currentLanguage, "appLanguage from context/initLanguage")
     if(currentLanguage){  
-      this.setLanguageToAsyncStorage(currentLanguage);
+      await this.setLanguageToAsyncStorage(currentLanguage);
     }else{
       let localeCode = DEFAULT_LANGUAGE;
-      this.setLanguageToAsyncStorage(localeCode);
+      await this.setLanguageToAsyncStorage(localeCode);
     }
   }
 

@@ -112,30 +112,32 @@ class LanguageOptionModal extends LanguageOptionsModalController {
             <View style={styles.bottemView}>
               <ButttonComponent
                 BtnText={t("CONTINUE")}
-                onpress={() => {
+                onpress={async () => {
                   this.setLoader(true);
-                  setLanguageToAsyncStorage(language);
+                  await setLanguageToAsyncStorage(language);
+                  // Fire backend language update (response handled asynchronously in receive())
                   this.getLanguageresultsModal();
                   console.log(language, "languagefromModal");
                   if (language == "English") {
                     console.log("English Language");
                     this.props.languageState("English 🇬🇧");
-                    i18n.changeLanguage("en");
+                    await i18n.changeLanguage("en");
                   } else if (language == "Français") {
                     console.log("Français Language");
                     this.props.languageState("Français 🇫🇷");
-                    i18n.changeLanguage("fr");
+                    await i18n.changeLanguage("fr");
                   } else if (language == "Português" || language == "Portuguese") {
                     console.log("Português Language");
                     this.props.languageState("Português 🇵🇹");
-                    i18n.changeLanguage("pt");
+                    await i18n.changeLanguage("pt");
                   } else if (language == "Italiano" || language == "Italian") {
                     console.log("Italiano Language");
                     this.props.languageState("Italiano 🇮🇹");
-                    i18n.changeLanguage("it");
+                    await i18n.changeLanguage("it");
                   }
                   
-                  displayLanguage();
+                  await langaugeFunction();
+                  await displayLanguage();
                   this.props.closeModal();
                 }}
               />

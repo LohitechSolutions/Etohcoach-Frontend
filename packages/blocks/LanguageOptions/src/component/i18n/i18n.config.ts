@@ -3,66 +3,70 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { initReactI18next } from "react-i18next";
 import { enus, en, fr, es, pt, it } from "../translations";
 
+const resources: Record<string, { translation: Record<string, string> }> = {
+  enus: { translation: enus },
+  en: { translation: en },
+  English: { translation: en },
+  fr: { translation: fr },
+  French: { translation: fr },
+  Français: { translation: fr },
+  es: { translation: es },
+  Spanish: { translation: es },
+  Español: { translation: es },
+  pt: { translation: pt },
+  Portuguese: { translation: pt },
+  Português: { translation: pt },
+  it: { translation: it },
+  Italian: { translation: it },
+  Italiano: { translation: it },
+};
+
+// Initialize i18n synchronously at module level with local resource bundles
+i18n.use(initReactI18next).init({
+  lng: "enus",
+  fallbackLng: "enus",
+  compatibilityJSON: "v2",
+  resources,
+  interpolation: {
+    escapeValue: false,
+  },
+  react: {
+    useSuspense: false,
+  },
+});
+
 export const langaugeFunction = async () => {
-  console.log("i18n", i18n.language);
-  const dataaa: any = (await AsyncStorage.getItem("langDataController"))
-    ? await AsyncStorage.getItem("langDataController")
-    : await AsyncStorage.getItem("langData");
+  console.log("i18n language function active language:", i18n.language);
   const languename: any = await AsyncStorage.getItem("languename");
-  const parseData: any = await JSON.parse(dataaa);
-  const applanguage = await AsyncStorage.getItem("appLanguage");
-  // console.log(applanguage, "appLanguage from i18n function");
-  // console.log(
-  //   "asyncdata " +
-  //     applanguage +
-  //     " " +
-  //     languename +
-  //     " " +
-  //     dataaa +
-  //     "-----------------" +
-  //     parseData
-  // );
+  const activeLanguage = languename || "enus";
 
-  /** M6 — shell bundles for EN/FR/ES/PT/IT; `languename` bundle from storage overrides when present. */
-  const resources: Record<string, { translation: Record<string, string> }> = {
-    enus: { translation: enus },
-    en: { translation: en },
-    English: { translation: en },
-    fr: { translation: fr },
-    French: { translation: fr },
-    Français: { translation: fr },
-    es: { translation: es },
-    Spanish: { translation: es },
-    Español: { translation: es },
-    pt: { translation: pt },
-    Portuguese: { translation: pt },
-    Português: { translation: pt },
-    it: { translation: it },
-    Italian: { translation: it },
-    Italiano: { translation: it },
-  };
-  if (languename && 
-      languename !== "pt" && languename !== "it" && languename !== "Portuguese" && languename !== "Português" && languename !== "Italian" && languename !== "Italiano" &&
-      languename !== "fr" && languename !== "French" && languename !== "Français"
-  ) {
-    resources[languename] = { translation: parseData };
-  }
+  // Use language-specific keys to prevent crossover contamination between languages
+  const langKey = `langDataController_${activeLanguage}`;
+  const fallbackLangKey = `langData_${activeLanguage}`;
 
-  console.log("resourcesss", resources);
+  const dataaa: any = (await AsyncStorage.getItem(langKey))
+    ? await AsyncStorage.getItem(langKey)
+    : await AsyncStorage.getItem(fallbackLangKey);
+
+  const parseData: any = dataaa ? await JSON.parse(dataaa) : null;
 
   try {
-    await i18n.use(initReactI18next).init({
-      lng: languename,
-      fallbackLng: "enus",
-      compatibilityJSON: "v2",
-      resources,
-      interpolation: {
-        escapeValue: false,
-      },
-      react: {
-        useSuspense: true,
-      },
-    });
+    if (languename) {
+      if (parseData) {
+        const targetKeys = [languename];
+        if (languename === "en" || languename === "English") targetKeys.push("en", "English");
+        if (languename === "fr" || languename === "French" || languename === "Français") targetKeys.push("fr", "French", "Français");
+        if (languename === "pt" || languename === "Portuguese" || languename === "Português") targetKeys.push("pt", "Portuguese", "Português");
+        if (languename === "it" || languename === "Italian" || languename === "Italiano") targetKeys.push("it", "Italian", "Italiano");
+
+        targetKeys.forEach((key) => {
+          i18n.addResourceBundle(key, "translation", parseData, true, true);
+        });
+      }
+      await i18n.changeLanguage(languename);
+      // Force all react-i18next components to re-render with updated resource bundles
+      i18n.emit("languageChanged", languename);
+    }
     console.log("i18n ends");
   } catch (error) {
     console.log("errorlanguage", error);
@@ -70,3 +74,4 @@ export const langaugeFunction = async () => {
 };
 
 export default i18n;
+

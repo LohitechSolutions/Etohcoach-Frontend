@@ -15,6 +15,7 @@ import Context from "../../../components/src/context/context";
 import { withTranslation } from "react-i18next";
 import { langaugeFunction } from "./component/i18n/i18n.config";
 import i18next from "i18next";
+import { resetNavigationToAuthenticated } from "../../../../react-native/src/navigation/rootNavigationRef";
 
 
 const LunguageArray = [{ name: 'English ' }, { name: 'Francais ' }]
@@ -101,21 +102,35 @@ class LanguageOptions extends LanguageOptionsController {
           </TouchableOpacity>
           <TouchableOpacity
             style={{ alignItems: "center" }}
-            onPress={() => {
+            onPress={async () => {
               if(this.state.isItOffline){
                 this.props.navigation.navigate('NoInternet',{showHeader:true,from:'language'})
               }else{
               this.setLoader(true);
-              setLanguageToAsyncStorage(language);
+              await setLanguageToAsyncStorage(language);
+              // Fire backend language update (response handled asynchronously in receive())
               this.getLanguageresults();
+              const { i18n }: any = this.props;
+              // Immediately switch i18n to selected language using preloaded local bundles
               if (language == "English") {
                 console.log("English Language");
-                i18next.changeLanguage("en");
-              } else if(language == "Français"){
+                await i18n.changeLanguage("en");
+              } else if (language == "Français") {
                 console.log("Francais Language");
-                i18next.changeLanguage("fr");
+                await i18n.changeLanguage("fr");
+              } else if (language == "Português" || language == "Portuguese") {
+                console.log("Português Language");
+                await i18n.changeLanguage("pt");
+              } else if (language == "Italiano" || language == "Italian") {
+                console.log("Italiano Language");
+                await i18n.changeLanguage("it");
               }
-              langaugeFunction();
+              // langaugeFunction reads the language-specific cache (may be empty on first switch,
+              // but the local bundle is already preloaded so change is immediate)
+              await langaugeFunction();
+              this.setLoader(false);
+              // Full navigation reset so LegacyTabShell remounts with the new i18n.language key
+              resetNavigationToAuthenticated("Dashboard");
             }
             }}
           >

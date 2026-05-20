@@ -44,6 +44,15 @@ interface SS {
   // Customizable Area End
 }
 
+const normalizeLanguageName = (name: string): string | null => {
+  const lower = name.toLowerCase().trim();
+  if (lower.includes("english") || lower === "en") return "English";
+  if (lower.includes("français") || lower.includes("francais") || lower.includes("french") || lower === "fr") return "Français";
+  if (lower.includes("português") || lower.includes("portugues") || lower.includes("portuguese") || lower.includes("portuguise") || lower === "pt") return "Português";
+  if (lower.includes("italiano") || lower.includes("italian") || lower === "it") return "Italiano";
+  return null;
+};
+
 export default class LanguageOptionsModalController extends BlockComponent<
   Props,
   S,
@@ -136,11 +145,6 @@ export default class LanguageOptionsModalController extends BlockComponent<
       if (responseJson && !responseJson.errors) {
         if (apiRequestCallId === this.getLanguageAPICall) {
           const apiLangs = responseJson?.languages || [];
-          const formattedApiLangs = apiLangs.map((item: any) => ({
-            language: item.language || item.name,
-            flag: item.flag,
-            id: item.id
-          }));
           
           const defaultLangs = [
             { language: "English", flag: "https://flagcdn.com/w80/gb.png" },
@@ -150,16 +154,18 @@ export default class LanguageOptionsModalController extends BlockComponent<
           ];
           
           const mergedList = [...defaultLangs];
-          formattedApiLangs.forEach((apiItem: any) => {
+          apiLangs.forEach((apiItem: any) => {
+            const rawName = apiItem.language || apiItem.name || "";
+            const normName = normalizeLanguageName(rawName);
+            if (!normName) return; // Completely skip Spanish, etc.
+            
             const index = mergedList.findIndex(
-              (mItem) => mItem.language.toLowerCase() === apiItem.language.toLowerCase()
+              (mItem) => mItem.language === normName
             );
             if (index !== -1) {
               if (apiItem.flag) {
                 mergedList[index].flag = apiItem.flag;
               }
-            } else {
-              mergedList.push(apiItem);
             }
           });
           
@@ -186,8 +192,22 @@ export default class LanguageOptionsModalController extends BlockComponent<
       } else {
         console.log("async receive from language data");
         const data = JSON.stringify(responseJson.meta.translations);
+        
+        // Save to language-specific key to prevent cross-language cache contamination
+        const applanguage = await AsyncStorage.getItem("appLanguage");
+        let langCode = "en";
+        if(applanguage == "English" || applanguage == "en"){
+          langCode = "en";
+        }else if(applanguage == "Français" || applanguage == "fr"){
+          langCode = "fr"; 
+        }else if(applanguage == "Português" || applanguage == "pt" || applanguage == "Portuguese"){
+          langCode = "pt"; 
+        }else if(applanguage == "Italiano" || applanguage == "it" || applanguage == "Italian"){
+          langCode = "it"; 
+        }
+        await AsyncStorage.setItem(`langDataController_${langCode}`, data);
         await AsyncStorage.setItem("langDataController", data);
-        const newData = await AsyncStorage.getItem("langDataController");
+        
         this.setLoader(false);
         await langaugeFunction();
       }

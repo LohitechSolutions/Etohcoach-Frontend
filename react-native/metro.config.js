@@ -780,6 +780,8 @@ config.resolver.extraNodeModules = {
     "@react-native-async-storage",
     "async-storage"
   ),
+  i18next: path.join(expoNodeModules, "i18next"),
+  "react-i18next": path.join(expoNodeModules, "react-i18next"),
 };
 config.resolver.unstable_enableSymlinks = true;
 

@@ -99,7 +99,7 @@ class Dashboard extends DashboardController {
     return (
       <View style={{ marginTop: Scale(15) }}>
         <View style={styles.progressView}>
-          <Text numberOfLines={1} style={styles.progressTxt}>{t("MY PROGRESS")}</Text>
+          <Text numberOfLines={1} style={styles.progressTxt}>{t("MYPROGRESS")}</Text>
           <TouchableOpacity style={styles.rewardView} onPress={() => { console.log(this.state.dashboardData), this.setState({ overlay_bt: true }) }}>
             <Text style={styles.rewardTxt}>{this.state.dashboardData?.reward_point}</Text>
             <Image style={styles.rewardImage} source={require("../assets/imagenav_reward.png")} />
@@ -180,7 +180,7 @@ class Dashboard extends DashboardController {
       <View style={{ marginTop: Scale(10) }}>
         {this.state.dashboardData?.user_in_progress_courses &&
           <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: 'center', paddingRight: Scale(20) }}>
-            <Text numberOfLines={1} style={ styles.courseContinueTxt}>{t("CONTINUE WITH YOUR COURSE")}</Text>
+            <Text numberOfLines={1} style={ styles.courseContinueTxt}>{t("CONTINUEWITHYOURCOURSE")}</Text>
             {<TouchableOpacity onPress={() => { this.setState({ seeAllContinue:! this.state.seeAllContinue }) }}>
               <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
                 <Text style={{ fontFamily: FONTS.Roboto_Regular, color: COLORS.darkGray }}>{!this.state.seeAllContinue? t("See all") : t("See less") }</Text>
@@ -429,7 +429,7 @@ class Dashboard extends DashboardController {
               <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                 <Image source={trial} style={styles.trialVersionImageContainer} />
                 <Text style={styles.trialVersionTextContainer}>
-                  {t("This is a trial version of the app.")}
+                  {t("ThisIsATrialVersion")}
                 </Text>
               </View>
               <Image source={rightArrow} style={{ height: hp(4), width: hp(4), marginRight: wp(2) }} />

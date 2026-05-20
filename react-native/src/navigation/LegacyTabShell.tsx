@@ -1,5 +1,5 @@
-import i18next from "i18next";
 import React, { useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import { Dimensions, Image, Platform, Text, View } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Scale from "../../../packages/components/src/Scale";
@@ -68,6 +68,7 @@ function LegacyTabBarIcon({
  * Blocks load lazily via `getLegacyBlock` when this shell mounts (not at app import time).
  */
 export function LegacyTabShell() {
+  const { t, i18n } = useTranslation();
   const WDashboard = useMemo(() => wrapLegacyTabScreen("Dashboard"), []);
   const WCatalogue = useMemo(() => wrapLegacyTabScreen("Catalogue"), []);
   const WLeaderboard = useMemo(() => wrapLegacyTabScreen("Leaderboard"), []);
@@ -78,6 +79,7 @@ export function LegacyTabShell() {
 
   return (
     <Tab.Navigator
+      key={i18n.language}
       screenOptions={{
         headerShown: false,
         tabBarActiveTintColor: "black",
@@ -96,7 +98,7 @@ export function LegacyTabShell() {
         name="Dashboard"
         component={WDashboard}
         options={{
-          title: i18next.t("Dashboard"),
+          title: t("Dashboard"),
           tabBarIcon: ({ focused }) => (
             <LegacyTabBarIcon source={TAB_ICONS.dashboard} sizeHp={2.5} focused={focused} />
           )
@@ -106,7 +108,7 @@ export function LegacyTabShell() {
         name="Catalogue"
         component={WCatalogue}
         options={{
-          title: i18next.t("Catalogue"),
+          title: t("Catalogue"),
           tabBarIcon: ({ focused }) => (
             <LegacyTabBarIcon source={TAB_ICONS.catalogue} sizeHp={2.9} focused={focused} />
           )
@@ -116,7 +118,7 @@ export function LegacyTabShell() {
         name="Leaderboard"
         component={WLeaderboard}
         options={{
-          title: i18next.t("Leaderboard"),
+          title: t("Leaderboard"),
           tabBarIcon: ({ focused }) => (
             <LegacyTabBarIcon source={TAB_ICONS.leaderboard} sizeHp={2.8} focused={focused} />
           )
@@ -127,7 +129,7 @@ export function LegacyTabShell() {
         component={WProfile}
         options={{
           headerShown: false,
-          title: "Profile",
+          title: t("Profile"),
           tabBarIcon: ({ focused }) => (
             <LegacyTabBarIcon source={TAB_ICONS.profile} sizeHp={3.5} focused={focused} />
           )

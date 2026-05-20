@@ -211,9 +211,22 @@ export default class SplashscreenController extends BlockComponent<
           } else {
             console.log("async recieve function from splash",responseJson);
             const data = JSON.stringify(responseJson.meta.translations);
+            
+            // Save to language-specific key to prevent cross-language cache contamination
+            const applanguage = await AsyncStorage.getItem("appLanguage");
+            let langCode = "en";
+            if(applanguage == "English" || applanguage == "en"){
+              langCode = "en";
+            }else if(applanguage == "Français" || applanguage == "fr"){
+              langCode = "fr"; 
+            }else if(applanguage == "Português" || applanguage == "pt" || applanguage == "Portuguese"){
+              langCode = "pt"; 
+            }else if(applanguage == "Italiano" || applanguage == "it" || applanguage == "Italian"){
+              langCode = "it"; 
+            }
+            await AsyncStorage.setItem(`langData_${langCode}`, data);
             await AsyncStorage.setItem("langData", data);
-            const dataa = await AsyncStorage.getItem("langData");
-            console.log("data from splash screen",dataa);
+            
             langaugeFunction();
           }
         }
