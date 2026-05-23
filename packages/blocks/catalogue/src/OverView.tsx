@@ -95,14 +95,6 @@ class OverView extends OverViewController {
                             <Text style={styles.itemNav}>{this.state.isConnect ? this.state.course_Details?.language_type : t(this.state.course_Details?.course?.language_type)}</Text>
                             <Image source={UK_Flag} style={styles.ukFlag} />
                         </View>
-                        {this.state.course_Details?.status != "not started" && this.state.course_Details?.user_course_percentage != 100 &&
-                            <View style={styles.availableOflineView}>
-                                <Text style={styles.offlineTxt}>{t("AvailableOffline")}</Text>
-                                <TouchableOpacity style={styles.download}>
-                                    <Image style={styles.downLoadOfflineIcon} source={require('../assets/Download.png')} />
-                                </TouchableOpacity>
-                            </View>
-                        }
                     </View>
                     {this.state.course_Details?.status != "not started" &&
                         <View style={styles.percantageView}>

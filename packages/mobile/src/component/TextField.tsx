@@ -30,7 +30,7 @@ class TextField extends React.Component {
             }]}>
                 <View style={{ flexDirection: 'row', marginLeft: wp(1.5) }}>
                     <Image source={this.props.Image} style={styles.textFieldIcon} resizeMode={'contain'} />
-                    <View style={{ width: '82%', justifyContent: 'space-around', marginLeft: wp(1.5) }}>
+                    <View style={styles.inputWrapper}>
                         {!!this.props.label ? <Text style={[styles.labalText, this.props?.labalColor &&{ color: this.props.labalColor }]}>{this.props.placeHolderName}</Text> : null}
                         <TextInput
                             placeholder={this.props.placeHolderName}
@@ -57,11 +57,21 @@ class TextField extends React.Component {
 
 
 const styles = StyleSheet.create({
+    inputWrapper: {
+        width: '82%',
+        marginLeft: wp(1.5),
+        flex: 1,
+        justifyContent: 'center',
+    },
     container: {
-        height: wp(7),
         fontSize: rf(14),
-        lineHeight: wp(4),
-        padding: wp(1),
+        lineHeight: rf(18),
+        paddingVertical: Platform.OS === 'android' ? 0 : hp(0.3),
+        paddingHorizontal: wp(1),
+        ...(Platform.OS === 'android' && {
+            includeFontPadding: false,
+            textAlignVertical: 'center',
+        }),
     },
     textFieldIcon: {
         height: hp(3.5),
@@ -76,21 +86,21 @@ const styles = StyleSheet.create({
     },
     mainContainer: {
         flexDirection: 'row',
-        height: hp(7),
+        minHeight: hp(7),
         width: '93.5%',
         alignSelf: 'center',
         backgroundColor: '#f0eff5',
-        padding: hp(1.2),
+        paddingVertical: hp(1),
+        paddingHorizontal: hp(1.2),
         justifyContent: 'space-between',
         borderRadius: hp(1.1),
         alignItems: 'center',
 
     },
     labalText: {
-        height: wp(8),
         fontSize: rf(11.7),
-        lineHeight: wp(4),
-        padding: wp(1),
+        lineHeight: rf(14),
+        marginBottom: hp(0.2),
         color: COLORS.grey
 
     }

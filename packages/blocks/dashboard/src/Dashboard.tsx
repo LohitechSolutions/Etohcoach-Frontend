@@ -20,7 +20,6 @@ import OverlayView from "../../Leaderboard/Components/OverlayView";
 import DashboardController, { Props } from "./DashboardController";
 import styles from "./DashboardStyle";
 import { rightArrow, trial, attractIcon, convinceIcon, convertIcon, retainIcon, growIcon } from "./assets";
-import LottieView from 'lottie-react-native';
 
 class Dashboard extends DashboardController {
   constructor(props: Props) {
@@ -204,18 +203,11 @@ class Dashboard extends DashboardController {
       <TouchableOpacity style={styles.courseList} onPress={() => this.CourceNavigate(item,idx)}>
         {this.state.isItOffline ? 
         (<ImageBackground imageStyle={{ borderRadius: Scale(10) }} style={styles.itemImageIcon}
-        source={item?.downloadedPath ?  {uri : item?.downloadedPath} : require("../assets/natureImage.jpeg")}>
-          <TouchableOpacity style={styles.downloadView}>
-            <Image style={styles.downloadImage} source={require('../assets/OfflineDownload.png')} />
-          </TouchableOpacity>
-        </ImageBackground>)
+        source={item?.downloadedPath ?  {uri : item?.downloadedPath} : require("../assets/natureImage.jpeg")} />)
         : 
         (<ImageBackground imageStyle={{ borderRadius: Scale(10) }} style={styles.itemImageIcon}
-          source={item?.course_attachment ? { uri: item?.course_attachment } : require("../assets/natureImage.jpeg")}>
-          <TouchableOpacity style={styles.downloadView}>
-            <Image style={styles.downloadImage} source={require('../assets/OfflineDownload.png')} />
-          </TouchableOpacity>
-        </ImageBackground>) }
+          source={item?.course_attachment ? { uri: item?.course_attachment } : require("../assets/natureImage.jpeg")} />)
+        }
         <View style={styles.dataView}>
           <View style={styles.itemView}>
             <Text numberOfLines={1} style={styles.aboutItem}>{t(item?.drink_type)}</Text>
@@ -399,30 +391,6 @@ class Dashboard extends DashboardController {
             )
           }
 
-           
-
-          {!this.state.isItOffline && this.props.offlineState?.offlineData?.downloadPercent > 0 && this.props.offlineState?.offlineData?.downloadPercent < 80 ?
-
-            <TouchableOpacity style={{ backgroundColor: '#EBEFF4', height: hp(6), margin: hp(2), bottom: Scale(55), position: 'absolute', width: '91%', flexDirection: 'row', alignItems: 'center', borderRadius: hp(1.3), justifyContent: 'space-between' }}>
-              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                <Image source={trial} style={styles.trialVersionImageContainer} />
-                <Text style={[styles.trialVersionTextContainer, { maxWidth: '80%' }]}>
-                  {t("Offline downloaded progress")} : {this.props?.offlineState?.offlineData?.downloadPercent === 0 ? "0" : this.props?.offlineState?.offlineData?.downloadPercent}%
-                </Text>
-              </View>
-              <View style={{ position: "absolute", right: 15 }}>
-                {this.props.offlineState?.offlineData?.downloadPercent < 80 &&
-                  <LottieView
-                    source={require('../../../components/images/animation.json')}
-                    imageAssetsFolder={'images'}
-                    autoPlay
-                    loop
-                    style={{ height: 10, width: 10 }}
-                  />
-                }
-              </View>
-            </TouchableOpacity>
-            : null}   
           {String(this.state.subscription).toLowerCase()!== "subscribed" && (this.state.subscription_reciept==''||this.state.subscription_reciept=="null"||this.state.subscription_reciept==undefined)  ?
           
             <TouchableOpacity onPress={() => {this.state.isItOffline ? this.props.navigation.navigate('NoInternet',{showHeader:true,from:'subscription'}) : this.props.navigation.navigate('SubCriptionScreen')}} style={{ backgroundColor: '#EBEFF4', height: hp(6), margin: hp(2), bottom: 0, position: 'absolute', width: '91%', flexDirection: 'row', alignItems: 'center', borderRadius: hp(1.3), justifyContent: 'space-between' }}>
