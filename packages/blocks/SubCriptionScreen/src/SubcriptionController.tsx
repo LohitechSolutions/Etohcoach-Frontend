@@ -81,7 +81,7 @@ interface SS {
 
 // // Prod Subscriptions
 const itemSubs: any = Platform.select({
-  android:['etoh_prod'],
+  android:['premium_monthly'],
   ios:['etoh_prod']
 })
 
