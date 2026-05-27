@@ -107,7 +107,7 @@ class Dashboard extends DashboardController {
 
         <ScrollView horizontal={true}  >
           <View style={{ flexDirection: 'row', marginTop: Scale(10) }}>
-            {this.state.dashboardData?.drinks_types?.map(({ drinktype, total_courses, user_courses }) => this.renderDrinkstatus(drinktype, total_courses, user_courses))}
+            {this.state.dashboardData?.drinks_types?.map(({ drinktype, total_courses, user_courses }) => <React.Fragment key={drinktype}>{this.renderDrinkstatus(drinktype, total_courses, user_courses)}</React.Fragment>)}
           </View>
         </ScrollView>
       </View>

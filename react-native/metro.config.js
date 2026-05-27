@@ -345,6 +345,51 @@ function resolveReactNativeAsyncStorage(moduleName) {
   return null;
 }
 
+/** react-native-svg must resolve to Expo's version (15.x) — core/node_modules has 12.x which mismatches the compiled native binary. */
+function resolveReactNativeSvg(moduleName) {
+  const pkg = "react-native-svg";
+  const pkgRoot = path.join(expoNodeModules, pkg);
+  if (!fs.existsSync(path.join(pkgRoot, "package.json"))) {
+    return null;
+  }
+  const bare = bareModuleName(moduleName);
+  const norm = String(moduleName).replace(/\\/g, "/");
+
+  if (bare === pkg || bare.startsWith(`${pkg}/`)) {
+    const sub = bare === pkg ? "" : bare.slice(pkg.length + 1);
+    if (!sub) {
+      const entry = resolvePackageEntry(pkgRoot);
+      if (entry) {
+        return { filePath: path.normalize(entry), type: "sourceFile" };
+      }
+    } else {
+      const resolved = resolveExistingFile(path.join(pkgRoot, sub));
+      if (resolved) {
+        return { filePath: path.normalize(resolved), type: "sourceFile" };
+      }
+    }
+  }
+
+  const needle = `/node_modules/${pkg}/`;
+  const idx = norm.indexOf(needle);
+  if (idx !== -1) {
+    const rel = norm.slice(idx + needle.length).split("?")[0];
+    const resolved = resolveExistingFile(path.join(pkgRoot, rel));
+    if (resolved) {
+      return { filePath: path.normalize(resolved), type: "sourceFile" };
+    }
+  }
+
+  if (norm.endsWith(`/node_modules/${pkg}`)) {
+    const entry = resolvePackageEntry(pkgRoot);
+    if (entry) {
+      return { filePath: path.normalize(entry), type: "sourceFile" };
+    }
+  }
+
+  return null;
+}
+
 /** RevenueCat must use the Expo app’s native module (RN 0.74), not a hoisted legacy copy. */
 function resolveReactNativePurchases(moduleName) {
   const pkg = "react-native-purchases";
@@ -568,6 +613,10 @@ config.resolver.resolveRequest = (context, moduleName, platform) => {
   if (fbsdkRes) {
     return fbsdkRes;
   }
+  const svgRes = resolveReactNativeSvg(moduleName);
+  if (svgRes) {
+    return svgRes;
+  }
   const safeAreaRes = resolveReactNativeSafeAreaContext(moduleName);
   if (safeAreaRes) {
     return safeAreaRes;
@@ -773,6 +822,7 @@ config.resolver.extraNodeModules = {
   "react-native-video": path.resolve(projectRoot, "src/shims/react-native-video.js"),
   "react-native-fs": path.resolve(projectRoot, "src/shims/react-native-fs.js"),
   "react-native-iap": path.resolve(projectRoot, "src/shims/react-native-iap.js"),
+  "react-native-svg": path.join(expoNodeModules, "react-native-svg"),
   "react-native-safe-area-context": path.join(expoNodeModules, "react-native-safe-area-context"),
   "react-native-purchases": path.join(expoNodeModules, "react-native-purchases"),
   "@react-native-async-storage/async-storage": path.join(

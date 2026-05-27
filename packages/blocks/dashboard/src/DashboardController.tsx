@@ -1057,7 +1057,7 @@ catch(err)
 subscribe = async () => {
   try {
     await this.iapConnection();
-    const reqSubs = await requestSubscription(this.state.subscription_id)
+    const reqSubs = await requestSubscription({ sku: this.state.subscription_id })
 
     console.log('reqSubs', reqSubs)
     if (reqSubs) {
@@ -1126,16 +1126,13 @@ updatePurchase = async () => {
       if (receipt) {
         try {
           if(Platform.OS=='ios'){
-            await RNIap.finishTransaction(purchase);
+            await RNIap.finishTransaction({ purchase });
           }
           if(Platform.OS=='android'){
             console.log('purchaseUpdatedListener android', receipt);
-
-            RNIap.acknowledgePurchaseAndroid({token:purchase.purchaseToken}).then(()=>{
-              RNIap.finishTransaction(purchase,true).catch((err)=>{
-                console.log("the error the eoor in iap",err.code,err.message)
-              });
-            })
+            RNIap.finishTransaction({ purchase, isConsumable: false }).catch((err: any) => {
+              console.log("the error the eoor in iap", err.code, err.message);
+            });
           }
         } catch (ackErr) {
           console.warn('ackErr', ackErr);
