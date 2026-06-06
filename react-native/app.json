@@ -2,7 +2,7 @@
   "expo": {
     "name": "EtOHCoach",
     "slug": "etohcoach",
-    "version": "1.4.2",
+    "version": "1.4.5",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "splash": {
@@ -17,10 +17,10 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.EtOHCoachFinal",
-      "buildNumber": "232"
+      "buildNumber": "235"
     },
     "android": {
-      "versionCode": 232,
+      "versionCode": 235,
       "package": "com.EtOHCoachFinal",
       "adaptiveIcon": {
         "foregroundImage": "./assets/icon.png",
