@@ -24,6 +24,6 @@ exports.subscriptionCancelApiMethodType = "GET";
   /** RevenueCat public SDK keys (dashboard → Project → API keys). Prefer injecting via your build/env in production. */
   exports.revenueCatIosApiKey = 'appl_IWwyCqEhSUcYlfQymwrvuOZgGVB';
   /** Set when supporting Android: goog_… */
-  exports.revenueCatAndroidApiKey = '';
+  exports.revenueCatAndroidApiKey = 'goog_VboSXKXpqFDMYWxOgpfqYcEgMrK';
   
   // Customizable Area End
